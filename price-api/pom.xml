@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.secoo.mall</groupId>
+        <artifactId>matrix</artifactId>
+        <version>1.0.13.RELEASE</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.secoo.order.admin</groupId>
+    <artifactId>price-api</artifactId>
+    <version>1.0.0${ver_type}</version>
+
+    <dependencies>
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.secoo.mall</groupId>
+            <artifactId>common-core</artifactId>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <ver_type>-DEV-SNAPSHOT</ver_type>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>secoo-dev</id>
+                    <name>secoo-dev-repository</name>
+                    <url>http://nexus.secoo.com:8081/nexus/content/repositories/secoo-hosted-dev/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <ver_type>-SNAPSHOT</ver_type>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>secoo-test</id>
+                    <name>secoo-test-repository</name>
+                    <url>http://nexus.secoo.com:8081/nexus/content/repositories/secoo-hosted-test/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>pro</id>
+            <properties>
+                <ver_type>.RELEASE</ver_type>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>secoo-pro</id>
+                    <name>secoo-pro-repository</name>
+                    <url>http://nexus.secoo.com:8081/nexus/content/repositories/secoo-hosted-pro/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+</project>
