@@ -10,7 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.secoo.order.admin</groupId>
+    <groupId>com.secoo.mall.market</groupId>
     <artifactId>price-api</artifactId>
     <version>1.0.0${ver_type}</version>
 

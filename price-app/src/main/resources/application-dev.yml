@@ -1,8 +1,8 @@
 
 dubbo:
   application:
-    name: price
-    id: price
+    name: price-provider
+    id: price-provider
   registry:
     id: secoo_zk
     address: zookeeper://dev01-zk-mall1.secoolocal.com:2181?backup=dev01-zk-mall2.secoolocal.com:2181,dev01-zk-mall3.secoolocal.com:2181

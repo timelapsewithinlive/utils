@@ -3,6 +3,6 @@ server:
 
 spring:
   application:
-    name: price
+    name: price-provider
   profiles:
     active: dev
