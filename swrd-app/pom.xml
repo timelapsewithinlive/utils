@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>swrd</groupId>
+        <artifactId>swrd-test</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>swrd-app</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.1.0.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>price-app</finalName>
+        <resources>
+            <!--copy start.sh-->
+            <resource>
+                <directory>${project.basedir}/boot/${profiles.active}</directory>
+                <targetPath>..</targetPath>
+            </resource>
+            <!--copy shutdown.sh-->
+            <resource>
+                <directory>${project.basedir}/boot</directory>
+                <targetPath>..</targetPath>
+                <excludes>
+                    <exclude>**/dev/**</exclude>
+                    <exclude>**/pro/**</exclude>
+                    <exclude>**/test/**</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <!--<plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.2.1.RELEASE</version>
+            </plugin>-->
+            <!-- 跳过单元测试 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
