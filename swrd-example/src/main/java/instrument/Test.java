@@ -17,7 +17,7 @@ import java.util.Properties;
 import java.util.Set;
 
 public class Test {
-    public static void main(String sfda) throws AgentLoadException, Exception {
+    public static void main(String[] args) throws AgentLoadException, Exception {
         try {
             // attach to target VM
             VirtualMachine vm = VirtualMachine.attach("4516");
