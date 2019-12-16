@@ -12,11 +12,12 @@ public class Test {
         JSONObject jsonObject = new JSONObject();
         List<Long> objects = new ArrayList<>();
         objects.add(60113683142069l);
-        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        //jsonObject.put("orderIds", objects);
+        objects.add(60148874681023l);
+        jsonObject.put("orderIds", JSON.toJSONString(objects));
+        /*HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         jsonObject.put("startTime","2019-05-22 12:01:03");
         jsonObject.put("endTime","2019-05-22 12:50:43");
-        objectObjectHashMap.put("params", jsonObject.toJSONString());
-        System.out.println(JSON.toJSONString(objectObjectHashMap));
+        objectObjectHashMap.put("params", jsonObject.toJSONString());*/
+        System.out.println(jsonObject.toJSONString());
     }
 }
