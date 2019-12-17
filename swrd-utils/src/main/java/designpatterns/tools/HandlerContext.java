@@ -13,6 +13,8 @@ import java.util.concurrent.TimeoutException;
 public class HandlerContext {
 
     FutureCollector futureCollector;
+    HandlerContext head;
+    HandlerContext tail;
     HandlerContext prev;
     HandlerContext next;
     Handler handler;
@@ -96,5 +98,21 @@ public class HandlerContext {
 
     private Handler handler() {
         return handler;
+    }
+
+    public HandlerContext getHead() {
+        return head;
+    }
+
+    public void setHead(HandlerContext head) {
+        this.head = head;
+    }
+
+    public HandlerContext getTail() {
+        return tail;
+    }
+
+    public void setTail(HandlerContext tail) {
+        this.tail = tail;
     }
 }

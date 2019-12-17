@@ -23,6 +23,11 @@ public abstract class AbstractHandler implements Handler {
 
         if(ctx.handler instanceof SynHandler){
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
+             if(ctx.response.getRetCode()!=0){
+                ctx.next=ctx.tail;
+                ctx.tail.prev=ctx;
+                return;
+             }
         }
         ctx.fireReceivedRequest(request);
     }

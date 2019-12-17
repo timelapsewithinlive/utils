@@ -51,7 +51,16 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         handlerContext.next = tail;
         tail.prev = handlerContext;
 
+        handlerContext.setHead(head);
+        handlerContext.setTail(tail);
+
         contextCollector.putContext(handler.getClass(),handlerContext);
+        return this;
+    }
+
+    public Pipeline removeAfterAll(HandlerContext handlerContext){
+        handlerContext.next =tail;
+        tail.prev=handlerContext;
         return this;
     }
 
@@ -78,6 +87,10 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         context.handler = handler;
         context.futureCollector=futureCollector;
         return context;
+    }
+
+    public boolean isDone(){
+        return false;
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) {
