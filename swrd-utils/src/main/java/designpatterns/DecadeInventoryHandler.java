@@ -1,9 +1,12 @@
-package designpatterns.tools;
+package designpatterns;
+
+import designpatterns.tools.AsynHandler;
+import designpatterns.tools.Request;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-public class DecadeInventory implements AsynHandler {
+public class DecadeInventoryHandler implements AsynHandler {
 
     @Override
     public void asynHandle(Request request) {
