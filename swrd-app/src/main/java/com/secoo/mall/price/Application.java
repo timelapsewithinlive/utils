@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class
 })
+@ComponentScan(basePackages = {"designpatterns" })
 public class Application {
 
     public static void main(String[] args) {
