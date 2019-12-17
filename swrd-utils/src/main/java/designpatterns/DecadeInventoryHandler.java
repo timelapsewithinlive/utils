@@ -1,13 +1,7 @@
 package designpatterns;
 
-import designpatterns.tools.AbstractHandler;
-import designpatterns.tools.AsynHandler;
-import designpatterns.tools.Request;
-import designpatterns.tools.Response;
+import designpatterns.tools.*;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 @Component
 public class DecadeInventoryHandler extends AbstractHandler implements AsynHandler {
@@ -18,7 +12,12 @@ public class DecadeInventoryHandler extends AbstractHandler implements AsynHandl
         if(false){
             throw new RuntimeException("扣减库存异常");
         }
+        System.out.println("DecadeInventoryHandler thread name: "+Thread.currentThread().getName());
+        ContextCollector contextCollector = request.getContextCollector();
+        System.out.println(contextCollector.getHandlerMapFuture().size());
         return new Response();
     }
+
+
 
 }

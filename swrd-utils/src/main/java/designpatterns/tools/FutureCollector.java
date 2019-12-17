@@ -6,14 +6,16 @@ import java.util.concurrent.Future;
 
 public class FutureCollector {
 
-    private volatile ConcurrentHashMap<String, Future> handlerMapFuture;
+    private  ConcurrentHashMap<String, Future> handlerMapFuture;
 
     public FutureCollector(ConcurrentHashMap<String, Future> handlerMapFuture) {
         this.handlerMapFuture = handlerMapFuture;
     }
 
     public FutureCollector putFuture(Class dependency,Future future){
-        handlerMapFuture.put(Thread.currentThread().getId()+"_"+dependency.getSimpleName(),future);
+        if(future!=null){
+            handlerMapFuture.put(Thread.currentThread().getId()+"_"+dependency.getSimpleName(),future);
+        }
         return this;
     }
 

@@ -15,6 +15,8 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
     private FutureCollector futureCollector;
 
+    private ContextCollector contextCollector;
+
     private static final Handler DEFAULT_HANDLER = new Handler() {};
 
     private ApplicationContext context;
@@ -43,6 +45,8 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         handlerContext.prev = tail.prev;
         handlerContext.next = tail;
         tail.prev = handlerContext;
+
+        contextCollector.putContext(handler.getClass(),handlerContext);
         return this;
     }
 
@@ -54,12 +58,14 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         tail.prev = head;
 
         futureCollector=new FutureCollector(new ConcurrentHashMap<>());
-
-        DecadeInventoryHandler bean = context.getBean(DecadeInventoryHandler.class);
+        contextCollector=new ContextCollector(new ConcurrentHashMap<>());
+        request.setContextCollector(contextCollector);
 
         this.addLast(context.getBean(ValidatorHandler.class))
                 .addLast(context.getBean(CommitHandler.class))
                 .addLast(context.getBean(DecadeInventoryHandler.class));
+
+        System.out.println("DefaultPipeline thread name: "+Thread.currentThread().getName());
 
     }
 

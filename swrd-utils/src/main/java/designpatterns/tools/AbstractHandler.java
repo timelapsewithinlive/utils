@@ -9,22 +9,22 @@ public abstract class AbstractHandler implements Handler {
     public Handler[] denpencies;
 
     public void receivedRequest(HandlerContext ctx, Request request) {
-        Future future =null;
         if(ctx.handler instanceof AsynHandler){
             Task task = new Task(ctx, request);
+            Future future =null;
             if(threadPoolExecutor.getActiveCount()<Runtime.getRuntime().availableProcessors()){
                  future = submit(task) ;
             }else{
                 future = new FutureTask(task);
                 ((FutureTask) future).run();
             }
+            ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
         }
 
         if(ctx.handler instanceof SynHandler){
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
         }
 
-        ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
 
         ctx.fireReceivedRequest(request);
     }
