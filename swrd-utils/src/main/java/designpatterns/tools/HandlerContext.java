@@ -19,12 +19,15 @@ public class HandlerContext {
     volatile Response response;
 
 
+    /**
+     * 处理请求
+     */
     public void fireReceivedRequest(Request request) {
         invokeReceivedRequest(next(), request);
     }
 
     /**
-     * 处理接收到任务的事件
+     * 处理请求
      */
     public static void invokeReceivedRequest(HandlerContext ctx, Request request) {
         if (ctx != null) {
@@ -34,11 +37,54 @@ public class HandlerContext {
                 ctx.handler().exceptionCaught(ctx, e);
             }
         }
+    }
 
+    /**
+     * 处理响应
+     * @param request
+     * @return
+     */
+    public Response fireReturndResponse(Request request) {
+         invokeReturndResponse(pre(), request);
+        return pre().response;
+    }
+
+    /**
+     * 处理响应
+     * @param ctx
+     * @param request
+     */
+    public static Response invokeReturndResponse(HandlerContext ctx, Request request) {
+        if (ctx != null) {
+            try {
+                Response response = ctx.response;
+                if(response==null){
+                    Handler handler = ctx.handler();
+                    if(handler instanceof AsynHandler){
+                        Future future = ctx.futureCollector.getFuture(ctx.handler.getClass());
+                         ctx.response  = (Response)future.get();
+                         if(ctx.response==null){
+                             handler.returndResponse(ctx, request);
+                         }
+                    }else{
+                        handler.returndResponse(ctx, request);
+                    }
+                }else{
+                    return response;
+                }
+            } catch (Throwable e) {
+                ctx.handler().exceptionCaught(ctx, e);
+            }
+        }
+        return null;
     }
 
     private HandlerContext next() {
         return next;
+    }
+
+    private HandlerContext pre(){
+        return prev;
     }
 
     private Handler handler() {

@@ -27,16 +27,6 @@ public class HealthController {
     }
 
     public static void  main(String[] args){
-        try{
-            AbstractHandler.Task task = new AbstractHandler.Task(null, new Request());
-            Future submit = AbstractHandler.threadPoolExecutor.submit(task);
-            Object o = submit.get();
-            System.out.println(o);
-          /*  FutureTask futureTask = new FutureTask(task);
-            futureTask.run();
-            futureTask.get();*/
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
     }
 }

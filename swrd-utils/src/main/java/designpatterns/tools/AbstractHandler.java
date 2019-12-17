@@ -10,7 +10,7 @@ public abstract class AbstractHandler implements Handler {
 
     public void receivedRequest(HandlerContext ctx, Request request) {
         if(ctx.handler instanceof AsynHandler){
-            Task task = new Task(ctx, request);
+            RequestTask task = new RequestTask(ctx, request);
             Future future =null;
             if(threadPoolExecutor.getActiveCount()<Runtime.getRuntime().availableProcessors()){
                  future = submit(task) ;
@@ -24,9 +24,16 @@ public abstract class AbstractHandler implements Handler {
         if(ctx.handler instanceof SynHandler){
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
         }
-
-
         ctx.fireReceivedRequest(request);
+    }
+
+
+    @Override
+    public void returndResponse(HandlerContext ctx, Request request) throws ExecutionException, InterruptedException {
+        if(ctx.response==null){
+            ctx.fireReturndResponse(request);
+
+        }
     }
 
     public Future submit(Callable callable){
@@ -41,11 +48,11 @@ public abstract class AbstractHandler implements Handler {
         }
     });
 
-    public static class Task implements Callable{
+    public static class RequestTask implements Callable{
         private HandlerContext ctx;
         private Request request;
 
-        public Task(HandlerContext ctx, Request request) {
+        public RequestTask(HandlerContext ctx, Request request) {
             this.ctx = ctx;
             this.request = request;
         }

@@ -13,6 +13,7 @@ public class ValidatorHandler extends AbstractHandler implements SynHandler {
         public Response synHandle(Request request) {
             System.out.println("参数校验");
             System.out.println("ValidatorHandler thread name: "+Thread.currentThread().getName());
-            return null;
+            Response resp = new Response(0,"参数校验成功",null);
+            return resp;
         }
 }

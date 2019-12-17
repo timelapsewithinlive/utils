@@ -3,6 +3,7 @@ package designpatterns;
 import designpatterns.tools.DefaultPipeline;
 import designpatterns.tools.Pipeline;
 import designpatterns.tools.Request;
+import designpatterns.tools.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,10 @@ public class ApplicationService {
         Pipeline pipeline = newPipeline(request);
         try {
             pipeline.fireReceiveRequest();
-
+            Response response = pipeline.fireReturnResponse();
+            System.out.println(response.getRetMsg());
         } finally {
+
         }
     }
 
