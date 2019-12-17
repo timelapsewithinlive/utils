@@ -2,7 +2,6 @@ package designpatterns;
 
 import designpatterns.tools.Request;
 import designpatterns.tools.SynHandler;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
