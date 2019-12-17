@@ -16,7 +16,6 @@ public class ApplicationService {
 
     @PostConstruct
     public void init() throws InterruptedException {
-        System.out.println(333333333L);
         //Thread.sleep(5000);
         mockedClient();
     }

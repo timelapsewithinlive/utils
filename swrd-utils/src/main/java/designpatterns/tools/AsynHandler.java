@@ -4,7 +4,8 @@ import java.util.concurrent.Future;
 
 public interface AsynHandler extends Handler {
 
-    default void asynHandle(Request request){
+    default Response asynHandle(Request request){
+        return null;
     }
 
 }

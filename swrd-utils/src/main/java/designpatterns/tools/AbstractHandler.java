@@ -51,9 +51,9 @@ public abstract class AbstractHandler implements Handler {
         }
 
         @Override
-        public Object call() throws Exception {
-            handler.asynHandle(request);
-            return null;
+        public Response call() throws Exception {
+            Response response = handler.asynHandle(request);
+            return response;
         }
     }
 

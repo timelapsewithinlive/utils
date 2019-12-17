@@ -55,6 +55,8 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
         futureCollector=new FutureCollector(new ConcurrentHashMap<>());
 
+        DecadeInventoryHandler bean = context.getBean(DecadeInventoryHandler.class);
+
         this.addLast(context.getBean(ValidatorHandler.class))
                 .addLast(context.getBean(CommitHandler.class))
                 .addLast(context.getBean(DecadeInventoryHandler.class));

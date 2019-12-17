@@ -30,7 +30,8 @@ public class HealthController {
         try{
             AbstractHandler.Task task = new AbstractHandler.Task(new DecadeInventoryHandler(), new Request());
             Future submit = AbstractHandler.threadPoolExecutor.submit(task);
-            submit.get();
+            Object o = submit.get();
+            System.out.println(o);
           /*  FutureTask futureTask = new FutureTask(task);
             futureTask.run();
             futureTask.get();*/
