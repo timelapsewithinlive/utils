@@ -26,22 +26,22 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-commons</artifactId>
-            <version>7.0</version>
+            <version>7.2</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
-        <dependency>
+       <!-- <dependency>
             <groupId>biz.paluch.redis</groupId>
             <artifactId>lettuce</artifactId>
             <version>5.0.0.Beta1</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-recipes -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
             <version>4.2.0</version>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 

@@ -45,8 +45,7 @@ public class HandlerContext {
      * @return
      */
     public Response fireReturndResponse(Request request) {
-         invokeReturndResponse(pre(), request);
-        return pre().response;
+        return invokeReturndResponse(pre(), request);
     }
 
     /**
@@ -64,12 +63,19 @@ public class HandlerContext {
                         Future future = ctx.futureCollector.getFuture(ctx.handler.getClass());
                          ctx.response  = (Response)future.get();
                          if(ctx.response==null){
-                             handler.returndResponse(ctx, request);
+                             response = handler.returndResponse(ctx, request);
                          }
                     }else{
-                        handler.returndResponse(ctx, request);
+                        response = handler.returndResponse(ctx, request);
+                    }
+                    if(response!=null){
+                        if(ctx.next!=null){
+                            ctx.next.response=response;
+                        }
+                        return response;
                     }
                 }else{
+                    ctx.next.response=response;
                     return response;
                 }
             } catch (Throwable e) {

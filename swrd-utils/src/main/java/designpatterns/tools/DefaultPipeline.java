@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 @Component("pipeline")
 @Scope("prototype")
@@ -33,13 +34,11 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         this.request = request;
     }
 
-    @Override
     public Pipeline fireReceiveRequest() {
         HandlerContext.invokeReceivedRequest(head, request);
         return this;
     }
 
-    @Override
     public Response fireReturnResponse() {
         return HandlerContext.invokeReturndResponse(tail, request);
     }
@@ -55,15 +54,14 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         return this;
     }
 
-    @Override
     public void afterPropertiesSet() throws Exception {
         head = newContext(DEFAULT_HANDLER);
         tail = newContext(DEFAULT_HANDLER);
         head.next = tail;
         tail.prev = head;
 
-        futureCollector=new FutureCollector(new ConcurrentHashMap<>());
-        contextCollector=new ContextCollector(new ConcurrentHashMap<>());
+        futureCollector=new FutureCollector(new ConcurrentHashMap<String, Future>());
+        contextCollector=new ContextCollector(new ConcurrentHashMap<String, HandlerContext>());
         request.setContextCollector(contextCollector);
 
         this.addLast(context.getBean(ValidatorHandler.class))
@@ -81,7 +79,6 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         return context;
     }
 
-    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.context = applicationContext;
     }
