@@ -62,7 +62,7 @@ public class HandlerContext {
                     Handler handler = ctx.handler();
                     if(handler instanceof AsynHandler){
                         Future future = ctx.futureCollector.getFuture(ctx.handler.getClass());
-                         Response response  = (Response)future.get();
+                         Response response  = (Response)future.get(10,TimeUnit.SECONDS);
                          if(response==null){
                             throw new RuntimeException("获取异步任务结果异常");
                          }else{
