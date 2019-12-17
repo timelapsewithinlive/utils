@@ -1,13 +1,13 @@
 
 dubbo:
   application:
-    name: price-provider
-    id: price-provider
+    name: swrd
+    id: swrd
   registry:
-    id: secoo_zk
+    id: swrd_zk
     address: zookeeper://dev01-zk-mall1.secoolocal.com:2181?backup=dev01-zk-mall2.secoolocal.com:2181,dev01-zk-mall3.secoolocal.com:2181
   scan:
-    basePackages: com.secoo.mall.price
+    basePackages: designpatterns;designpatterns.*
   provider:
     timeout: 1000
     threadpool: fixed

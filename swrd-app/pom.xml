@@ -17,6 +17,18 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.1.0.RELEASE</version>
         </dependency>
+
+        <dependency>
+            <artifactId>swrd-test</artifactId>
+            <groupId>swrd</groupId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>swrd-utils</artifactId>
+            <groupId>swrd</groupId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

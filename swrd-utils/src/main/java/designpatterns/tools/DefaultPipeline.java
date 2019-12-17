@@ -1,14 +1,20 @@
-package designpatterns;
+package designpatterns.tools;
 
+import designpatterns.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @Component("pipeline")
 @Scope("prototype")
 public class DefaultPipeline implements Pipeline, ApplicationContextAware, InitializingBean {
+
+    private FutureCollector futureCollector;
+
     // 创建一个默认的handler，将其注入到首尾两个节点的HandlerContext中，其作用只是将链往下传递
     private static final Handler DEFAULT_HANDLER = new Handler() {};
 
@@ -23,8 +29,6 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
     // 用于业务调用的request对象，其内部封装了业务数据
     private Request request;
-    // 用于执行任务的task对象
-    private Task task;
 
     public DefaultPipeline() {
     }
@@ -39,39 +43,19 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     // 也就是说我们每一层级链的入口都是从头结点开始的，当然在某些情况下，我们也需要从尾节点开始链
     // 的调用，这个时候传入tail即可。
     @Override
-    public Pipeline fireTaskReceived() {
-        HandlerContext.invokeTaskReceived(head, request);
-        return this;
-    }
-
-    // 触发任务过滤的链调用
-    @Override
-    public Pipeline fireTaskFiltered() {
-        HandlerContext.invokeTaskFiltered(head, task);
-        return this;
-    }
-
-    // 触发任务执行的链执行
-    @Override
-    public Pipeline fireTaskExecuted() {
-        HandlerContext.invokeTaskExecuted(head, task);
-        return this;
-    }
-
-    // 触发最终完成的链的执行
-    @Override
-    public Pipeline fireAfterCompletion() {
-        HandlerContext.invokeAfterCompletion(head);
+    public Pipeline fireReceiveRequest() {
+        HandlerContext.invokeReceivedRequest(head, request);
         return this;
     }
 
     // 用于往Pipeline中添加节点的方法，读者朋友也可以实现其他的方法用于进行链的维护
-    void addLast(Handler handler) {
+    public Pipeline addLast(Handler handler) {
         HandlerContext handlerContext = newContext(handler);
         tail.prev.next = handlerContext;
         handlerContext.prev = tail.prev;
         handlerContext.next = tail;
         tail.prev = handlerContext;
+        return this;
     }
 
     // 这里通过实现InitializingBean接口来达到初始化Pipeline的目的，可以看到，这里初始的时候
@@ -83,12 +67,19 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         tail = newContext(DEFAULT_HANDLER);
         head.next = tail;
         tail.prev = head;
+
+        futureCollector=new FutureCollector(new ConcurrentHashMap<>());
+
+        this.addLast(context.getBean(ValidatorHandler.class))
+                .addLast(context.getBean(CommitHandler.class));
+
     }
 
     // 使用默认的Handler初始化一个HandlerContext
     private HandlerContext newContext(Handler handler) {
         HandlerContext context = this.context.getBean(HandlerContext.class);
         context.handler = handler;
+        context.futureCollector=futureCollector;
         return context;
     }
 
@@ -105,4 +96,5 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     public void setRequest(Request request) {
         this.request = request;
     }
+
 }

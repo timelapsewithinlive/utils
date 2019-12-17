@@ -3,6 +3,6 @@ server:
 
 spring:
   application:
-    name: price-provider
+    name: swrd
   profiles:
     active: dev
