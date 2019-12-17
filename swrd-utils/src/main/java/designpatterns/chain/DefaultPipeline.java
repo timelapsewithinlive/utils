@@ -1,4 +1,4 @@
-package designpatterns.tools;
+package designpatterns.chain;
 
 import designpatterns.*;
 import org.springframework.beans.factory.InitializingBean;

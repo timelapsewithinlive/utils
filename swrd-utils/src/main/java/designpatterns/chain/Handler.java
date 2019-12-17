@@ -1,4 +1,4 @@
-package designpatterns.tools;
+package designpatterns.chain;
 
 import java.util.concurrent.ExecutionException;
 

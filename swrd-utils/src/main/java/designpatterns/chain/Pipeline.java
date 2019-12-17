@@ -1,4 +1,4 @@
-package designpatterns.tools;
+package designpatterns.chain;
 
 public interface Pipeline {
 

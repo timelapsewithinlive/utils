@@ -1,6 +1,4 @@
-package designpatterns.tools;
-
-import designpatterns.CommitHandler;
+package designpatterns.chain;
 
 import java.util.concurrent.*;
 

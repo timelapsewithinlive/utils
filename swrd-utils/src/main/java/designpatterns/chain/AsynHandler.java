@@ -1,6 +1,4 @@
-package designpatterns.tools;
-
-import java.util.concurrent.Future;
+package designpatterns.chain;
 
 public interface AsynHandler extends Handler {
 

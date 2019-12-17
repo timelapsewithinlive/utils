@@ -1,9 +1,5 @@
-package designpatterns;
+package designpatterns.chain;
 
-import designpatterns.tools.AbstractHandler;
-import designpatterns.tools.Request;
-import designpatterns.tools.Response;
-import designpatterns.tools.SynHandler;
 import org.springframework.stereotype.Component;
 
 @Component

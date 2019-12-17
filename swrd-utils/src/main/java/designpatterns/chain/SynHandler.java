@@ -1,7 +1,4 @@
-package designpatterns.tools;
-
-import designpatterns.tools.Handler;
-import designpatterns.tools.Request;
+package designpatterns.chain;
 
 public interface SynHandler extends Handler {
 

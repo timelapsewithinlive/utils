@@ -1,6 +1,5 @@
-package designpatterns;
+package designpatterns.chain;
 
-import designpatterns.tools.*;
 import org.springframework.stereotype.Component;
 
 @Component

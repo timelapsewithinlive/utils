@@ -1,9 +1,5 @@
-package designpatterns;
+package designpatterns.chain;
 
-import designpatterns.tools.DefaultPipeline;
-import designpatterns.tools.Pipeline;
-import designpatterns.tools.Request;
-import designpatterns.tools.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -11,7 +7,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Service
-public class ApplicationService {
+public class TestService {
     @Autowired
     private ApplicationContext context;
 

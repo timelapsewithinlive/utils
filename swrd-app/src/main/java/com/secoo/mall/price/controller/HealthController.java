@@ -1,13 +1,9 @@
 package com.secoo.mall.price.controller;
 
-import designpatterns.tools.AbstractHandler;
-import designpatterns.DecadeInventoryHandler;
-import designpatterns.tools.Request;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.Future;
 
 /**
  * check health

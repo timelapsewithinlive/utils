@@ -1,4 +1,4 @@
-/*
+package designpatterns.chain;/*
 package designpatterns;
 
 import java.util.Map;

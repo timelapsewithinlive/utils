@@ -1,4 +1,4 @@
-package designpatterns.tools;
+package designpatterns.chain;
 
 public class Request {
     private ContextCollector contextCollector;
