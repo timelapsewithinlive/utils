@@ -1,9 +1,14 @@
 package com.secoo.mall.price.controller;
 
+import designpatterns.tools.AbstractHandler;
+import designpatterns.tools.DecadeInventory;
+import designpatterns.tools.Request;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * check health
@@ -20,5 +25,18 @@ public class HealthController {
     @GetMapping("/health")
     public String checkHealth() {
         return "ok";
+    }
+
+    public static void  main(String[] args){
+        try{
+            AbstractHandler.Task task = new AbstractHandler.Task(new DecadeInventory(), new Request());
+            Future submit = AbstractHandler.threadPoolExecutor.submit(task);
+            submit.get();
+          /*  FutureTask futureTask = new FutureTask(task);
+            futureTask.run();
+            futureTask.get();*/
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

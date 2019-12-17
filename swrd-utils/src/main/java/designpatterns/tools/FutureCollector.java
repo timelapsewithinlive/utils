@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 
 public class FutureCollector {
 
-    private ConcurrentHashMap<String, Future> handlerMapFuture;
+    private volatile ConcurrentHashMap<String, Future> handlerMapFuture;
 
     public FutureCollector(ConcurrentHashMap<String, Future> handlerMapFuture) {
         this.handlerMapFuture = handlerMapFuture;
