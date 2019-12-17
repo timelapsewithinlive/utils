@@ -11,20 +11,20 @@ public abstract class AbstractHandler implements Handler {
     public void receivedRequest(HandlerContext ctx, Request request) {
         Future future =null;
         if(ctx.handler instanceof AsynHandler){
-            Task task = new Task((AsynHandler) ctx.handler, request);
+            Task task = new Task(ctx, request);
             if(threadPoolExecutor.getActiveCount()<Runtime.getRuntime().availableProcessors()){
                  future = submit(task) ;
             }else{
-                ((AsynHandler) ctx.handler).asynHandle(request);
                 future = new FutureTask(task);
                 ((FutureTask) future).run();
             }
-            ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
         }
 
         if(ctx.handler instanceof SynHandler){
-            ((SynHandler)ctx.handler).synHandle(request);
+             ctx.response= ((SynHandler) ctx.handler).synHandle(request);
         }
+
+        ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
 
         ctx.fireReceivedRequest(request);
     }
@@ -42,17 +42,18 @@ public abstract class AbstractHandler implements Handler {
     });
 
     public static class Task implements Callable{
-        private AsynHandler handler;
+        private HandlerContext ctx;
         private Request request;
 
-        public Task(AsynHandler handler, Request request) {
-            this.handler = handler;
+        public Task(HandlerContext ctx, Request request) {
+            this.ctx = ctx;
             this.request = request;
         }
 
         @Override
         public Response call() throws Exception {
-            Response response = handler.asynHandle(request);
+            Response response = ((AsynHandler)ctx.handler).asynHandle(request);
+            ctx.response=response;
             return response;
         }
     }
@@ -63,5 +64,9 @@ public abstract class AbstractHandler implements Handler {
 
     public void setDenpencies(Handler[] denpencies) {
         this.denpencies = denpencies;
+    }
+
+    public void init(){
+        denpencies =null;//具体的值通过枚举值来取
     }
 }

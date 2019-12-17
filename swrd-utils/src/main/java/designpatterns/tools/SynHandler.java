@@ -5,7 +5,8 @@ import designpatterns.tools.Request;
 
 public interface SynHandler extends Handler {
 
-    default void synHandle(Request request){
+    default Response synHandle(Request request){
 
+        return null;
     }
 }
