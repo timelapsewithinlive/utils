@@ -28,9 +28,8 @@ public abstract class AbstractHandler implements Handler {
     }
 
 
-    @Override
-    public Response returndResponse(HandlerContext ctx, Request request) throws ExecutionException, InterruptedException {
-           return ctx.fireReturndResponse(request);
+    public void returndResponse(HandlerContext ctx, Request request) throws ExecutionException, InterruptedException {
+            ctx.fireReturndResponse(request);
     }
 
     public Future submit(Callable callable){

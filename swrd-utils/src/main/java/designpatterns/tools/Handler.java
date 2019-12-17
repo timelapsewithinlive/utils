@@ -9,8 +9,8 @@ public interface Handler {
         ctx.fireReceivedRequest(request);
     }
 
-    default Response returndResponse(HandlerContext ctx, Request request) throws ExecutionException, InterruptedException {
-          return  ctx.fireReturndResponse(request);
+    default void returndResponse(HandlerContext ctx, Request request) throws ExecutionException, InterruptedException {
+            ctx.fireReturndResponse(request);
     }
 
 

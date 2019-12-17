@@ -40,7 +40,8 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     }
 
     public Response fireReturnResponse() {
-        return HandlerContext.invokeReturndResponse(tail, request);
+        HandlerContext.invokeReturndResponse(tail, request);
+        return tail.response;
     }
 
     public Pipeline addLast(Handler handler) {

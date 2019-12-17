@@ -44,8 +44,8 @@ public class HandlerContext {
      * @param request
      * @return
      */
-    public Response fireReturndResponse(Request request) {
-        return invokeReturndResponse(pre(), request);
+    public void fireReturndResponse(Request request) {
+         invokeReturndResponse(pre(), request);
     }
 
     /**
@@ -53,36 +53,37 @@ public class HandlerContext {
      * @param ctx
      * @param request
      */
-    public static Response invokeReturndResponse(HandlerContext ctx, Request request) {
+    public static void invokeReturndResponse(HandlerContext ctx, Request request) {
         if (ctx != null) {
             try {
-                Response response = ctx.response;
-                if(response==null){
+                if(ctx.response==null){
                     Handler handler = ctx.handler();
                     if(handler instanceof AsynHandler){
                         Future future = ctx.futureCollector.getFuture(ctx.handler.getClass());
-                         ctx.response  = (Response)future.get();
-                         if(ctx.response==null){
-                             response = handler.returndResponse(ctx, request);
+                         Response response  = (Response)future.get();
+                         if(response==null){
+                            throw new RuntimeException("获取异步任务结果异常");
+                         }else{
+                             if(ctx.next!=null){
+                                 ctx.next.response=response;
+                             }else{
+                                 return;
+                             }
                          }
                     }else{
-                        response = handler.returndResponse(ctx, request);
-                    }
-                    if(response!=null){
-                        if(ctx.next!=null){
-                            ctx.next.response=response;
-                        }
-                        return response;
+                        ctx.handler.returndResponse(ctx,request);
                     }
                 }else{
-                    ctx.next.response=response;
-                    return response;
+                    if(ctx.next!=null){
+                        ctx.next.response=ctx.response;
+                    }else{
+                        return;
+                    }
                 }
             } catch (Throwable e) {
                 ctx.handler().exceptionCaught(ctx, e);
             }
         }
-        return null;
     }
 
     private HandlerContext next() {
