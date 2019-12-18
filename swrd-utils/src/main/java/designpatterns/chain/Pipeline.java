@@ -23,7 +23,7 @@ public interface Pipeline {
 
     Pipeline fireReceiveRequest();
 
-    Response fireReturnResponse();
+    Pipeline fireReturnResponse();
 
     Pipeline fireReleaseSource();
 

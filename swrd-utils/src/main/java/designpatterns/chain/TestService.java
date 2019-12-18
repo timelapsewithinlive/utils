@@ -19,21 +19,22 @@ public class TestService {
 
     public void mockedClient() {
         Request request = new Request();  // request一般是通过外部调用获取
-        Pipeline pipeline = newPipeline(request);
+        DefaultPipeline pipeline = newPipeline(request);
         try {
-            pipeline.fireReceiveRequest();
-            Response response = pipeline.fireReturnResponse();
+            pipeline.fireReceiveRequest();//执行请求
+            pipeline.fireReturnResponse();//获取响应
+            Response response =pipeline.tail.response;//找到最后一个执行的handler,将结果放入尾部节点上
             System.out.println(response);
             if(response.getCause()!=null){
                 StackTraceElement[] stackTrace = response.getCause().getStackTrace();
                 response.getCause().printStackTrace();
             }
         } finally {
-
+            pipeline.fireReleaseSource();//释放资源暂时没实现
         }
     }
 
-    private Pipeline newPipeline(Request request) {
+    private DefaultPipeline newPipeline(Request request) {
         return context.getBean(DefaultPipeline.class, request);
     }
 }

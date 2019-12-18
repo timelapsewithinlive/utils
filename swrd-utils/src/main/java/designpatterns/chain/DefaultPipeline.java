@@ -15,8 +15,8 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
     private ApplicationContext context;
 
-    private HandlerContext head;
-    private HandlerContext tail;
+    HandlerContext head;
+    HandlerContext tail;
 
     private Request request;
 
@@ -74,9 +74,9 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     }
 
     //获取响应的入口
-    public Response fireReturnResponse() {
+    public Pipeline fireReturnResponse() {
         HandlerContext.invokeReturndResponse(tail, request);
-        return tail.response;
+        return this;
     }
 
     //以后再实现
