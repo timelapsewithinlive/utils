@@ -116,7 +116,25 @@ public class HandlerContext {
         }
     }
 
-    private HandlerContext next() {
+    /**
+     * 如果response中的cause不为空，需要释放库存、事物回滚等等
+     * @param request
+     */
+    public void fireReleaseSource(Request request) {
+        invokeReleaseSource(pre(), request);
+    }
+
+    /**
+     *事物回滚。没有具体实现，有时间再写吧
+     * @param ctx
+     * @param request
+     */
+    //TODO
+    public static void invokeReleaseSource(HandlerContext ctx, Request request) {
+        ctx.handler.releaseSource(ctx, request);
+    }
+
+    private HandlerContext next(){
         return next;
     }
 

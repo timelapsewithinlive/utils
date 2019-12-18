@@ -46,6 +46,7 @@ public class Response<T> {
                 "flag=" + flag +
                 ", cause=" + cause +
                 ", data=" + data +
+                ", 当前时间=" + System.currentTimeMillis() +
                 '}';
     }
 }
