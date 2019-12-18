@@ -2,35 +2,34 @@ package designpatterns.chain;
 
 public class Response<T> {
 
-    private int retCode;
+    private FlagEnum flag;
 
-    private String retMsg;
+    private Throwable cause;
 
     private T data;
 
     public Response() {
     }
 
-    public Response(int retCode, String retMsg, T data) {
-        this.retCode = retCode;
-        this.retMsg = retMsg;
+    public Response(FlagEnum flag, T data) {
+        this.flag = flag;
         this.data = data;
     }
 
-    public int getRetCode() {
-        return retCode;
+    public FlagEnum getFlag() {
+        return flag;
     }
 
-    public void setRetCode(int retCode) {
-        this.retCode = retCode;
+    public void setFlag(FlagEnum flag) {
+        this.flag = flag;
     }
 
-    public String getRetMsg() {
-        return retMsg;
+    public Throwable getCause() {
+        return cause;
     }
 
-    public void setRetMsg(String retMsg) {
-        this.retMsg = retMsg;
+    public void setCause(Throwable cause) {
+        this.cause = cause;
     }
 
     public T getData() {
@@ -39,5 +38,14 @@ public class Response<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "Response{" +
+                "flag=" + flag +
+                ", cause=" + cause +
+                ", data=" + data +
+                '}';
     }
 }

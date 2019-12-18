@@ -1,10 +1,16 @@
 package designpatterns.chain;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.*;
 
 public abstract class AbstractHandler implements Handler {
 
     public Handler[] denpencies;
+
+    @PostConstruct
+    public void init(){
+        denpencies =null;//具体的值通过枚举值来取
+    }
 
     public void receivedRequest(HandlerContext ctx, Request request) {
         if(ctx.handler instanceof AsynHandler){
@@ -21,7 +27,7 @@ public abstract class AbstractHandler implements Handler {
 
         if(ctx.handler instanceof SynHandler){
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
-             if(ctx.response.getRetCode()!=0){
+             if(FlagEnum.FAIL.equals(ctx.response.getFlag())){
                 ctx.next=ctx.tail;
                 ctx.tail.prev=ctx;
                 return;
@@ -30,14 +36,8 @@ public abstract class AbstractHandler implements Handler {
         ctx.fireReceivedRequest(request);
     }
 
-
     public void returndResponse(HandlerContext ctx, Request request) throws ExecutionException, InterruptedException {
             ctx.fireReturndResponse(request);
-    }
-
-    public Future submit(Callable callable){
-        Future submit = threadPoolExecutor.submit(callable);
-        return submit;
     }
 
     public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()*2, Runtime.getRuntime().availableProcessors()*2,60000, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
@@ -46,6 +46,11 @@ public abstract class AbstractHandler implements Handler {
             r.run();
         }
     });
+
+    public Future submit(Callable callable){
+        Future submit = threadPoolExecutor.submit(callable);
+        return submit;
+    }
 
     public static class RequestTask implements Callable{
         private HandlerContext ctx;
@@ -72,7 +77,5 @@ public abstract class AbstractHandler implements Handler {
         this.denpencies = denpencies;
     }
 
-    public void init(){
-        denpencies =null;//具体的值通过枚举值来取
-    }
+
 }

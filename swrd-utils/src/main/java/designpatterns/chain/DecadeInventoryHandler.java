@@ -11,11 +11,8 @@ public class DecadeInventoryHandler extends AbstractHandler implements AsynHandl
         if(false){
             throw new RuntimeException("扣减库存异常");
         }
-        System.out.println("DecadeInventoryHandler thread name: "+Thread.currentThread().getName());
-        Response resp = new Response(0,"扣减库存成功",null);
+        Response resp = new Response(FlagEnum.SUCCESS,"扣减库存成功");
         return resp;
     }
-
-
 
 }

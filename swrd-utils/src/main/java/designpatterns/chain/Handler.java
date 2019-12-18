@@ -15,7 +15,13 @@ public interface Handler {
 
 
     default void exceptionCaught(HandlerContext ctx, Throwable e) {
-        throw new RuntimeException(e);
+        if(ctx.response==null){
+            ctx.response=new Response(FlagEnum.FAIL,null);
+            ctx.response.setCause(e);
+            ctx.next=ctx.tail;
+            ctx.tail.prev=ctx;
+        }
+       // throw new RuntimeException(e);
     }
 
 }

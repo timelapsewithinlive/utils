@@ -23,7 +23,7 @@ public class TestService {
         try {
             pipeline.fireReceiveRequest();
             Response response = pipeline.fireReturnResponse();
-            System.out.println(response.getRetMsg());
+            System.out.println(response);
         } finally {
 
         }
