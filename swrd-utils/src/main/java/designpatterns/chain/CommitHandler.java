@@ -10,7 +10,7 @@ public class CommitHandler extends AbstractHandler implements SynHandler {
         System.out.println("订单提交开始");
         Response resp = new Response(FlagEnum.SUCCESS,653422897);
         if(true){
-            resp = new Response(FlagEnum.FAIL,"订单提交失败");
+            //return new Response(FlagEnum.FAIL,"订单提交失败");
 
            //throw  new RuntimeException("提交订单系统异常");
         }

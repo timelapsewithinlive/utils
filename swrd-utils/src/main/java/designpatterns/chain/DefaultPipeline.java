@@ -11,13 +11,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 @Component("pipeline")
-@Scope("prototype")
+@Scope("prototype")//多例是因为有成员变量。每个请求都有自己的上下文
 public class DefaultPipeline implements Pipeline, ApplicationContextAware, InitializingBean {
 
-    private FutureCollector futureCollector;
+    private ApplicationContext context;
 
-    private ContextCollector contextCollector;
+    private HandlerContext head;
+    private HandlerContext tail;
 
+    private Request request;
+
+    private FutureCollector futureCollector; //异步handler结果收集器
+
+    private ContextCollector contextCollector;//一个请求经历过链路的上下文
+
+    //头部节点和尾部节点默认实现。所有handler为单例，因为handler不在成员变量体现。
+    // 具体的rquest和respones在多例的handlerContext中传递
     private static final Handler DEFAULT_HANDLER = new Handler() {
         @Override
         public void receivedRequest(HandlerContext ctx, Request request) {
@@ -34,12 +43,23 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         }
     };
 
-    private ApplicationContext context;
+    //请求进来时进行一些初始化
+    public void afterPropertiesSet() throws Exception {
+        head = newContext(DEFAULT_HANDLER);
+        tail = newContext(DEFAULT_HANDLER);
+        head.next = tail;
+        tail.prev = head;
 
-    private HandlerContext head;
-    private HandlerContext tail;
+        futureCollector=new FutureCollector(new ConcurrentHashMap<String, Future>());
+        contextCollector=new ContextCollector(new ConcurrentHashMap<String, HandlerContext>());
+        request.setContextCollector(contextCollector);
 
-    private Request request;
+        //组装该请求的调用链路
+        this.addLast(context.getBean(ValidatorHandler.class))
+                .addLast(context.getBean(CommitHandler.class))
+                .addLast(context.getBean(DecadeInventoryHandler.class));
+
+    }
 
     public DefaultPipeline() {
     }
@@ -48,16 +68,19 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         this.request = request;
     }
 
+    //请求开始的入口
     public Pipeline fireReceiveRequest() {
         HandlerContext.invokeReceivedRequest(head, request);
         return this;
     }
 
+    //获取响应的入口
     public Response fireReturnResponse() {
         HandlerContext.invokeReturndResponse(tail, request);
         return tail.response;
     }
 
+    //添加handler到链表中
     public Pipeline addLast(Handler handler) {
         HandlerContext handlerContext = newContext(handler);
         tail.prev.next = handlerContext;
@@ -70,30 +93,6 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
         contextCollector.putContext(handler.getClass(),handlerContext);
         return this;
-    }
-
-    public Pipeline removeAfterAll(HandlerContext handlerContext){
-        handlerContext.next =tail;
-        tail.prev=handlerContext;
-        return this;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        head = newContext(DEFAULT_HANDLER);
-        tail = newContext(DEFAULT_HANDLER);
-        head.next = tail;
-        tail.prev = head;
-
-        futureCollector=new FutureCollector(new ConcurrentHashMap<String, Future>());
-        contextCollector=new ContextCollector(new ConcurrentHashMap<String, HandlerContext>());
-        request.setContextCollector(contextCollector);
-
-        this.addLast(context.getBean(ValidatorHandler.class))
-                .addLast(context.getBean(CommitHandler.class))
-                .addLast(context.getBean(DecadeInventoryHandler.class));
-
-        System.out.println("DefaultPipeline thread name: "+Thread.currentThread().getName());
-
     }
 
     private HandlerContext newContext(Handler handler) {

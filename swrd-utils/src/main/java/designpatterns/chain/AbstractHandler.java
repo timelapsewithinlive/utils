@@ -10,25 +10,32 @@ public abstract class AbstractHandler implements Handler {
 
     @PostConstruct
     public void init(){
-        denpencies =null;//具体的值通过枚举值来取
+        denpencies =null;//具体的值通过枚举值来取，或者配置文件等等。
     }
 
     @Override
     public void receivedRequest(HandlerContext ctx, Request request) {
+        //如果是异步的，提交到线程池进行处理
         if(ctx.handler instanceof AsynHandler){
             RequestTask task = new RequestTask(ctx, request);
             Future future =null;
-            if(threadPoolExecutor.getActiveCount()<Runtime.getRuntime().availableProcessors()){
+            //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
+            if(threadPoolExecutor.getActiveCount()<Runtime.getRuntime().availableProcessors()*2){
                  future = submit(task) ;
             }else{
+                //如果没可用线程。用当前线程执行任务
                 future = new FutureTask(task);
                 ((FutureTask) future).run();
             }
+            //异步结果进行统一收集
             ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
         }
 
+        //同步handler处理方式
         if(ctx.handler instanceof SynHandler){
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
+             //如果当前handler执行的结果不符合预期成功结果，那么直接改变责任链到尾部。其它后续的节点不执行
+            //只有同步的情况下才断开后续链路。
              if(FlagEnum.FAIL.equals(ctx.response.getFlag())){
                  if(ctx.next!=ctx.tail){
                      ctx.next=ctx.tail;
@@ -37,33 +44,29 @@ public abstract class AbstractHandler implements Handler {
                  }
              }
         }
+
+        //通过上下文传递，继续进行下一个handler调用
         ctx.fireReceivedRequest(request);
     }
 
+    //响应结果处理，从尾部节点开始向前查找结果
     @Override
     public void returndResponse(HandlerContext ctx, Request request){
             ctx.fireReturndResponse(request);
     }
 
+    //请求和响应异常的统一处理。响应目前只存在future超时的异常，因为响应不参与业务处理
     @Override
     public void exceptionCaught(HandlerContext ctx, Throwable e) {
-        try{
-            if(ctx.response==null){
-                ctx.response=new Response(FlagEnum.FAIL,null);
-                ctx.response.setCause(e);
-            }
-        }catch (Exception exe){
-            ctx.response.setFlag(FlagEnum.FAIL);
-            ctx.response.setCause(exe);
-        }finally {
-            if(ctx.next!=ctx.tail){
-                ctx.next=ctx.tail;
-                ctx.tail.prev=ctx;
-            }
+        //出现异常时，上下文的reponse为null
+        if(ctx.response==null){
+            ctx.response=new Response(FlagEnum.FAIL,null);
         }
+        ctx.response.setCause(e);
     }
 
     public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()*2, Runtime.getRuntime().availableProcessors()*2,60000, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
+        //线程池满时用当前线程处理任务
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             r.run();
@@ -84,8 +87,10 @@ public abstract class AbstractHandler implements Handler {
             this.request = request;
         }
 
+        //线程池的线程有异常，直接抛出
         @Override
         public Response call() throws Exception {
+            //Thread.sleep(10000);
             Response response = ((AsynHandler)ctx.handler).asynHandle(request);
             ctx.response=response;
             return response;
