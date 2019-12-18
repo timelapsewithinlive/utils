@@ -70,7 +70,7 @@ public class HandlerContext {
                         //如果未获取到future,代表链路未执行到该异步handler
                         if(future!=null){
                              //超时，抛出异常，进行响应异常处理
-                             Response response  = (Response)future.get(10,TimeUnit.SECONDS);
+                             Response response  = (Response)future.get(Config.FUTURE_TIME_OUT,TimeUnit.SECONDS);
                              //如果未获取到结果，说明handler没有返回值
                              if(response==null){
                                  throw new RuntimeException(handler.getClass().getSimpleName()+" 获取异步任务结果异常,业务侧未进行结果返回");

@@ -3,7 +3,7 @@ package designpatterns.chain;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidatorHandler extends AbstractHandler implements SynHandler {
+public class OrderValidatorHandler extends AbstractHandler implements SynHandler {
 
         @Override
         public Response synHandle(Request request) {

@@ -23,11 +23,11 @@ public class ContextCollector {
         this.handlerMapContext = handlerMapFuture;
     }
 
-    public ConcurrentHashMap<String, HandlerContext> getHandlerMapFuture() {
+    public ConcurrentHashMap<String, HandlerContext> getHandlerMapContext() {
         return handlerMapContext;
     }
 
-    public void setHandlerMapFuture(ConcurrentHashMap<String, HandlerContext> handlerMapFuture) {
-        this.handlerMapContext = handlerMapFuture;
+    public void setHandlerMapContext(ConcurrentHashMap<String, HandlerContext> handlerMapContext) {
+        this.handlerMapContext = handlerMapContext;
     }
 }

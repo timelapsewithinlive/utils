@@ -20,7 +20,7 @@ public abstract class AbstractHandler implements Handler {
             RequestTask task = new RequestTask(ctx, request);
             Future future =null;
             //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
-            if(threadPoolExecutor.getActiveCount()<Runtime.getRuntime().availableProcessors()*2){
+            if(threadPoolExecutor.getActiveCount()<Config.THREAD_POOL_NUM){
                  future = submit(task) ;
             }else{
                 //如果没可用线程。用当前线程执行任务
@@ -65,7 +65,7 @@ public abstract class AbstractHandler implements Handler {
         ctx.response.setCause(e);
     }
 
-    public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()*2, Runtime.getRuntime().availableProcessors()*2,60000, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
+    public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Config.THREAD_POOL_NUM, Config.THREAD_POOL_NUM,Config.THREAD_POOL_KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
         //线程池满时用当前线程处理任务
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -94,6 +94,26 @@ public abstract class AbstractHandler implements Handler {
             Response response = ((AsynHandler)ctx.handler).asynHandle(request);
             ctx.response=response;
             return response;
+        }
+    }
+
+    public Response getHandlerResponse(Class handler,Request request) throws InterruptedException, ExecutionException, TimeoutException, IllegalAccessException, InstantiationException {
+        ContextCollector contextCollector = request.getContextCollector();
+        HandlerContext context = contextCollector.getContext(handler);
+        if(context.response==null){
+            if(handler.newInstance() instanceof AsynHandler){
+                Future<Response> future = context.futureCollector.getFuture(handler);
+                Response resp = future.get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
+                if(resp==null){
+                    throw new RuntimeException(handler.getSimpleName()+ "未返回结果");
+                }else{
+                    return resp;
+                }
+            }else{
+                throw new RuntimeException(handler.getSimpleName()+ "未返回结果");
+            }
+        }else{
+            return context.response;
         }
     }
 

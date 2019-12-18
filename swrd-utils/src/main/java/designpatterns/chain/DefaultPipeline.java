@@ -1,6 +1,5 @@
 package designpatterns.chain;
 
-import designpatterns.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,9 +54,9 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         request.setContextCollector(contextCollector);
 
         //组装该请求的调用链路
-        this.addLast(context.getBean(ValidatorHandler.class))
-                .addLast(context.getBean(CommitHandler.class))
-                .addLast(context.getBean(DecadeInventoryHandler.class));
+        this.addLast(context.getBean(OrderValidatorHandler.class))
+                .addLast(context.getBean(OrderCommitHandler.class))
+                .addLast(context.getBean(OrderDecadeInventoryHandler.class));
 
     }
 

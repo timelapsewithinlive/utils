@@ -3,7 +3,7 @@ package designpatterns.chain;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DecadeInventoryHandler extends AbstractHandler implements AsynHandler {
+public class OrderDecadeInventoryHandler extends AbstractHandler implements AsynHandler {
 
     @Override
     public Response asynHandle(Request request) {
