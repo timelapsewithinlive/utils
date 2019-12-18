@@ -12,8 +12,10 @@ package designpatterns.chain;
  *  7.获取响应时，异步handler的future获取结果超时、或者future获取response为空抛出异常
  *  8.当获取到最后一个执行的handler时。直接将当前handler指向尾部节点。
  *  9. handler的统一异常处理。构造response。同时赋值给当前handlerContext
- *  10. 请求synHandler可以在fail时剔除后续节点。asynHandler因为可能还没执行完成，不能剔除。在响应时。从尾部节点挨个寻找
- *
+ *  10.请求synHandler可以在fail时剔除后续节点。asynHandler因为可能还没执行完成，不能剔除。在响应时。从尾部节点挨个寻找
+ *  11.asynHandler如果在链表中间调用，就是异步后边还有同步，例如下单。如果出现业务异常，需要抛出异常。除非实现release方法。进行遍历判断每一个
+ *     response。是不是有fail状态节点。如果有进行事物回滚，其它资源释放
+ *  12.建议asynHandler出现业务异常，直接抛出异常。否则后续的节点还会继续执行
  */
 public interface Pipeline {
 

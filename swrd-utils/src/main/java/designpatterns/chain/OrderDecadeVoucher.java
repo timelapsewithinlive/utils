@@ -13,7 +13,7 @@ public class OrderDecadeVoucher extends AbstractHandler implements AsynHandler {
         }
         Response resp = new Response(FlagEnum.SUCCESS,"扣减优惠券成功");
         System.out.println("扣减优惠券成功--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
-        //return null;
-        return resp;
+        return null;
+        //return resp;
     }
 }
