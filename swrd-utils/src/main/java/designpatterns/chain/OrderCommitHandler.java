@@ -15,6 +15,7 @@ public class OrderCommitHandler extends AbstractHandler implements SynHandler {
            //throw  new RuntimeException("提交订单系统异常");
         }
         System.out.println("订单提交成功");
-        return resp;
+        //return resp;
+        return null;
     }
 }

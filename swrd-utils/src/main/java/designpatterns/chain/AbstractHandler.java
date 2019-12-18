@@ -36,7 +36,11 @@ public abstract class AbstractHandler implements Handler {
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
              //如果当前handler执行的结果不符合预期成功结果，那么直接改变责任链到尾部。其它后续的节点不执行
             //只有同步的情况下才断开后续链路。
-             if(FlagEnum.FAIL.equals(ctx.response.getFlag())){
+             if(ctx.response==null||FlagEnum.FAIL.equals(ctx.response.getFlag())){
+                 if(ctx.response==null){
+                     ctx.response=new Response(FlagEnum.FAIL,null);
+                     ctx.response.setCause(new RuntimeException(ctx.handler.getClass().getSimpleName() +" 未返回结果，直接结束链路执行"));
+                 }
                  if(ctx.next!=ctx.tail){
                      ctx.next=ctx.tail;
                      ctx.tail.prev=ctx;

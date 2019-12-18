@@ -13,7 +13,8 @@ public class OrderDecadeInventoryHandler extends AbstractHandler implements Asyn
         }
         Response resp = new Response(FlagEnum.SUCCESS,"扣减库存成功");
         System.out.println("扣减库存成功");
-        return null;
+        //return null;
+        return resp;
     }
 
 }
