@@ -25,5 +25,7 @@ public interface Pipeline {
 
     Response fireReturnResponse();
 
+    Pipeline fireReleaseSource();
+
     Pipeline addLast(Handler handler);
 }
