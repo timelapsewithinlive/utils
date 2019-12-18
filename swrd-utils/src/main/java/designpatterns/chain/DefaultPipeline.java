@@ -58,8 +58,6 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
                 .addLast(context.getBean(OrderDecadeInventoryHandler.class))
                 .addLast(context.getBean(OrderDecadeVoucher.class))
                 .addLast(context.getBean(OrderCommitHandler.class));
-
-
     }
 
     public DefaultPipeline() {

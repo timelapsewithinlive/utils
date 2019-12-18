@@ -1,5 +1,7 @@
 package designpatterns.chain;
 
+import exception.ExceptionWithoutTraceStack;
+
 import javax.annotation.PostConstruct;
 import java.util.concurrent.*;
 
@@ -74,7 +76,7 @@ public abstract class AbstractHandler implements Handler {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             /*if(true){
-                throw new RuntimeException("执行拒绝策略异常");
+                throw new ExceptionWithoutTraceStack("执行拒绝策略异常");
             }*/
             r.run();
         }
@@ -120,12 +122,12 @@ public abstract class AbstractHandler implements Handler {
                 Future<Response> future = context.futureCollector.getFuture(handler);
                 Response resp = future.get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
                 if(resp==null){
-                    throw new RuntimeException(handler.getSimpleName()+ "未返回结果");
+                    throw new ExceptionWithoutTraceStack(handler.getSimpleName()+ "未返回结果");
                 }else{
                     return resp;
                 }
             }else{
-                throw new RuntimeException(handler.getSimpleName()+ "未返回结果");
+                throw new ExceptionWithoutTraceStack(handler.getSimpleName()+ "未返回结果");
             }
         }else{
             return context.response;

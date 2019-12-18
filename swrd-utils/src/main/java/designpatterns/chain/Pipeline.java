@@ -17,6 +17,7 @@ package designpatterns.chain;
  *     response。是不是有fail状态节点。如果有进行事物回滚，其它资源释放
  *  12.建议asynHandler出现业务异常，直接抛出异常。否则后续的节点还会继续执行
  *  13.如果不想处理11和12步。事物方法应该判断所有的asynHandler是不是执行成功。否则进行事物回滚
+ *  14.抛出异常时，建议使用ExceptionWithoutTraceStack。不会收集栈信息，节省性能开销
  */
 public interface Pipeline {
 

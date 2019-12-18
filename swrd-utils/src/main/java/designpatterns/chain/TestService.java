@@ -24,9 +24,10 @@ public class TestService {
             pipeline.fireReceiveRequest();
             Response response = pipeline.fireReturnResponse();
             System.out.println(response);
-           /* if(response.getCause()!=null){
+            if(response.getCause()!=null){
+                StackTraceElement[] stackTrace = response.getCause().getStackTrace();
                 response.getCause().printStackTrace();
-            }*/
+            }
         } finally {
 
         }

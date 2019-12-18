@@ -1,5 +1,6 @@
 package designpatterns.chain;
 
+import exception.ExceptionWithoutTraceStack;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -73,7 +74,7 @@ public class HandlerContext {
                              Response response  = (Response)future.get(Config.FUTURE_TIME_OUT,TimeUnit.SECONDS);
                              //如果未获取到结果，说明handler没有返回值
                              if(response==null){
-                                 throw new RuntimeException(handler.getClass().getSimpleName()+" 获取异步任务结果异常,业务侧未进行结果返回");
+                                 throw new ExceptionWithoutTraceStack(handler.getClass().getSimpleName()+" 获取异步任务结果异常,业务侧未进行结果返回");
                              }else{
                                  //获取链路最后一次执行的结果，非尾部节点，将值赋值给尾部节点，否则直接返回
                                  if(ctx.next!=null){
