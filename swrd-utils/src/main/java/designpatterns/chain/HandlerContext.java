@@ -59,10 +59,10 @@ public class HandlerContext {
                 if(ctx.response==null){
                     Handler handler = ctx.handler();
                     if(handler instanceof AsynHandler){
-                        Future future = ctx.futureCollector.getFuture(ctx.handler.getClass());
+                         Future future = ctx.futureCollector.getFuture(ctx.handler.getClass());
                          Response response  = (Response)future.get(10,TimeUnit.SECONDS);
                          if(response==null){
-                            throw new RuntimeException("获取异步任务结果异常");
+                            throw new RuntimeException(handler.getClass().getSimpleName()+" 获取异步任务结果异常");
                          }else{
                              if(ctx.next!=null){
                                  ctx.next.response=response;
@@ -81,7 +81,12 @@ public class HandlerContext {
                     }
                 }
             } catch (Throwable e) {
+                ctx.response=new Response(FlagEnum.FAIL,null);
+                ctx.response.setCause(e);
                 ctx.handler().exceptionCaught(ctx, e);
+                if(ctx.next!=null){
+                    ctx.next.response=ctx.response;
+                }
             }
         }
     }

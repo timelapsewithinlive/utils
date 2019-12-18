@@ -18,7 +18,21 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
     private ContextCollector contextCollector;
 
-    private static final Handler DEFAULT_HANDLER = new Handler() {};
+    private static final Handler DEFAULT_HANDLER = new Handler() {
+        @Override
+        public void receivedRequest(HandlerContext ctx, Request request) {
+            ctx.fireReceivedRequest(request);
+        }
+
+        @Override
+        public void returndResponse(HandlerContext ctx, Request request) {
+            ctx.fireReturndResponse(request);
+        }
+
+        @Override
+        public void exceptionCaught(HandlerContext ctx, Throwable e) {
+        }
+    };
 
     private ApplicationContext context;
 

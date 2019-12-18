@@ -5,13 +5,15 @@ import java.util.concurrent.*;
 
 public abstract class AbstractHandler implements Handler {
 
-    public Handler[] denpencies;
+    //依赖的其它handler处理结果，从futureCollector通过class的简单类名和线程id进行获取
+    public Class[] denpencies;
 
     @PostConstruct
     public void init(){
         denpencies =null;//具体的值通过枚举值来取
     }
 
+    @Override
     public void receivedRequest(HandlerContext ctx, Request request) {
         if(ctx.handler instanceof AsynHandler){
             RequestTask task = new RequestTask(ctx, request);
@@ -28,16 +30,37 @@ public abstract class AbstractHandler implements Handler {
         if(ctx.handler instanceof SynHandler){
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
              if(FlagEnum.FAIL.equals(ctx.response.getFlag())){
-                ctx.next=ctx.tail;
-                ctx.tail.prev=ctx;
-                return;
+                 if(ctx.next!=ctx.tail){
+                     ctx.next=ctx.tail;
+                     ctx.tail.prev=ctx;
+                     return;
+                 }
              }
         }
         ctx.fireReceivedRequest(request);
     }
 
-    public void returndResponse(HandlerContext ctx, Request request) throws ExecutionException, InterruptedException {
+    @Override
+    public void returndResponse(HandlerContext ctx, Request request){
             ctx.fireReturndResponse(request);
+    }
+
+    @Override
+    public void exceptionCaught(HandlerContext ctx, Throwable e) {
+        try{
+            if(ctx.response==null){
+                ctx.response=new Response(FlagEnum.FAIL,null);
+                ctx.response.setCause(e);
+            }
+        }catch (Exception exe){
+            ctx.response.setFlag(FlagEnum.FAIL);
+            ctx.response.setCause(exe);
+        }finally {
+            if(ctx.next!=ctx.tail){
+                ctx.next=ctx.tail;
+                ctx.tail.prev=ctx;
+            }
+        }
     }
 
     public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()*2, Runtime.getRuntime().availableProcessors()*2,60000, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
@@ -69,11 +92,11 @@ public abstract class AbstractHandler implements Handler {
         }
     }
 
-    public Handler[] getDenpencies() {
+    public Class[] getDenpencies() {
         return denpencies;
     }
 
-    public void setDenpencies(Handler[] denpencies) {
+    public void setDenpencies(Class[] denpencies) {
         this.denpencies = denpencies;
     }
 
