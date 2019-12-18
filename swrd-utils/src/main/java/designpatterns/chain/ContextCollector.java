@@ -9,13 +9,13 @@ public class ContextCollector {
 
     public ContextCollector putContext(Class handler,HandlerContext context){
         if(context!=null){
-            handlerMapContext.put(Thread.currentThread().getId()+"_"+handler.getSimpleName(),context);
+            handlerMapContext.put(Thread.currentThread().getId()+Constants.SEPARATOR+handler.getSimpleName(),context);
         }
         return this;
     }
 
     public HandlerContext getContext(Class dependency){
-        HandlerContext context = handlerMapContext.get(Thread.currentThread().getId()+"_"+dependency.getSimpleName());
+        HandlerContext context = handlerMapContext.get(Thread.currentThread().getId()+Constants.SEPARATOR+dependency.getSimpleName());
         return context;
     }
 

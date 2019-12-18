@@ -73,6 +73,9 @@ public abstract class AbstractHandler implements Handler {
         //线程池满时用当前线程处理任务
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            /*if(true){
+                throw new RuntimeException("执行拒绝策略异常");
+            }*/
             r.run();
         }
     });
@@ -98,6 +101,14 @@ public abstract class AbstractHandler implements Handler {
             Response response = ((AsynHandler)ctx.handler).asynHandle(request);
             ctx.response=response;
             return response;
+        }
+
+        @Override
+        public String toString() {
+            return "RequestTask{" +
+                    "ctx=" + ctx +
+                    ", request=" + request +
+                    '}';
         }
     }
 

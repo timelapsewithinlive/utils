@@ -13,13 +13,13 @@ public class FutureCollector {
 
     public FutureCollector putFuture(Class dependency,Future future){
         if(future!=null){
-            handlerMapFuture.put(Thread.currentThread().getId()+"_"+dependency.getSimpleName(),future);
+            handlerMapFuture.put(Thread.currentThread().getId()+Constants.SEPARATOR+dependency.getSimpleName(),future);
         }
         return this;
     }
 
     public Future getFuture(Class dependency){
-        Future future = handlerMapFuture.get(Thread.currentThread().getId()+"_"+dependency.getSimpleName());
+        Future future = handlerMapFuture.get(Thread.currentThread().getId()+Constants.SEPARATOR+dependency.getSimpleName());
         return future;
     }
 

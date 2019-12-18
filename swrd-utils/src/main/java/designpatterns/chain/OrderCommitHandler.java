@@ -7,7 +7,7 @@ public class OrderCommitHandler extends AbstractHandler implements SynHandler {
 
     @Override
     public Response synHandle(Request request) {
-        System.out.println("订单提交开始");
+        System.out.println("订单提交开始: "+Thread.currentThread().getId());
         Response resp = new Response(FlagEnum.SUCCESS,653422897);
         if(true){
             //return new Response(FlagEnum.FAIL,"订单提交失败");

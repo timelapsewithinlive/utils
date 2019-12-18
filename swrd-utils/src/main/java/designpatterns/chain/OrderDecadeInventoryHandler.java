@@ -7,7 +7,7 @@ public class OrderDecadeInventoryHandler extends AbstractHandler implements Asyn
 
     @Override
     public Response asynHandle(Request request) {
-        System.out.println("扣减库存开始");
+        System.out.println("扣减库存开始: "+Thread.currentThread().getId());
         if(true){
             //throw new RuntimeException("扣减库存异常");
         }

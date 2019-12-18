@@ -55,8 +55,10 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
         //组装该请求的调用链路
         this.addLast(context.getBean(OrderValidatorHandler.class))
-                .addLast(context.getBean(OrderCommitHandler.class))
-                .addLast(context.getBean(OrderDecadeInventoryHandler.class));
+                .addLast(context.getBean(OrderDecadeInventoryHandler.class))
+                .addLast(context.getBean(OrderDecadeVoucher.class))
+                .addLast(context.getBean(OrderCommitHandler.class));
+
 
     }
 

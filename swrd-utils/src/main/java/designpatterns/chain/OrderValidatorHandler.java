@@ -7,7 +7,7 @@ public class OrderValidatorHandler extends AbstractHandler implements SynHandler
 
         @Override
         public Response synHandle(Request request) {
-            System.out.println("参数校验开始");
+            System.out.println("参数校验开始 "+Thread.currentThread().getId());
             if(true){
                //throw  new RuntimeException("参数校验异常");
             }
