@@ -79,6 +79,12 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         return tail.response;
     }
 
+    //以后再实现
+    @Override
+    public Pipeline fireReleaseSource() {
+        return null;
+    }
+
     //添加handler到链表中
     public Pipeline addLast(Handler handler) {
         HandlerContext handlerContext = newContext(handler);
