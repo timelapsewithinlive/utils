@@ -22,8 +22,8 @@ public class ChainThreadPoolExecutor extends ThreadPoolExecutor {
 
     public <T> ChainFuture<Response> submit(Callable<T> task,Listener listener) {
         if (task == null) throw new NullPointerException();
-        ChainFutureTask ftask = new ChainFutureTask(task);
-        ftask.addListener(listener);
+        ChainFutureTask ftask = new ChainFutureTask(task,listener);
+        //ftask.addListener(listener);
         execute(ftask);
         return ftask;
     }

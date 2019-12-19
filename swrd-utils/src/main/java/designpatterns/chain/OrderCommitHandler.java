@@ -13,7 +13,6 @@ public class OrderCommitHandler extends AbstractHandler implements SynHandler {
     @ChainTransactional
     public Response synHandle(Request request) {
         System.out.println("订单提交开始--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
-        Response resp = new Response(FlagEnum.SUCCESS,"订单号："+60149759441046l);
         if(true){
            /* try {
 
@@ -25,7 +24,7 @@ public class OrderCommitHandler extends AbstractHandler implements SynHandler {
            //throw  new RuntimeException("提交订单系统异常");
 
         }
-        new Response(FlagEnum.FAIL,"订单提交成功");
+        Response resp = new Response(FlagEnum.SUCCESS,"订单号："+60149759441046l);
         System.out.println("订单提交成功--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         return resp;
         //return null;

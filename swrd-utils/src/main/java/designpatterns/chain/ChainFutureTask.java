@@ -7,8 +7,9 @@ import java.util.concurrent.*;
 public class ChainFutureTask extends FutureTask implements ChainFuture<Response>{
     private Listener listener;
 
-    public ChainFutureTask(Callable callable) {
+    public ChainFutureTask(Callable callable,Listener listener) {
         super(callable);
+        this.listener=listener;
     }
 
     public ChainFutureTask(Runnable runnable, Object result) {
