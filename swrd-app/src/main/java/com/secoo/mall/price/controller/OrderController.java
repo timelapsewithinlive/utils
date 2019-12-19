@@ -14,7 +14,7 @@ public class OrderController {
     @Resource
     OrderService orderService;
 
-    @PostConstruct
+    //@PostConstruct
     public void init(){
         for (int i=0;i<10;++i){
            Thread thread = new Thread(new Runnable() {

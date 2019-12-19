@@ -9,11 +9,11 @@ public class OrderDecadeInventoryHandler extends AbstractHandler implements Asyn
     public Response asynHandle(Request request) {
         System.out.println("扣减库存开始--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         if(true){
-            try {
+            /*try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
             //throw new RuntimeException("扣减库存异常");
             //Response resp = new Response(FlagEnum.FAIL,"扣减库存失败");
             //return resp;
