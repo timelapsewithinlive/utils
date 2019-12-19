@@ -154,16 +154,13 @@ public abstract class AbstractHandler implements Handler {
         ContextCollector contextCollector = request.getContextCollector();
         HandlerContext context = contextCollector.getContext(handler);
         if(context.response==null){
-            if(handler.newInstance() instanceof AsynHandler){
-                Future<Response> future = context.futureCollector.getFuture(handler);
-                Response resp = future.get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
-                if(resp==null){
-                    throw new ExceptionWithoutTraceStack(handler.getSimpleName()+ "未返回结果");
-                }else{
-                    return resp;
-                }
-            }else{
+            FutureCollector futureCollector = context.futureCollector;
+            Future<Response> future = futureCollector.getFuture(handler);
+            Response resp = future.get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
+            if(resp==null){
                 throw new ExceptionWithoutTraceStack(handler.getSimpleName()+ "未返回结果");
+            }else{
+                return resp;
             }
         }else{
             return context.response;
