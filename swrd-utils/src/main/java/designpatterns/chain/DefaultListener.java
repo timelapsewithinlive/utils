@@ -15,8 +15,11 @@ public class DefaultListener implements Listener<Response>{
 
     @Override
     public void listen(Response response) {
-        ctx.response=response;
-        request.isPropagation.compareAndSet(true,false);
+        if(response==null||FlagEnum.FAIL.equals(response.getFlag())){
+            request.isPropagation.compareAndSet(true,false);
+        }else{
+            ctx.response=response;
+        }
     }
 
 }

@@ -87,15 +87,14 @@ public class HandlerContext {
                                 }
                             }
                         } else {
-                            //future为空，继续向前寻找最后一个执行的节点
+                            //同步的话继续向前寻找最后一个执行的节点,因为前边执行请求时已经校验了同步handler返回结果不能为空。
                             ctx.handler.returndResponse(ctx, request);
                         }
-                    } else {
-                        //同步handler的判断逻辑,继续向前寻找最后一个执行的节点
+                    }else{
                         ctx.handler.returndResponse(ctx, request);
                     }
-                } else if(!request.isPropagation.get()&&FlagEnum.SUCCESS.equals(ctx.response.getFlag())){
-                    //如果节点不为空，但是传播标识为false。证明前边的节点出现过异常。一直找到出现异常的节点
+                }else if(!request.isPropagation.get()&&FlagEnum.SUCCESS.equals(ctx.response.getFlag())){
+                    //如果节点不为空，但是传播标识为false,且节点执行成功。证明前边的节点出现过异常。一直找到出现异常的节点
                     ctx.handler.returndResponse(ctx, request);
                 } else{
                     //获取链路最后一次执行的结果，非尾部节点，将值赋值给尾部节点，否则直接返回

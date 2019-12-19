@@ -1,9 +1,10 @@
 package designpatterns.chain;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import exception.ExceptionWithoutTraceStack;
 
-public class ChainFutureTask extends FutureTask implements ChainFuture{
+import java.util.concurrent.*;
+
+public class ChainFutureTask extends FutureTask implements ChainFuture<Response>{
     private Listener listener;
 
     public ChainFutureTask(Callable callable) {
@@ -31,5 +32,23 @@ public class ChainFutureTask extends FutureTask implements ChainFuture{
     protected void set(Object o) {
         listener.listen((Response)o);
         super.set(o);
+    }
+
+    @Override
+    public Response get(long timeout, TimeUnit unit){
+        Response response=null;
+        try{
+            Object o = super.get(timeout, unit);
+            if(o!=null){
+                response=(Response) o;
+            }else{
+                response =new Response(FlagEnum.FAIL,null);
+                response.setCause(new ExceptionWithoutTraceStack("异步handler未返回结果或获取结果超时"));
+            }
+        }catch (Exception e){
+            response =new Response(FlagEnum.FAIL,null);
+            response.setCause(e);
+        }
+        return response;
     }
 }

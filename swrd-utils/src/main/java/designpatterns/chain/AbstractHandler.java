@@ -3,6 +3,7 @@ package designpatterns.chain;
 import exception.ExceptionWithoutTraceStack;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Method;
 import java.util.concurrent.*;
 
 public abstract class AbstractHandler implements Handler {
@@ -27,11 +28,7 @@ public abstract class AbstractHandler implements Handler {
 
             //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
             if(CHAIN_THREAD_POOL.getActiveCount()<Config.THREAD_POOL_NUM){
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
                 RequestTask task = new RequestTask(ctx, request);
                 ChainFuture future = submit(task,new DefaultListener(ctx, request)) ;
                 //异步结果进行统一收集
@@ -47,6 +44,11 @@ public abstract class AbstractHandler implements Handler {
 
         //同步handler处理方式
         if(ctx.handler instanceof SynHandler){
+             //事物方法开始前，如果前边的异步handler任何一个出现异常。都不向下传播
+             if(!isTransactional(ctx, request)){
+                 request.isPropagation.set(false);
+                 return;
+             }
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
              //如果当前handler执行的结果不符合预期成功结果，那么直接改变责任链到尾部。其它后续的节点不执行
             //当前线程处理结果判断是否继续传播
@@ -60,11 +62,10 @@ public abstract class AbstractHandler implements Handler {
     }
 
     private void isPropagation(HandlerContext ctx,Request request){
-        if(ctx.response==null||FlagEnum.FAIL.equals(ctx.response.getFlag())){
-            if(ctx.response==null){
-                ctx.response=new Response(FlagEnum.FAIL,null);
-                ctx.response.setCause(new RuntimeException(ctx.handler.getClass().getSimpleName() +" 未返回结果，直接结束链路执行"));
-            }
+        if(ctx.response==null) {
+            throw new ExceptionWithoutTraceStack(ctx.handler.getClass().getSimpleName() +" 未返回结果，直接结束链路执行");
+        }
+        if(FlagEnum.FAIL.equals(ctx.response.getFlag())){
             if(ctx.next!=ctx.tail){
                 ctx.next=ctx.tail;
                 ctx.tail.prev=ctx;
@@ -72,6 +73,20 @@ public abstract class AbstractHandler implements Handler {
             }
             request.isPropagation.set(false);
         }
+    }
+
+    private boolean isTransactional(HandlerContext ctx,Request request){
+
+        Method[] declaredMethods = ctx.handler.getClass().getDeclaredMethods();
+        for (Method method:declaredMethods){
+            if(method.getName().equals("synHandle")){
+                ChainTransactional annotation = method.getAnnotation(ChainTransactional.class);
+                if(annotation!=null){
+                   return ctx.futureCollector.isDone();
+                }
+            }
+        }
+        return true;
     }
 
     //响应结果处理，从尾部节点开始向前查找结果

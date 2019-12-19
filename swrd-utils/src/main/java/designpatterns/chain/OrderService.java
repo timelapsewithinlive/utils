@@ -15,6 +15,7 @@ public class OrderService {
         Request request = new Request();  // request一般是通过外部调用获取
         DefaultPipeline pipeline = newPipeline(request);
         try {
+            System.out.println("业务开始----------------------------------------");
             //组装该请求的调用链路
             pipeline.addLast(context.getBean(OrderValidatorHandler.class));
 
@@ -28,14 +29,19 @@ public class OrderService {
             pipeline.fireReceiveRequest()//执行请求
                     .fireReturnResponse();//获取响应
             Response response =pipeline.tail.response;//找到最后一个执行的handler,将结果放入尾部节点上
-            System.out.println(response);
-            if(response.getCause()!=null){
-                StackTraceElement[] stackTrace = response.getCause().getStackTrace();
-                response.getCause().printStackTrace();
+            if(response==null){
+                System.out.println("空响应");
+            }else{
+                if(response.getCause()!=null){
+                    StackTraceElement[] stackTrace = response.getCause().getStackTrace();
+                    response.getCause().printStackTrace();
+                }
+               // System.out.println(response);
             }
             return response;
         } finally {
             pipeline.fireReleaseSource();//释放资源暂时没实现
+            System.out.println("业务结束----------------------------------------");
         }
     }
 
