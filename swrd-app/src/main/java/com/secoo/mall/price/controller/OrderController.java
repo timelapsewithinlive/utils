@@ -14,6 +14,21 @@ public class OrderController {
     @Resource
     OrderService orderService;
 
+    @PostConstruct
+    public void init(){
+        for (int i=0;i<10;++i){
+           Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true){
+                        orderService.mockedCreateOrder(0);
+                    }
+                }
+            });
+            thread.start();
+        }
+    }
+
     @GetMapping("/createOrder")
     public Object createOrder(){
 

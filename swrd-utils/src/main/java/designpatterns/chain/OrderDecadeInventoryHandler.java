@@ -10,7 +10,7 @@ public class OrderDecadeInventoryHandler extends AbstractHandler implements Asyn
         System.out.println("扣减库存开始--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         if(true){
             try {
-                Thread.sleep(5);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -19,9 +19,9 @@ public class OrderDecadeInventoryHandler extends AbstractHandler implements Asyn
             //return resp;
             //return null;
         }
-        Response resp = new Response(FlagEnum.SUCCESS,"扣减库存成功");
+        Response resp = new Response(FlagEnum.FAIL,"扣减库存失败");
         System.out.println("扣减库存成功--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
-        return null;
+        return resp;
         //return resp;
     }
 
