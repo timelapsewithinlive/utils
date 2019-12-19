@@ -53,11 +53,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         contextCollector=new ContextCollector(new ConcurrentHashMap<String, HandlerContext>());
         request.setContextCollector(contextCollector);
 
-        //组装该请求的调用链路
-        this.addLast(context.getBean(OrderValidatorHandler.class))
-                .addLast(context.getBean(OrderDecadeInventoryHandler.class))
-                .addLast(context.getBean(OrderDecadeVoucher.class))
-                .addLast(context.getBean(OrderCommitHandler.class));
+
     }
 
     public DefaultPipeline() {
@@ -105,6 +101,10 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         context.handler = handler;
         context.futureCollector=futureCollector;
         return context;
+    }
+
+    public Response response(){
+        return tail.response;
     }
 
     public boolean isDone(){
