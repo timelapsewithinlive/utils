@@ -21,4 +21,9 @@ public class OrderDecadeVoucher extends AbstractHandler implements AsynHandler {
         return resp;
         //return resp;
     }
+
+    @Override
+    public void setDenpencies(Class[] denpencies) {
+
+    }
 }

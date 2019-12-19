@@ -26,4 +26,8 @@ public class OrderDecadeInventoryHandler extends AbstractHandler implements Asyn
         //return resp;
     }
 
+    @Override
+    public void setDenpencies(Class[] denpencies) {
+
+    }
 }

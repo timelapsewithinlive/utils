@@ -16,4 +16,9 @@ public class OrderValidatorHandler extends AbstractHandler implements SynHandler
             System.out.println("参数校验成功--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
             return resp;
         }
+
+    @Override
+    public void setDenpencies(Class[] denpencies) {
+
+    }
 }

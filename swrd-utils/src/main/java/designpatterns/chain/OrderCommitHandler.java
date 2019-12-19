@@ -29,4 +29,9 @@ public class OrderCommitHandler extends AbstractHandler implements SynHandler {
         return resp;
         //return null;
     }
+
+    @Override
+    public void setDenpencies(Class[] denpencies) {
+
+    }
 }
