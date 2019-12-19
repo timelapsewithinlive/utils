@@ -19,40 +19,49 @@ public abstract class AbstractHandler implements Handler {
     public void receivedRequest(HandlerContext ctx, Request request) {
         //如果是异步的，提交到线程池进行处理
         if(ctx.handler instanceof AsynHandler){
-            RequestTask task = new RequestTask(ctx, request);
-            Future future =null;
+
             //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
             if(threadPoolExecutor.getActiveCount()<Config.THREAD_POOL_NUM){
-                 future = submit(task) ;
+                RequestTask task = new RequestTask(ctx, request);
+                Future future = submit(task) ;
+                //异步结果进行统一收集
+                ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
             }else{
                 //如果没可用线程。用当前线程执行任务
-                future = new FutureTask(task);
-                ((FutureTask) future).run();
+                ctx.response = ((AsynHandler) ctx.handler).asynHandle(request);
+                //当前线程处理结果判断是否继续传播
+                isPropagation(ctx, request);
             }
-            //异步结果进行统一收集
-            ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
+
         }
 
         //同步handler处理方式
         if(ctx.handler instanceof SynHandler){
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
              //如果当前handler执行的结果不符合预期成功结果，那么直接改变责任链到尾部。其它后续的节点不执行
-            //只有同步的情况下才断开后续链路。
-             if(ctx.response==null||FlagEnum.FAIL.equals(ctx.response.getFlag())){
-                 if(ctx.response==null){
-                     ctx.response=new Response(FlagEnum.FAIL,null);
-                     ctx.response.setCause(new RuntimeException(ctx.handler.getClass().getSimpleName() +" 未返回结果，直接结束链路执行"));
-                 }
-                 if(ctx.next!=ctx.tail){
-                     ctx.next=ctx.tail;
-                     ctx.tail.prev=ctx;
-                     return;
-                 }
-             }
+            //当前线程处理结果判断是否继续传播
+            isPropagation(ctx, request);
         }
 
         //通过上下文传递，继续进行下一个handler调用
-        ctx.fireReceivedRequest(request);
+        if(request.isPropagation){
+            ctx.fireReceivedRequest(request);
+        }
+    }
+
+    private void isPropagation(HandlerContext ctx,Request request){
+        if(ctx.response==null||FlagEnum.FAIL.equals(ctx.response.getFlag())){
+            if(ctx.response==null){
+                ctx.response=new Response(FlagEnum.FAIL,null);
+                ctx.response.setCause(new RuntimeException(ctx.handler.getClass().getSimpleName() +" 未返回结果，直接结束链路执行"));
+            }
+            if(ctx.next!=ctx.tail){
+                ctx.next=ctx.tail;
+                ctx.tail.prev=ctx;
+                return;
+            }
+        }
+        request.isPropagation=false;
     }
 
     //响应结果处理，从尾部节点开始向前查找结果
