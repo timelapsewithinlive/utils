@@ -18,6 +18,11 @@ package designpatterns.chain;
  *  12.建议asynHandler出现业务异常，直接抛出异常。否则后续的节点还会继续执行
  *  13.如果不想处理11和12步。事物方法应该判断所有的asynHandler是不是执行成功。否则进行事物回滚
  *  14.抛出业务异常时，建议使用ExceptionWithoutTraceStack。不会收集栈信息，节省性能开销
+ *  15.新改造的。如果线程池满，当前线程执行任务，如果返回的respones为null或者状态标识为fail。也不再进行传播
+ *  16.扩展jdk的Future,可以添加监听器。在任务执行完时。直接将结果赋值给handlerContext
+ *  17.扩展jdk的线程池。可以添加监听器和提交扩展的future
+ *  18. request维护一个是否传播的全局标识。异步handler在监听器里通过乐观锁设置标识是否继续传播
+ *
  */
 public interface Pipeline {
 

@@ -27,6 +27,11 @@ public abstract class AbstractHandler implements Handler {
 
             //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
             if(CHAIN_THREAD_POOL.getActiveCount()<Config.THREAD_POOL_NUM){
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 RequestTask task = new RequestTask(ctx, request);
                 ChainFuture future = submit(task,new DefaultListener(ctx, request)) ;
                 //异步结果进行统一收集
