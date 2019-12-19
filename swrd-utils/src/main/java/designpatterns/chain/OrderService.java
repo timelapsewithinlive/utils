@@ -14,6 +14,7 @@ public class OrderService {
     public Response mockedCreateOrder(int orderType) {
         Request request = new Request();  // request一般是通过外部调用获取
         DefaultPipeline pipeline = newPipeline(request);
+        Response response = new Response(FlagEnum.FAIL,null);
         try {
             System.out.println("业务开始----------------------------------------");
             //组装该请求的调用链路
@@ -28,7 +29,7 @@ public class OrderService {
 
             pipeline.fireReceiveRequest()//执行请求
                     .fireReturnResponse();//获取响应
-            Response response =pipeline.tail.response;//找到最后一个执行的handler,将结果放入尾部节点上
+             response =pipeline.tail.response;//找到最后一个执行的handler,将结果放入尾部节点上
             if(response==null){
                 System.out.println("空响应");
             }else{
@@ -36,11 +37,15 @@ public class OrderService {
                     StackTraceElement[] stackTrace = response.getCause().getStackTrace();
                     response.getCause().printStackTrace();
                 }
-               // System.out.println(response);
+               System.out.println(response);
             }
             return response;
         } finally {
-            pipeline.fireReleaseSource();//释放资源暂时没实现
+            //未获取到想要的业务结果。进行业务链回滚
+            if(response.getData()==null){
+                pipeline.fireReleaseSource();//释放资源暂时没实现
+
+            }
             System.out.println("业务结束----------------------------------------");
         }
     }

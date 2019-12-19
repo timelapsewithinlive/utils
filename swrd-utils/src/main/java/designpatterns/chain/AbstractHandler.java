@@ -76,15 +76,17 @@ public abstract class AbstractHandler implements Handler {
     }
 
     private boolean isTransactional(HandlerContext ctx,Request request){
-
-        Method[] declaredMethods = ctx.handler.getClass().getDeclaredMethods();
-        for (Method method:declaredMethods){
-            if(method.getName().equals("synHandle")){
-                ChainTransactional annotation = method.getAnnotation(ChainTransactional.class);
-                if(annotation!=null){
-                   return ctx.futureCollector.isDone();
-                }
+        try {
+            Method method = ctx.handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
+            ChainTransactional annotation = method.getAnnotation(ChainTransactional.class);
+            if(annotation!=null){
+                return ctx.futureCollector.isDone();
             }
+        } catch (NoSuchMethodException e) {
+            Response resp = new Response(FlagEnum.FAIL,null);
+            resp.setCause(e);
+            ctx.response=resp;
+            return false;
         }
         return true;
     }
