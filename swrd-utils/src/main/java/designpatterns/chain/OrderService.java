@@ -11,12 +11,6 @@ public class OrderService {
     @Autowired
     private ApplicationContext context;
 
-    @PostConstruct
-    public void init() throws InterruptedException {
-        //Thread.sleep(5000);
-        mockedCreateOrder(0);
-    }
-
     public Response mockedCreateOrder(int orderType) {
         Request request = new Request();  // request一般是通过外部调用获取
         DefaultPipeline pipeline = newPipeline(request);

@@ -26,9 +26,9 @@ public abstract class AbstractHandler implements Handler {
         if(ctx.handler instanceof AsynHandler){
 
             //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
-            if(threadPoolExecutor.getActiveCount()<Config.THREAD_POOL_NUM){
+            if(CHAIN_THREAD_POOL.getActiveCount()<Config.THREAD_POOL_NUM){
                 RequestTask task = new RequestTask(ctx, request);
-                Future future = submit(task) ;
+                ChainFuture future = submit(task,new DefaultListener(ctx, request)) ;
                 //异步结果进行统一收集
                 ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
             }else{
@@ -85,7 +85,7 @@ public abstract class AbstractHandler implements Handler {
         ctx.response.setCause(e);
     }
 
-    public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Config.THREAD_POOL_NUM, Config.THREAD_POOL_NUM,Config.THREAD_POOL_KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
+    public static ChainThreadPoolExecutor CHAIN_THREAD_POOL = new ChainThreadPoolExecutor(Config.THREAD_POOL_NUM, Config.THREAD_POOL_NUM,Config.THREAD_POOL_KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
         //线程池满时用当前线程处理任务
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -96,8 +96,8 @@ public abstract class AbstractHandler implements Handler {
         }
     });
 
-    public Future submit(Callable callable){
-        Future submit = threadPoolExecutor.submit(callable);
+    public ChainFuture submit(Callable callable,Listener listener){
+        ChainFuture submit = CHAIN_THREAD_POOL.submit(callable,listener);
         return submit;
     }
 

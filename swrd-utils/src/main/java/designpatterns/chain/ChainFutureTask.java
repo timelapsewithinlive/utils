@@ -16,12 +16,20 @@ public class ChainFutureTask extends FutureTask implements ChainFuture{
 
     @Override
     public void addListener(Listener listener) {
-        listener=listener;
+        setListener(listener);
+    }
+
+    public Listener getListener() {
+        return listener;
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
     protected void set(Object o) {
-        super.set(o);
         listener.listen((Response)o);
+        super.set(o);
     }
 }
