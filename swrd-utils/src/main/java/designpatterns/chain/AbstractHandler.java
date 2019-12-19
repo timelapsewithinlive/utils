@@ -171,9 +171,7 @@ public abstract class AbstractHandler implements Handler {
         return denpencies;
     }
 
-    public void setDenpencies(Class[] denpencies) {
-        this.denpencies = denpencies;
-    }
+    public abstract void setDenpencies(Class[] denpencies);
 
 
 }
