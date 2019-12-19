@@ -1,10 +1,13 @@
 package designpatterns.chain;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * 请求参数封装体
  */
 public class Request {
-    public volatile boolean isPropagation=true;//handlerContext是否继续向下传播标识
+
+    public AtomicBoolean isPropagation =new AtomicBoolean(true);//handlerContext是否继续向下传播标识
 
     private ContextCollector contextCollector;
 

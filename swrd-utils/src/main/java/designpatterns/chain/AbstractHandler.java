@@ -17,6 +17,11 @@ public abstract class AbstractHandler implements Handler {
 
     @Override
     public void receivedRequest(HandlerContext ctx, Request request) {
+        //如果检测到前边的异步handler标识为不继续传播，则直接结束
+        if(!request.isPropagation.get()){
+            return;
+        }
+
         //如果是异步的，提交到线程池进行处理
         if(ctx.handler instanceof AsynHandler){
 
@@ -44,7 +49,7 @@ public abstract class AbstractHandler implements Handler {
         }
 
         //通过上下文传递，继续进行下一个handler调用
-        if(request.isPropagation){
+        if(request.isPropagation.get()){
             ctx.fireReceivedRequest(request);
         }
     }
@@ -60,8 +65,8 @@ public abstract class AbstractHandler implements Handler {
                 ctx.tail.prev=ctx;
                 return;
             }
+            request.isPropagation.set(false);
         }
-        request.isPropagation=false;
     }
 
     //响应结果处理，从尾部节点开始向前查找结果
