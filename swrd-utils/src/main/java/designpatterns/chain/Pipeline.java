@@ -3,7 +3,7 @@ package designpatterns.chain;
 /**
  * 注意事项：
  *  1.模仿netty实现
- *  2.pipeline、handlerContext、response为多例。request、handler为单例
+ *  2.pipeline(责任链管理器)、handlerContext(执行者上下文)、response(每个执行者结果)为多例。request(请求封装体)、handler(业务处理者)为单例
  *  3.futureCollector收集所有的异步执行结果，ContextCollector收集链路所有的上下文
  *  4.执行请求时，从头节点开始，同步handler的respones为null或者respones的状态为fail。
  *    则直接将当前handlerContext指向尾部。剔除链路上后续的handler
