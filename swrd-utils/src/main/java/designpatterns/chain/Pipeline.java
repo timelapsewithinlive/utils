@@ -28,6 +28,8 @@ package designpatterns.chain;
  *  22. 因为链中存在异步，无法考虑整体的原子性。只能通过业务手段判断
  *  23. 后续可以利用反射，在每一个handler执行前，验证是否增加了@ChainTransactionnal注解。如果是。则认为是
  *      事物方法，必须等待前边的异步节点全部执行完成。 通过代理模式实现比较好
+ *  24. 不要在一个链中产生多个事物handler。更不要在异步handler里产生事物。不然业务侧很难控制
+ *  25. 如果业务侧handler中要做降级。那就再业务失败时。将response中的状态标识为SUCCESS
  *
  */
 public interface Pipeline {
