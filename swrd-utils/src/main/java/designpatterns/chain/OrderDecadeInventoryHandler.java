@@ -19,7 +19,8 @@ public class OrderDecadeInventoryHandler extends AbstractHandler implements Asyn
             //return resp;
             //return null;
         }
-        Response resp = new Response(FlagEnum.FAIL,"扣减库存失败");
+        Response resp = new Response(FlagEnum.FAIL,"扣减库存成功");
+        //Response resp = new Response(FlagEnum.FAIL,"扣减库存失败");
         System.out.println("扣减库存成功--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         return resp;
         //return resp;
