@@ -29,7 +29,8 @@ public class OrderService {
 
             pipeline.fireReceiveRequest()//执行请求
                     .fireReturnResponse();//获取响应
-             response =pipeline.tail.response;//找到最后一个执行的handler,将结果放入尾部节点上
+
+            response =pipeline.response();
             if(response==null){
                 System.out.println("空响应");
             }else{

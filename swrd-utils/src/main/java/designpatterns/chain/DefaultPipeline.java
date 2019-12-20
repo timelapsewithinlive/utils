@@ -103,7 +103,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         return context;
     }
 
-    public Response response(){
+    public Response response(){//将结果集放入尾节点
         return tail.response;
     }
 
