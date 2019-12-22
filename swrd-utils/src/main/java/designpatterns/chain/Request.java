@@ -1,5 +1,6 @@
 package designpatterns.chain;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -8,6 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Request {
 
     public AtomicBoolean isPropagation =new AtomicBoolean(true);//handlerContext是否继续向下传播标识
+
+    public CountDownLatch countDownLatch;
 
     private ContextCollector contextCollector;
 

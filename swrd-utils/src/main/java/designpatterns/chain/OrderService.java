@@ -40,7 +40,9 @@ public class OrderService {
                System.out.println(response);
             }
             return response;
-        } finally {
+        }catch (Exception e){
+            return null;
+        }finally {
             //未获取到想要的业务结果。进行业务链回滚
             if(response.getData()==null){
                 pipeline.fireReleaseSource();//释放资源暂时没实现

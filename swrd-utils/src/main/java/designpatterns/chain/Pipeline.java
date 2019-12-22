@@ -41,5 +41,5 @@ public interface Pipeline {
 
     Pipeline fireReleaseSource();
 
-    Pipeline addLast(Handler handler);
+    Pipeline addLast(Handler handler) throws NoSuchMethodException;
 }

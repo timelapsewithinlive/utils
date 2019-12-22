@@ -4,6 +4,7 @@ import exception.ExceptionWithoutTraceStack;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +19,7 @@ public class HandlerContext {
     HandlerContext next;
     Handler handler;
     volatile Response response;
+    CountDownLatch countDownLatch;
 
 
     /**

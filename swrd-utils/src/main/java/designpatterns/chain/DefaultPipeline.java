@@ -1,5 +1,6 @@
 package designpatterns.chain;
 
+import exception.ExceptionWithoutTraceStack;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 @Component("pipeline")
@@ -53,8 +55,6 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         futureCollector=new FutureCollector(new ConcurrentHashMap<String, Future>());
         contextCollector=new ContextCollector(new ConcurrentHashMap<String, HandlerContext>());
         request.setContextCollector(contextCollector);
-
-
     }
 
     public DefaultPipeline() {
@@ -82,8 +82,11 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         return null;
     }
 
+    public int stageAysnNum;
+
+    public int tsNum;//事务数量只允许一个
     //添加handler到链表中
-    public Pipeline addLast(Handler handler){
+    public Pipeline addLast(Handler handler) throws NoSuchMethodException {
         HandlerContext handlerContext = newContext(handler);
         tail.prev.next = handlerContext;
         handlerContext.prev = tail.prev;
@@ -92,6 +95,26 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
         handlerContext.setHead(head);
         handlerContext.setTail(tail);
+
+        if(handler instanceof AsynHandler){
+            Method method = handler.getClass().getDeclaredMethod(Constants.UN_NECESSARY_METHOD, Request.class);
+            UnNecessary annotation = method.getAnnotation(UnNecessary.class);
+            if(annotation==null){
+                stageAysnNum+=1;
+            }
+        }else{
+            Method method = handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
+            ChainTransactional annotation = method.getAnnotation(ChainTransactional.class);
+            if(annotation!=null){
+                handlerContext.countDownLatch=new CountDownLatch(stageAysnNum);
+                request.countDownLatch=handlerContext.countDownLatch;
+                System.out.println("事务需要等待："+ request.countDownLatch.getCount() +" 个异步handle处理完成");;
+                tsNum+=1;
+                if(tsNum>1){
+                    throw new ExceptionWithoutTraceStack("一次请求只允许产生一个事务处理类");
+                }
+            }
+        }
 
         contextCollector.putContext(handler.getClass(),handlerContext);
         return this;
@@ -123,5 +146,14 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     public void setRequest(Request request) {
         this.request = request;
     }
+
+    public int getStageAysnNum() {
+        return stageAysnNum;
+    }
+
+    public void setStageAysnNum(int stageAysnNum) {
+        this.stageAysnNum = stageAysnNum;
+    }
+
 
 }

@@ -91,9 +91,11 @@ public abstract class AbstractHandler implements Handler {
             Method method = ctx.handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
             ChainTransactional annotation = method.getAnnotation(ChainTransactional.class);
             if(annotation!=null){
-                return ctx.futureCollector.isDone();
+                request.countDownLatch.await();
+                return true;
+               // return ctx.futureCollector.isDone();
             }
-        } catch (NoSuchMethodException e) {
+        } catch (Exception e) {
             Response resp = new Response(HandlerCurrentlyStatus.FAIL,null);
             resp.setCause(e);
             ctx.response=resp;
