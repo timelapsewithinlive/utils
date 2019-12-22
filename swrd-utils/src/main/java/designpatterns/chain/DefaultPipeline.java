@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
@@ -82,7 +83,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     }
 
     //添加handler到链表中
-    public Pipeline addLast(Handler handler) {
+    public Pipeline addLast(Handler handler){
         HandlerContext handlerContext = newContext(handler);
         tail.prev.next = handlerContext;
         handlerContext.prev = tail.prev;

@@ -2,7 +2,7 @@ package designpatterns.chain;
 
 public class Response<T> {
 
-    private FlagEnum flag;
+    private HandlerCurrentlyStatus flag;
 
     private Throwable cause;
 
@@ -11,16 +11,16 @@ public class Response<T> {
     public Response() {
     }
 
-    public Response(FlagEnum flag, T data) {
+    public Response(HandlerCurrentlyStatus flag, T data) {
         this.flag = flag;
         this.data = data;
     }
 
-    public FlagEnum getFlag() {
+    public HandlerCurrentlyStatus getFlag() {
         return flag;
     }
 
-    public void setFlag(FlagEnum flag) {
+    public void setFlag(HandlerCurrentlyStatus flag) {
         this.flag = flag;
     }
 

@@ -93,7 +93,7 @@ public class HandlerContext {
                     }else{
                         ctx.handler.returndResponse(ctx, request);
                     }
-                }else if(!request.isPropagation.get()&&FlagEnum.SUCCESS.equals(ctx.response.getFlag())){
+                }else if(!request.isPropagation.get()&& HandlerCurrentlyStatus.SUCCESS.equals(ctx.response.getFlag())){
                     //如果节点不为空，但是传播标识为false,且节点执行成功。证明前边的节点出现过异常。一直找到出现异常的节点
                     ctx.handler.returndResponse(ctx, request);
                 } else{
@@ -109,7 +109,7 @@ public class HandlerContext {
                 }
             } catch (Throwable e) {
                 //future获取response超时，或者response为空会出现异常
-                ctx.response=new Response(FlagEnum.FAIL,null);
+                ctx.response=new Response(HandlerCurrentlyStatus.FAIL,null);
                 ctx.response.setCause(e);
                 ctx.handler().exceptionCaught(ctx, e);
                 if(ctx.next!=null){
