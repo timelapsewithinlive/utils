@@ -43,11 +43,11 @@ public class ChainFutureTask extends FutureTask implements ChainFuture<Response>
             if(o!=null){
                 response=(Response) o;
             }else{
-                response =new Response(FlagEnum.FAIL,null);
+                response =new Response(HandlerCurrentlyStatus.FAIL,null);
                 response.setCause(new ExceptionWithoutTraceStack("异步handler未返回结果或获取结果超时"));
             }
         }catch (Exception e){
-            response =new Response(FlagEnum.FAIL,null);
+            response =new Response(HandlerCurrentlyStatus.FAIL,null);
             response.setCause(e);
         }
         return response;

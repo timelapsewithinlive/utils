@@ -32,7 +32,18 @@ public abstract class AbstractHandler implements Handler {
                 RequestTask task = new RequestTask(ctx, request);
                 ChainFuture future = submit(task,new DefaultListener(ctx, request)) ;
                 //异步结果进行统一收集
-                ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
+                try{
+                    Method method = ctx.handler.getClass().getDeclaredMethod(Constants.UN_NECESSARY_METHOD, Request.class);
+                    UnNecessary annotation = method.getAnnotation(UnNecessary.class);
+                    if(annotation==null){
+                        ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
+                    }
+                }catch (Exception e){
+                    Response resp = new Response(HandlerCurrentlyStatus.FAIL,null);
+                    resp.setCause(e);
+                    ctx.response=resp;
+                    return;
+                }
             }else{
                 //如果没可用线程。用当前线程执行任务
                 ctx.response = ((AsynHandler) ctx.handler).asynHandle(request);
@@ -65,7 +76,7 @@ public abstract class AbstractHandler implements Handler {
         if(ctx.response==null) {
             throw new ExceptionWithoutTraceStack(ctx.handler.getClass().getSimpleName() +" 未返回结果，直接结束链路执行");
         }
-        if(FlagEnum.FAIL.equals(ctx.response.getFlag())){
+        if(HandlerCurrentlyStatus.FAIL.equals(ctx.response.getFlag())){
             if(ctx.next!=ctx.tail){
                 ctx.next=ctx.tail;
                 ctx.tail.prev=ctx;
@@ -80,10 +91,12 @@ public abstract class AbstractHandler implements Handler {
             Method method = ctx.handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
             ChainTransactional annotation = method.getAnnotation(ChainTransactional.class);
             if(annotation!=null){
-                return ctx.futureCollector.isDone();
+                request.countDownLatch.await();
+                return true;
+               // return ctx.futureCollector.isDone();
             }
-        } catch (NoSuchMethodException e) {
-            Response resp = new Response(FlagEnum.FAIL,null);
+        } catch (Exception e) {
+            Response resp = new Response(HandlerCurrentlyStatus.FAIL,null);
             resp.setCause(e);
             ctx.response=resp;
             return false;
@@ -102,7 +115,7 @@ public abstract class AbstractHandler implements Handler {
     public void exceptionCaught(HandlerContext ctx, Throwable e) {
         //出现异常时，上下文的reponse为null
         if(ctx.response==null){
-            ctx.response=new Response(FlagEnum.FAIL,null);
+            ctx.response=new Response(HandlerCurrentlyStatus.FAIL,null);
         }
         ctx.response.setCause(e);
     }

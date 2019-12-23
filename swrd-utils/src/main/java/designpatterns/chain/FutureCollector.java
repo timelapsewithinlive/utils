@@ -35,7 +35,7 @@ public class FutureCollector {
         for (Map.Entry<String, Future> entry:entries){
             Response response = ((ChainFutureTask) entry.getValue()).get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
             //true代表执行成功，继续向下传播
-            if(FlagEnum.SUCCESS.equals(response.getFlag())){
+            if(HandlerCurrentlyStatus.SUCCESS.equals(response.getFlag())){
                 continue;
             }else{
                 isDone =false;
