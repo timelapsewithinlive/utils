@@ -2,7 +2,7 @@ package jdk.encrypt;
 
 import encryption.rsa.RSA_AES_Util;
 
-public class Test {
+public class Test_RAS_AES {
     static String publicKeyStr="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgXUno3SkhXdtfZHxeJqyweeIcrapKKAMic1" +
             "6eaUOb2c/P+mcrqM2/DnCsF/t7T4Er3UrwqBuEkuuCxy/1OlCkDY01cP8K1HgnhX2JngMIdfKz" +
             "sqFK92v0GPpeRdAjXSxJU3RqfzmZSsYQ1g0qLIO1fQJi5+K1VIx4C9dnWnWlpwIDAQAB";
@@ -21,10 +21,15 @@ public class Test {
             "DBGBSS+0Pl8RsKxhe4qI0ZIuk8iJv9";
 
     public static void main(String[] args) throws Exception {
-        String[] message = RSA_AES_Util.encrypt("i am a good man ", publicKeyStr);
+        String message="i am a good man";
 
-        String decrypt = RSA_AES_Util.decrypt(privateKeyStr, message[1], message[0]);
-        System.out.println(decrypt);
+        System.out.println("加密前的内容: "+message);
+
+        String[] messages = RSA_AES_Util.encrypt(message, publicKeyStr);
+        System.out.println("加密后的内容："+messages[0]);
+
+        String decrypt = RSA_AES_Util.decrypt(privateKeyStr, messages[1], messages[0]);
+        System.out.println("解密后的内容: "+decrypt);
 
     }
 }

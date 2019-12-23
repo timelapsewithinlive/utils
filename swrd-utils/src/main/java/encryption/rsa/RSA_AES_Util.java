@@ -46,7 +46,6 @@ public class RSA_AES_Util {
         byte[] aesKeyStrBytes = RSAUtil.privateDecrypt(publicEncrypt2, privateKey);
         //解密后的aesKey
         String aesKeyStr2 = new String(aesKeyStrBytes);
-        System.out.println("解密后的aesKey(Base64编码): " + aesKeyStr2);
 
         //将Base64编码后的AES秘钥转换成SecretKey对象
         SecretKey aesKey2 = AESUtil.loadKeyAES(aesKeyStr2);
@@ -55,7 +54,6 @@ public class RSA_AES_Util {
         //用AES秘钥解密实际的内容
         byte[] decryptAES = AESUtil.decryptAES(encryptAES2, aesKey2);
         //解密后的实际内容
-        System.out.println("解密后的实际内容: " + new String(decryptAES));
 
         return new String(decryptAES);
     }
