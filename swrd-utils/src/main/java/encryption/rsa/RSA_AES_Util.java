@@ -41,9 +41,9 @@ public class RSA_AES_Util {
         //将Base64编码后的私钥转换成PrivateKey对象
         PrivateKey privateKey = RSAUtil.string2PrivateKey(privateKeyStr);
         //公钥加密AES秘钥后的内容(Base64编码)，进行Base64解码
-        byte[] publicEncrypt2 = RSAUtil.base642Byte(publicEncryptStr);
+        byte[] publicEncrypt = RSAUtil.base642Byte(publicEncryptStr);
         //用私钥解密,得到aesKey
-        byte[] aesKeyStrBytes = RSAUtil.privateDecrypt(publicEncrypt2, privateKey);
+        byte[] aesKeyStrBytes = RSAUtil.privateDecrypt(publicEncrypt, privateKey);
         //解密后的aesKey
         String aesKeyStr2 = new String(aesKeyStrBytes);
 
