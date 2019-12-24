@@ -16,7 +16,7 @@ public class ChainController implements  ApplicationContextAware {
 
     private ApplicationContext context;
 
-    @PostConstruct
+    //@PostConstruct
     public void init(){
         for (int i=0;i<1;++i){
            Thread thread = new Thread(new Runnable() {

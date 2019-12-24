@@ -99,7 +99,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
         if(handler instanceof AsynHandler){
 
-            if(handler instanceof DownGradeHandler){
+            if(!(handler instanceof DownGradeHandler)){
                 stageAysnNum+=1;
             }
         }else{
