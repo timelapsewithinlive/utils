@@ -107,8 +107,9 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
             Method method = handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
             ChainTransactional annotation =AnnotationUtils.findAnnotation(method,ChainTransactional.class);
             if(annotation!=null){
-                handlerContext.countDownLatch=new CountDownLatch(stageAysnNum);
-                request.countDownLatch=handlerContext.countDownLatch;
+               /* handlerContext.countDownLatch=new CountDownLatch(stageAysnNum);
+                request.countDownLatch=handlerContext.countDownLatch;*/
+                request.countDownLatch=new CountDownLatch(stageAysnNum);
                 System.out.println("事务需要等待："+ request.countDownLatch.getCount() +" 个异步handle处理完成");;
                 tsNum+=1;
                 if(tsNum>1){

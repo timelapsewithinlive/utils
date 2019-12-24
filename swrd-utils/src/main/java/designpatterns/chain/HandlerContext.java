@@ -19,7 +19,7 @@ public class HandlerContext {
     HandlerContext next;
     Handler handler;
     volatile Response response;
-    CountDownLatch countDownLatch;
+    //CountDownLatch countDownLatch;
 
 
     /**
