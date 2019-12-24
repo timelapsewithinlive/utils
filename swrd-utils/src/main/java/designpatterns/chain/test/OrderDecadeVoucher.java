@@ -15,9 +15,10 @@ public class OrderDecadeVoucher extends AbstractHandler implements AsynHandler {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }*/
-            //throw new RuntimeException("扣减优惠券异常");
+           throw new RuntimeException("扣减优惠券异常");
         }
-        Response resp = new Response(HandlerCurrentlyStatus.SUCCESS,"扣减优惠券成功");
+        Response resp = new Response(HandlerCurrentlyStatus.FAIL,"扣减优惠券失败");
+        //Response resp = new Response(HandlerCurrentlyStatus.SUCCESS,"扣减优惠券成功");
         System.out.println("扣减优惠券成功--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         return resp;
         //return resp;

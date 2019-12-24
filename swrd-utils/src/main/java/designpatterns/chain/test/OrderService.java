@@ -19,7 +19,7 @@ public class OrderService {
         DefaultPipeline pipeline = newPipeline(request);
         Response response = new Response(HandlerCurrentlyStatus.FAIL,null);
         try {
-            System.out.println("业务开始----------------------------------------");
+            System.out.println("业务开始---------------------------------------------------------");
             //组装该请求的调用链路
             pipeline.addLast(context.getBean(OrderValidatorHandler.class));
 
@@ -53,7 +53,7 @@ public class OrderService {
                 pipeline.fireReleaseSource();//释放资源暂时没实现
 
             }
-            System.out.println("业务结束----------------------------------------");
+            System.out.println("业务结束-----------------------------------------------------------");
         }
     }
 

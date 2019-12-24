@@ -82,6 +82,7 @@ public abstract class AbstractHandler implements Handler {
         }
     }
 
+    @Deprecated
     private boolean isTransactional(HandlerContext ctx,Request request){
         try {
             Method method = ctx.handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
