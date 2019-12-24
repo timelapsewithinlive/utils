@@ -69,11 +69,11 @@ public class HandlerContext {
                     Handler handler = ctx.handler();
                     //异步handler的判断逻辑
                     if (handler instanceof AsynHandler) {
-                        Future future = ctx.futureCollector.getFuture(ctx.handler.getClass());
+                        ChainFutureTask future = (ChainFutureTask)ctx.futureCollector.getFuture(ctx.handler.getClass());
                         //如果未获取到future,代表链路未执行到该异步handler
                         if (future != null) {
                             //超时，抛出异常，进行响应异常处理
-                            Response response = (Response) future.get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
+                            Response response = future.get(((AbstractHandler)ctx.handler).timeOut);
                             //如果未获取到结果，说明handler没有返回值
                             if (response == null) {
                                 throw new ExceptionWithoutTraceStack(handler.getClass().getSimpleName() + " 获取异步任务结果异常,业务侧未进行结果返回");

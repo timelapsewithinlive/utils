@@ -41,11 +41,18 @@ public class ChainFutureTask extends FutureTask implements ChainFuture<Response>
         super.set(o);
     }
 
-    @Override
-    public Response get(long timeout, TimeUnit unit){
+    public Response get(long timeout){
+
         Response response=null;
         try{
-            Object o = super.get(timeout, unit);
+            Object o=null;
+            if(Config.FUTURE_TIME_OUT_NEVER==timeout){
+                o=super.get();
+            }else if(Config.FUTURE_TIME_OUT_DEFAULT==timeout){
+                o= super.get(1, TimeUnit.NANOSECONDS);
+            }else{
+                o= super.get(timeout, TimeUnit.SECONDS);
+            }
             if(o!=null){
                 response=(Response) o;
             }else{

@@ -12,6 +12,8 @@ public abstract class AbstractHandler implements Handler {
     //依赖的其它handler处理结果，从futureCollector通过class的简单类名和线程id进行获取
     public Class[] denpencies;
 
+    public int timeOut=Config.FUTURE_TIME_OUT_DEFAULT;
+
     @PostConstruct
     public void init(){
         denpencies =null;//具体的值通过枚举值来取，或者配置文件等等。
@@ -163,7 +165,7 @@ public abstract class AbstractHandler implements Handler {
         if(context.response==null){
             FutureCollector futureCollector = context.futureCollector;
             Future<Response> future = futureCollector.getFuture(handler);
-            Response resp = future.get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
+            Response resp = future.get(timeOut, TimeUnit.SECONDS);
             if(resp==null){
                 throw new ExceptionWithoutTraceStack(handler.getSimpleName()+ "未返回结果");
             }else{
@@ -180,5 +182,11 @@ public abstract class AbstractHandler implements Handler {
 
     public abstract void setDenpencies(Class[] denpencies);
 
+    public int getTimeOut() {
+        return timeOut;
+    }
 
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
+    }
 }

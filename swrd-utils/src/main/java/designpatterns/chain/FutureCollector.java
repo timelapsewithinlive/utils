@@ -24,7 +24,8 @@ public class FutureCollector {
         return future;
     }
 
-    public boolean isDone(){
+    //判断所有的异步handler是否都成功执行
+   public boolean isDone(){
         if(handlerMapFuture==null||handlerMapFuture.size()<=0){
             return true;
         }
@@ -33,7 +34,7 @@ public class FutureCollector {
         //在事物方法开始前。任何一个异步handler，出现失败，就不往下传播
         //因为hashMap是无序的，必须要遍历所有，查找是否有异常的节点
         for (Map.Entry<String, Future> entry:entries){
-            Response response = ((ChainFutureTask) entry.getValue()).get(Config.FUTURE_TIME_OUT, TimeUnit.SECONDS);
+            Response response = ((ChainFutureTask) entry.getValue()).get(Config.FUTURE_TIME_OUT_DEFAULT);
             //true代表执行成功，继续向下传播
             if(HandlerCurrentlyStatus.SUCCESS.equals(response.getFlag())){
                 continue;
