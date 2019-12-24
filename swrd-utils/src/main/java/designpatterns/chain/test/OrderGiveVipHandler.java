@@ -4,7 +4,7 @@ import designpatterns.chain.*;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderGiveVipHandler extends AbstractHandler implements AsynHandler {
+public class OrderGiveVipHandler extends AbstractHandler implements DownGradeHandler {
 
     @Override
     @UnNecessary
