@@ -5,6 +5,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -104,7 +105,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
             }
         }else{
             Method method = handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
-            ChainTransactional annotation = method.getAnnotation(ChainTransactional.class);
+            ChainTransactional annotation =AnnotationUtils.findAnnotation(method,ChainTransactional.class);
             if(annotation!=null){
                 handlerContext.countDownLatch=new CountDownLatch(stageAysnNum);
                 request.countDownLatch=handlerContext.countDownLatch;

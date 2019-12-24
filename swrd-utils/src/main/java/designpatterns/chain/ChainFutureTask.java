@@ -30,8 +30,14 @@ public class ChainFutureTask extends FutureTask implements ChainFuture<Response>
     }
 
     @Override
+    protected void setException(Throwable t){
+        listener.listen(t);
+        super.setException(t);
+    }
+
+    @Override
     protected void set(Object o) {
-        listener.listen((Response)o);
+        listener.listen(o);
         super.set(o);
     }
 

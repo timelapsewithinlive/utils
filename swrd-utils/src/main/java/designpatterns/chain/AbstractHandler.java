@@ -1,6 +1,7 @@
 package designpatterns.chain;
 
 import exception.ExceptionWithoutTraceStack;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
@@ -30,20 +31,10 @@ public abstract class AbstractHandler implements Handler {
             if(CHAIN_THREAD_POOL.getActiveCount()<Config.THREAD_POOL_NUM){
 
                 RequestTask task = new RequestTask(ctx, request);
-                ChainFuture future = submit(task,new DefaultListener(ctx, request)) ;
+                ChainFuture future = submit(task,new DefaultListener(ctx, request));
+
                 //异步结果进行统一收集
-                try{
-                    Method method = ctx.handler.getClass().getDeclaredMethod(Constants.UN_NECESSARY_METHOD, Request.class);
-                    UnNecessary annotation = method.getAnnotation(UnNecessary.class);
-                    if(annotation==null){
-                        ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
-                    }
-                }catch (Exception e){
-                    Response resp = new Response(HandlerCurrentlyStatus.FAIL,null);
-                    resp.setCause(e);
-                    ctx.response=resp;
-                    return;
-                }
+                ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
             }else{
                 //如果没可用线程。用当前线程执行任务
                 ctx.response = ((AsynHandler) ctx.handler).asynHandle(request);
@@ -55,11 +46,14 @@ public abstract class AbstractHandler implements Handler {
 
         //同步handler处理方式
         if(ctx.handler instanceof SynHandler){
-             //事物方法开始前，如果前边的异步handler任何一个出现异常。都不向下传播
-             if(!isTransactional(ctx, request)){
+             //事物方法开始前，如果前边的异步handler任何一个出现异常。都不向下传播.。
+            //现在改为aop实现
+
+            /* if(!isTransactional(ctx, request)){
                  request.isPropagation.set(false);
                  return;
-             }
+             }*/
+
              ctx.response= ((SynHandler) ctx.handler).synHandle(request);
              //如果当前handler执行的结果不符合预期成功结果，那么直接改变责任链到尾部。其它后续的节点不执行
             //当前线程处理结果判断是否继续传播
