@@ -28,20 +28,23 @@ public abstract class AbstractHandler implements Handler {
 
         //如果是异步的，提交到线程池进行处理
         if(ctx.handler instanceof AsynHandler){
-
-            //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
-            if(CHAIN_THREAD_POOL.getActiveCount()<Config.THREAD_POOL_NUM){
-
-                RequestTask task = new RequestTask(ctx, request);
-                ChainFuture future = submit(task,new DefaultListener(ctx, request));
-
-                //异步结果进行统一收集
-                ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
+            if(ctx.handler instanceof DownGradeHandler){
+                CHAIN_SINGILE_THREAD_POOL.submit(new RequestTask(ctx, request));
             }else{
-                //如果没可用线程。用当前线程执行任务
-                ctx.response = ((AsynHandler) ctx.handler).asynHandle(request);
-                //当前线程处理结果判断是否继续传播
-                isPropagation(ctx, request);
+                //如果正在执行任务的线程小于cpu核心数的两倍，就提交到线程池。该方法有锁，可以去掉。执行拒绝策略
+                if(CHAIN_THREAD_POOL.getActiveCount()<Config.THREAD_POOL_NUM){
+
+                    RequestTask task = new RequestTask(ctx, request);
+                    ChainFuture future = submit(task,new DefaultListener(ctx, request));
+
+                    //异步结果进行统一收集
+                    ctx.futureCollector.putFuture(ctx.handler.getClass(),future);
+                }else{
+                    //如果没可用线程。用当前线程执行任务
+                    ctx.response = ((AsynHandler) ctx.handler).asynHandle(request);
+                    //当前线程处理结果判断是否继续传播
+                    isPropagation(ctx, request);
+                }
             }
 
         }
@@ -116,6 +119,8 @@ public abstract class AbstractHandler implements Handler {
         }
         ctx.response.setCause(e);
     }
+
+    public static ExecutorService CHAIN_SINGILE_THREAD_POOL = Executors.newSingleThreadExecutor();
 
     public static ChainThreadPoolExecutor CHAIN_THREAD_POOL = new ChainThreadPoolExecutor(Config.THREAD_POOL_NUM, Config.THREAD_POOL_NUM,Config.THREAD_POOL_KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS,new SynchronousQueue(), new RejectedExecutionHandler() {
         //线程池满时用当前线程处理任务

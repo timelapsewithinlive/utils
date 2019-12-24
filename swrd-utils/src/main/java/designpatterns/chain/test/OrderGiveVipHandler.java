@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 public class OrderGiveVipHandler extends AbstractHandler implements DownGradeHandler {
 
     @Override
-    @UnNecessary
     public Response asynHandle(Request request) {
         System.out.println("办理会员开始--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         if(true){

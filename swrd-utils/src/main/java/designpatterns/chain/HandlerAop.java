@@ -44,10 +44,6 @@ public class HandlerAop {
         Request request = ((Request)args[0]);
 
         UnNecessary annotation = AnnotationUtils.findAnnotation(method,UnNecessary.class);
-        if(annotation!=null){
-            System.out.println(method.getDeclaringClass().getName() + "不必要等待的异步handler直接将计数器减1");
-            request.countDownLatch.countDown();
-        }
 
         //业务放行
         Response response = (Response)pjp.proceed(args);

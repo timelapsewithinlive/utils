@@ -98,12 +98,10 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         handlerContext.setTail(tail);
 
         if(handler instanceof AsynHandler){
-          /*  Method method = handler.getClass().getDeclaredMethod(Constants.UN_NECESSARY_METHOD, Request.class);
-            UnNecessary annotation = method.getAnnotation(UnNecessary.class);
-            if(annotation==null){
+
+            if(handler instanceof DownGradeHandler){
                 stageAysnNum+=1;
-            }*/
-            stageAysnNum+=1;
+            }
         }else{
             Method method = handler.getClass().getDeclaredMethod(Constants.TRANSATIONAL_METHOD, Request.class);
             ChainTransactional annotation =AnnotationUtils.findAnnotation(method,ChainTransactional.class);
