@@ -176,6 +176,19 @@ public abstract class AbstractHandler implements Handler {
         }
     }
 
+    public AbstractHandler(Class[] denpencies) {
+        this.denpencies = denpencies;
+    }
+
+    public AbstractHandler(int timeOut) {
+        this.timeOut = timeOut;
+    }
+
+    public AbstractHandler(Class[] denpencies, int timeOut) {
+        this.denpencies = denpencies;
+        this.timeOut = timeOut;
+    }
+
     public Class[] getDenpencies() {
         return denpencies;
     }
