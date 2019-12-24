@@ -32,7 +32,7 @@ public class DefaultListener implements Listener{
             ctx.response=resp;
         }
 
-        try{
+        /*try{
             Method method = ctx.handler.getClass().getDeclaredMethod(Constants.UN_NECESSARY_METHOD, Request.class);
             UnNecessary annotation = method.getAnnotation(UnNecessary.class);
             if(annotation==null){
@@ -44,7 +44,7 @@ public class DefaultListener implements Listener{
             Response resp = new Response(HandlerCurrentlyStatus.FAIL,null);
             resp.setCause(e);
             ctx.response=resp;
-        }
+        }*/
 
     }
 

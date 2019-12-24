@@ -9,11 +9,11 @@ public class OrderDecadeVoucher extends AbstractHandler implements AsynHandler {
     public Response asynHandle(Request request) {
         System.out.println("扣减优惠券开始--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         if(true){
-            try {
+            /*try {
                 Thread.sleep(8000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
             //throw new RuntimeException("扣减优惠券异常");
         }
         Response resp = new Response(HandlerCurrentlyStatus.SUCCESS,"扣减优惠券成功");
