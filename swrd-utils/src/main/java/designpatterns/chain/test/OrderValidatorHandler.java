@@ -1,5 +1,6 @@
-package designpatterns.chain;
+package designpatterns.chain.test;
 
+import designpatterns.chain.*;
 import org.springframework.stereotype.Component;
 
 @Component

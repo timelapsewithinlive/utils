@@ -1,9 +1,10 @@
-package designpatterns.chain;
+package designpatterns.chain.test;
 
+import designpatterns.chain.*;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderGiveVipHandler extends  AbstractHandler implements AsynHandler {
+public class OrderGiveVipHandler extends AbstractHandler implements AsynHandler {
 
     @Override
     //@UnNecessary

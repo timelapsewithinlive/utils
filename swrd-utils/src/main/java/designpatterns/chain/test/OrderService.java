@@ -1,5 +1,10 @@
-package designpatterns.chain;
+package designpatterns.chain.test;
 
+import designpatterns.chain.DefaultPipeline;
+import designpatterns.chain.HandlerCurrentlyStatus;
+import designpatterns.chain.Request;
+import designpatterns.chain.Response;
+import designpatterns.chain.test.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
