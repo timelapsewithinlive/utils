@@ -7,7 +7,11 @@ import designpatterns.chain.Response;
 import designpatterns.chain.test.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.format.datetime.joda.DateTimeParser;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class OrderService {
@@ -19,7 +23,9 @@ public class OrderService {
         DefaultPipeline pipeline = newPipeline(request);
         Response response = new Response(HandlerCurrentlyStatus.FAIL,null);
         try {
-            System.out.println("业务开始---------------------------------------------------------");
+            Date date = new Date();
+            SimpleDateFormat time=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            System.out.println("业务开始---------------------------------------------------------"+ time.format(date));
             //组装该请求的调用链路
             pipeline.addLast(context.getBean(OrderValidatorHandler.class));
 
@@ -53,7 +59,9 @@ public class OrderService {
                 pipeline.fireReleaseSource();//释放资源暂时没实现
 
             }
-            System.out.println("业务结束-----------------------------------------------------------");
+            Date date2 = new Date();
+            SimpleDateFormat time=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            System.out.println("业务结束-----------------------------------------------------------"+ time.format(date2));
         }
     }
 

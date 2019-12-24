@@ -7,14 +7,17 @@ import org.springframework.stereotype.Component;
 public class OrderGiveVipHandler extends AbstractHandler implements AsynHandler {
 
     @Override
-    //@UnNecessary
+    @UnNecessary
     public Response asynHandle(Request request) {
         System.out.println("办理会员开始--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
-          /* try {
+        if(true){
+             /* try {
                 Thread.sleep(8000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }*/
+           throw new RuntimeException("办会员异常");
+        }
         Response resp = new Response(HandlerCurrentlyStatus.SUCCESS,"办理会员成功");
         System.out.println("办理会员成功--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         return resp;
