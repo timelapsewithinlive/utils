@@ -10,4 +10,6 @@ public class Config {
 
     public final static int FUTURE_TIME_OUT_DEFAULT =0;//-1为立马获取
 
+    public final static int TRANSACTION_WAIT_TIME_OUT=10;
+
 }

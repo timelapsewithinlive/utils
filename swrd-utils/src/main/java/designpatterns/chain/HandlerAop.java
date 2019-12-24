@@ -9,6 +9,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 @Aspect
 @Component
@@ -21,7 +22,8 @@ public class HandlerAop {
     public void transactionBefore(JoinPoint joinPoint) throws InterruptedException {
         System.out.println("事物方法开始通过aop校验前方异步handler是否执行完成");
         Object[] args = joinPoint.getArgs();
-        ((Request)args[0]).countDownLatch.await();
+        Request request = (Request) args[0];
+        request.countDownLatch.await(request.TransactionWaitTimeOut, TimeUnit.SECONDS);
     }
 
     @Pointcut("execution(* designpatterns.chain.AsynHandler.asynHandle*(..))")

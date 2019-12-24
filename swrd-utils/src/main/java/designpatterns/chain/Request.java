@@ -10,6 +10,8 @@ public class Request {
 
     public AtomicBoolean isPropagation =new AtomicBoolean(true);//handlerContext是否继续向下传播标识
 
+    public int TransactionWaitTimeOut=Config.TRANSACTION_WAIT_TIME_OUT;
+
     public CountDownLatch countDownLatch;
 
     private ContextCollector contextCollector;
