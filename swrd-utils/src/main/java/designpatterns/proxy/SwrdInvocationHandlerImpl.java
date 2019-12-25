@@ -33,10 +33,10 @@ public class SwrdInvocationHandlerImpl implements SwrdInvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         try {
-            System.out.println("Guitu动态代理，代理执行前...");
+            System.out.println("swrd动态代理增强开始执行啦...");
             Object invoke = null;
             invoke = method.invoke(this.target, args);
-            System.out.println("执行后...");
+            System.out.println("swrd动态代理增强执行结束啦...");
             return invoke;
         } catch (IllegalAccessException e) {
             e.printStackTrace();

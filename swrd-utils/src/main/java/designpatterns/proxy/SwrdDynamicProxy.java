@@ -18,11 +18,11 @@ public class SwrdDynamicProxy {
     /**
      * 生成的代理类的名称，这里为了方便就不生成了，直接字符串简单定义一下
      */
-    private static final String SRC_NAME = "$GuituProxy0";
+    private static final String SRC_NAME = "$SwrdProxy0";
     /**
      * 生成的代理类的包名，同样为了测试方便直接定义成字符串
      */
-    private static final String PACKAGE_NAME = "com.guitu18.study.proxy.guitu";
+    private static final String PACKAGE_NAME = "designpatterns.proxy";
 
     /**
      * 生成并返回一个代理对象
@@ -85,9 +85,9 @@ public class SwrdDynamicProxy {
                 }
             }
             sb.append("public class " + SRC_NAME + " implements " + interfaceStr.toString() + " {" + LN);
-            sb.append("    GuituInvocationHandler guituInvocationHandler;" + LN);
-            sb.append("    public " + SRC_NAME + "(GuituInvocationHandler guituInvocationHandler) { " + LN);
-            sb.append("        this.guituInvocationHandler = guituInvocationHandler;" + LN);
+            sb.append("    SwrdInvocationHandler swrdInvocationHandler;" + LN);
+            sb.append("    public " + SRC_NAME + "(SwrdInvocationHandler swrdInvocationHandler) { " + LN);
+            sb.append("        this.swrdInvocationHandler = swrdInvocationHandler;" + LN);
             sb.append("    }" + LN);
 
             /**
@@ -126,11 +126,11 @@ public class SwrdDynamicProxy {
                     // 判断方法是否有返回值
                     if (!"void".equals(returnTypeName)) {
                         sb.append("            " + returnTypeName +
-                                " invoke = (" + returnTypeName + ")this.guituInvocationHandler.invoke(this, method, new Object[]{"
+                                " invoke = (" + returnTypeName + ")this.swrdInvocationHandler.invoke(this, method, new Object[]{"
                                 + paramNameStr.toString() + "});" + LN);
                         sb.append("            return invoke;" + LN);
                     } else {
-                        sb.append("            this.guituInvocationHandler.invoke(this, method, null);" + LN);
+                        sb.append("            this.swrdInvocationHandler.invoke(this, method, null);" + LN);
                     }
                     sb.append("        }catch(Throwable e){" + LN);
                     sb.append("            e.printStackTrace();" + LN);
