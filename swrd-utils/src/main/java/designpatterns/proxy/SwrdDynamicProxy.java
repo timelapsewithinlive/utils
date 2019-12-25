@@ -148,6 +148,7 @@ public class SwrdDynamicProxy {
             System.out.println(path);
             File file = new File(path + SRC_NAME + ".java");
             FileWriter fw = new FileWriter(file);
+            System.out.println(sb.toString());
             fw.write(sb.toString());
             fw.flush();
             fw.close();
