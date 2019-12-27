@@ -26,11 +26,13 @@ public class AttachThread extends Thread {
             while (true) {
                 listAfter = VirtualMachine.list();
                 for (VirtualMachineDescriptor vmd : listAfter) {
-                    if (!listBefore.contains(vmd)) {
+                    if(vmd.displayName().equals("instrument.TestMainInJar")){
+                    //if (!listBefore.contains(vmd)) {
                         // 如果 VM 有增加，我们就认为是被监控的 VM 启动了
                         // 这时，我们开始监控这个 VM
                         vm = VirtualMachine.attach(vmd);
                         vm.loadAgent(jar);
+                        System.out.println("替换成功");
                         break;
                     }
                 }
@@ -42,11 +44,13 @@ public class AttachThread extends Thread {
             }
             vm.detach();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
     public static void main(String[] args) throws InterruptedException {
-        new AttachThread("E:\\work\\code\\secoo-open\\asmtools-master\\out\\artifacts\\instrument\\instrument.jar", VirtualMachine.list()).start();
+        //new AttachThread("E:\\work\\code\\secoo-open\\asmtools-master\\out\\artifacts\\instrument\\instrument.jar", VirtualMachine.list()).start();
+        new AttachThread("F:\\code\\code-github\\utils\\out\\artifacts\\swrd-example.jar", VirtualMachine.list()).start();
+
     }
 }

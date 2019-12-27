@@ -5,7 +5,7 @@ public class TestMainInJar {
         System.out.println(new TransClass().getNumber());
         int count = 0;
         while (true) {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
             count++;
             int number = new TransClass().getNumber();
             System.out.println(number);

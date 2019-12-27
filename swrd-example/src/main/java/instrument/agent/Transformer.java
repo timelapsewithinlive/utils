@@ -10,7 +10,7 @@ import java.security.ProtectionDomain;
 
 public class Transformer implements ClassFileTransformer {
 
-    public static final String classNumberReturns2 = "E:\\work\\code\\secoo-open\\asmtools-master\\src\\instrument\\TransClass2.class";
+    public static final String classNumberReturns2 = "F:\\TransClass.class";
 
     public static byte[] getBytesFromFile(String fileName) {
         try {
