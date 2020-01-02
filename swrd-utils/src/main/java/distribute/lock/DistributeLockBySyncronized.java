@@ -56,16 +56,18 @@ public class DistributeLockBySyncronized {
         }
         String currentValueStr = jedis.get(key);
         String threadMark = KEY_MAP_THREAD_MARK.get(key);
-        String[] split = currentValueStr.split(seperator);
-        if (currentValueStr != null && (split[1]+seperator+split[2]+"").equals(threadMark) ) {
-            jedis.del(key);
-            return true;
+        if(currentValueStr != null){
+            String[] split = currentValueStr.split(seperator);
+            if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
+                jedis.del(key);
+                return true;
+            }
         }
         return  false;
     }
 
     //业务执行时，保障当前机器的加锁和释放锁在一个事物里执行，事物执行结束前，当前机器的其它线程无法参与
-    public synchronized  void bussiness(){
+    public synchronized  void bussiness(){//关键字，貌似不需要，显得多余。已经用uuid做区分了
         try{
             boolean lock = lock("aaa");
             if(lock){
