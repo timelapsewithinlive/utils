@@ -17,8 +17,17 @@ public class DistributeLockBySyncronized {
     private static final long expireMsecs = 1000*60;
     private static volatile Map<String,String> KEY_MAP_THREAD_MARK = new ConcurrentHashMap();//防止hashmap在多线程放置元素的过程中产生扩容死链
 
+    private String key;
+
+    public DistributeLockBySyncronized() {
+    }
+
+    public DistributeLockBySyncronized(String key) {
+        this.key = key;
+    }
+
     //获取锁
-    public boolean lock(String key)  {
+    public boolean lock()  {
         try{
             if(StringUtils.isBlank(key)){
                 key=distributeLock;
@@ -50,7 +59,7 @@ public class DistributeLockBySyncronized {
     }
 
     //释放锁
-    public boolean unlock(String key) {
+    public boolean unlock() {
         if(StringUtils.isBlank(key)){
             key=distributeLock;
         }
@@ -69,7 +78,7 @@ public class DistributeLockBySyncronized {
     //业务执行时，保障当前机器的加锁和释放锁在一个事物里执行，事物执行结束前，当前机器的其它线程无法参与
     public synchronized  void bussiness(){//关键字，貌似不需要，显得多余。已经用uuid做区分了
         try{
-            boolean lock = lock("aaa");
+            boolean lock = lock();
             if(lock){
                 //业务
             }
@@ -77,7 +86,7 @@ public class DistributeLockBySyncronized {
             LOGGER.error("业务执行异常：",e);
 
         }finally {
-            boolean unlock = unlock("aaa");
+            boolean unlock = unlock();
             if(!unlock){
                 //未释放锁成功，走回滚或者其它补偿逻辑
             }
