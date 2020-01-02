@@ -27,17 +27,17 @@ public class DistributeLockBySyncronized {
             String hostAddress = address.getHostAddress();//192.168.0.121
             String threadMark=hostAddress+UUID.randomUUID();
             long expires = System.currentTimeMillis() + expireMsecs + 1;
-            Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress);
+            Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress+seperator+threadMark);
             if(setnx>0){
-                KEY_MAP_THREAD_MARK.put(key,threadMark);
+                KEY_MAP_THREAD_MARK.put(key,hostAddress+seperator+threadMark);
                 return  true;
             }
 
             String currentValueStr = jedis.get(key);
             if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {
-                String oldValueStr = jedis.getSet(key,expires+ seperator + threadMark);//存在两个线程同时运行到这里。分别先后修改key值得情况。会放入其它线程的UUID标识。释放锁，就会无法释放，必须等待锁超时
+                String oldValueStr = jedis.getSet(key,expires+ seperator + hostAddress+seperator+ threadMark);//存在两个线程同时运行到这里。分别先后修改key值得情况。会放入其它线程的UUID标识。释放锁，就会无法释放，必须等待锁超时
                 if (oldValueStr != null && oldValueStr.equals(currentValueStr)) {
-                    jedis.set(key,currentValueStr);//38 到 40行整个算一个cas操作
+                    jedis.set(key,expires+ seperator + hostAddress+seperator+ threadMark);//38 到 40行整个算一个cas操作
                     KEY_MAP_THREAD_MARK.put(key,threadMark);
                     return true;
                 }
@@ -55,8 +55,10 @@ public class DistributeLockBySyncronized {
         }
         String currentValueStr = jedis.get(key);
         String threadMark = KEY_MAP_THREAD_MARK.get(key);
-        if (currentValueStr != null && (currentValueStr.split(seperator)[1]+"").equals(threadMark) ) {
+        String[] split = currentValueStr.split(seperator);
+        if (currentValueStr != null && (split[1]+seperator+split[2]+"").equals(threadMark) ) {
             jedis.del(key);
+            return true;
         }
         return  false;
     }
