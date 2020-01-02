@@ -33,6 +33,7 @@ public class DistributeLockBySyncronized {
                 return  true;
             }
 
+            //超时检测，释放掉其它线程设置的超时的锁
             String currentValueStr = jedis.get(key);
             if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {
                 String oldValueStr = jedis.getSet(key,expires+ seperator + hostAddress+seperator+ threadMark);//存在两个线程同时运行到这里。分别先后修改key值得情况。会放入其它线程的UUID标识。释放锁，就会无法释放，必须等待锁超时
