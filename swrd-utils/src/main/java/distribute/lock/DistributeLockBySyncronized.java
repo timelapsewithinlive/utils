@@ -35,7 +35,7 @@ public class DistributeLockBySyncronized {
 
             String currentValueStr = jedis.get(key);
             if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {
-                String oldValueStr = jedis.getSet(key,expires+ seperator + threadMark);//存在两个线程同时运行到这里。分别先后修改key值得情况。会放入其它线程的UUID标识。释放锁，就会无法释放
+                String oldValueStr = jedis.getSet(key,expires+ seperator + threadMark);//存在两个线程同时运行到这里。分别先后修改key值得情况。会放入其它线程的UUID标识。释放锁，就会无法释放，必须等待锁超时
                 if (oldValueStr != null && oldValueStr.equals(currentValueStr)) {
                     KEY_MAP_THREAD_MARK.put(key,threadMark);
                     return true;
