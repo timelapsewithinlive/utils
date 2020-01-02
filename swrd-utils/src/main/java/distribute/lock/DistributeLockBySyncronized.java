@@ -72,6 +72,7 @@ public class DistributeLockBySyncronized {
                 String watch = jedis.watch(key);
                 Transaction multi = jedis.multi();
                 jedis.del(key);
+                multi.exec();
                 return true;
             }
         }
