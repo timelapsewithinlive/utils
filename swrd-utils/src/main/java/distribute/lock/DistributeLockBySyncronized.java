@@ -71,8 +71,9 @@ public class DistributeLockBySyncronized {
             if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
                 String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
                 Transaction multi = jedis.multi();
-                jedis.del(key);
+                multi.del(key);
                 multi.exec();
+                jedis.unwatch();
                 return true;
             }
         }
