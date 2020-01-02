@@ -76,7 +76,7 @@ public class DistributeLockBySyncronized {
     }
 
     //业务执行时，保障当前机器的加锁和释放锁在一个事物里执行，事物执行结束前，当前机器的其它线程无法参与
-    public synchronized  void bussiness(){//防止本机内A线程准备del锁的时候，其它线程getSet锁。会导致本机内线程互删锁操作
+    public synchronized  void bussiness(){//防止本机内A线程准备del锁的时候，其它线程getSet锁。会导致本机内线程互删锁操作。但是分布式中还存在此问题
         try{
             boolean lock = lock();
             if(lock){
