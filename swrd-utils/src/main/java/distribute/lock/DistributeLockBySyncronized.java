@@ -35,7 +35,7 @@ public class DistributeLockBySyncronized {
 
             String currentValueStr = jedis.get(key);
             if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {
-                String oldValueStr = jedis.getSet(key,expires+ seperator + threadMark);
+                String oldValueStr = jedis.getSet(key,expires+ seperator + threadMark);//存在两个线程同时运行到这里。分别先后修改key值得情况
                 if (oldValueStr != null && oldValueStr.equals(currentValueStr)) {
                     return true;
                 }
