@@ -3,6 +3,7 @@ package distribute.lock;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Transaction;
 
 import java.net.InetAddress;
 import java.util.Map;
@@ -68,6 +69,8 @@ public class DistributeLockBySyncronized {
         if(currentValueStr != null){
             String[] split = currentValueStr.split(seperator);
             if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
+                String watch = jedis.watch(key);
+                Transaction multi = jedis.multi();
                 jedis.del(key);
                 return true;
             }
