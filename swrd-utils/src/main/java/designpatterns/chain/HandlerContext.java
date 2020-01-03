@@ -114,7 +114,9 @@ public class HandlerContext {
                 ctx.response=new Response(HandlerCurrentlyStatus.FAIL,null);
                 ctx.response.setCause(e);
                 ctx.handler.exceptionCaught(ctx, e);
-                if(ctx.next!=null){
+                if(ctx.next!=null){//不等于空，证明不是尾节点
+                    ctx.next=ctx.tail;
+                    ctx.tail.prev=ctx;
                     ctx.next.response=ctx.response;
                 }
             }
