@@ -8,8 +8,6 @@ package distribute.lock;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
@@ -19,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DistributeLockByWatch {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DistributeLockBySyncronized.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DistributeLockByGetSet.class);
 	private static final redis.clients.jedis.Jedis jedis = new redis.clients.jedis.Jedis("192.168.155.130", 6379);
 	private static final String distributeLock="distribute_lock";
 	private static final String seperator="_";
@@ -100,7 +98,7 @@ public class DistributeLockByWatch {
 	}
 
 	//业务执行时，保障当前机器的加锁和释放锁在一个事物里执行，事物执行结束前，当前机器的其它线程无法参与
-	public synchronized  void bussiness(){//防止本机内A线程准备del锁的时候，其它线程getSet锁。会导致本机内线程互删锁操作。但是分布式中还存在此问题
+	public synchronized void bussiness(){//防止本机内A线程准备del锁的时候，其它线程getSet锁。会导致本机内线程互删锁操作。但是分布式中还存在此问题
 		try{
 			boolean lock = lock();
 			if(lock){

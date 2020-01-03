@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DistributeLockBySyncronized {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DistributeLockBySyncronized.class);
+public class DistributeLockByGetSet {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DistributeLockByGetSet.class);
     private static final redis.clients.jedis.Jedis jedis = new redis.clients.jedis.Jedis("192.168.155.130", 6379);
     private static final String distributeLock="distribute_lock";
     private static final String seperator="_";
@@ -20,10 +20,10 @@ public class DistributeLockBySyncronized {
 
     private String key;
 
-    public DistributeLockBySyncronized() {
+    public DistributeLockByGetSet() {
     }
 
-    public DistributeLockBySyncronized(String key) {
+    public DistributeLockByGetSet(String key) {
         this.key = key;
     }
 
@@ -99,7 +99,7 @@ public class DistributeLockBySyncronized {
     }
 
     public static void main(String[ ] args){
-        DistributeLockBySyncronized distributeLockBySyncronized = new DistributeLockBySyncronized();
+        DistributeLockByGetSet distributeLockBySyncronized = new DistributeLockByGetSet();
         distributeLockBySyncronized.bussiness();
     }
 }
