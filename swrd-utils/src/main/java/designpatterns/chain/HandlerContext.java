@@ -90,6 +90,7 @@ public class HandlerContext {
                             ctx.handler.returndResponse(ctx, request);
                         }
                     }else{
+                        //这里非异步节点为空时其实不向下传播也可以
                         ctx.handler.returndResponse(ctx, request);
                     }
                 }else if(!request.isPropagation.get()&& HandlerCurrentlyStatus.SUCCESS.equals(ctx.response.getFlag())){
