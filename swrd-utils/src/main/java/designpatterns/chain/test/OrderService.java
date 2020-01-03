@@ -34,7 +34,8 @@ public class OrderService {
                 pipeline.addLast(context.getBean(OrderGiveVipHandler.class))
                         .addLast(context.getBean(OrderDecadeInventoryHandler.class))
                         .addLast(context.getBean(OrderDecadeVoucher.class))
-                        .addLast(context.getBean(OrderCommitHandler.class));
+                        .addLast(context.getBean(OrderCommitHandler.class))
+                        .addLast(context.getBean(OrderSendMqHandler.class));
             }
 
             pipeline.fireReceiveRequest()//执行请求
