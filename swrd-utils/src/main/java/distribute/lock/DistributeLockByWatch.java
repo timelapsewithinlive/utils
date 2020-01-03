@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DistributeLockByWatch {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DistributeLockByGetSet.class);
 	private static final redis.clients.jedis.Jedis jedis = new redis.clients.jedis.Jedis("192.168.155.130", 6379);
-	private static final String distributeLock="distribute_lock";
+	private static final String distributeLock="swrd_distribute_lock";
 	private static final String seperator="_";
 	private static final long expireMsecs = 1000*60;
 	private static volatile Map<String,String> KEY_MAP_THREAD_MARK = new ConcurrentHashMap();//防止hashmap在多线程放置元素的过程中产生扩容死链

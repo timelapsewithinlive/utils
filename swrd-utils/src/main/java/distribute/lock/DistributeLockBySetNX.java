@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DistributeLockBySetNX {
 	static redis.clients.jedis.Jedis jedis = new redis.clients.jedis.Jedis("192.168.155.130", 6379);
 	public static void task() throws Exception{
-		String distributeLock="distribute_lock";
+		String distributeLock="swrd_distribute_lock";
 		Long timesOut= System.currentTimeMillis()+900*1000;
 		Long now =System.currentTimeMillis();
 		try{
