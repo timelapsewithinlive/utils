@@ -64,6 +64,7 @@ public class DistributeLockByGetSet {
         if(StringUtils.isBlank(key)){
             key=distributeLock;
         }
+        //假如watch得是旧值，那么会进入判断。如果超时被修改。监控得是新值。则不会进入if判断。所以应该不会存在安全问题
         String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
         String currentValueStr = jedis.get(key);
         String threadMark = KEY_MAP_THREAD_MARK.get(key);

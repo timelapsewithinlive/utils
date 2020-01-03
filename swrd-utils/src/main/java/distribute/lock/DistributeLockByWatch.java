@@ -50,9 +50,9 @@ public class DistributeLockByWatch {
 			}
 
 			//超时检测，释放掉其它线程设置的超时的锁
+			String watch = jedis.watch(key);
 			String currentValueStr = jedis.get(key);
 			if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {
-				String watch = jedis.watch(key);
 				Transaction multi = jedis.multi();
 				multi.set(key,expires+ seperator + hostAddress+seperator+ threadMark);
 				multi.exec();
@@ -74,7 +74,8 @@ public class DistributeLockByWatch {
                 key=distributeLock;
             }
 
-            String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
+            //事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
+			String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
 			String currentValueStr = jedis.get(key);
             String threadMark = KEY_MAP_THREAD_MARK.get(key);
             if(currentValueStr != null){
