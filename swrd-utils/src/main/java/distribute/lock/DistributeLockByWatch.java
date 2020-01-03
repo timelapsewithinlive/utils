@@ -79,7 +79,7 @@ public class DistributeLockByWatch {
             String threadMark = KEY_MAP_THREAD_MARK.get(key);
             if(currentValueStr != null){
                 String[] split = currentValueStr.split(seperator);
-                if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
+                if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {//这个判断解决了超时或者宕机watch失效的情况
 					Transaction multi = jedis.multi();
                     multi.del(key);
                     multi.exec();//当A线程走到释放锁事物。B线程走到超时获取锁时。只能有一个成功。使用了事物互斥特性
