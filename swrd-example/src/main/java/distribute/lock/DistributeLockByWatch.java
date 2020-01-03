@@ -39,7 +39,7 @@ public class DistributeLockByWatch {
 				key=distributeLock;
 			}
 			String hostAddress = InetAddress.getLocalHost().getHostAddress();//获取的是本地的IP地址,作分布式实例之间得区分
-			String threadMark=hostAddress+UUID.randomUUID();//实例内，每次请求得唯一标识，也是避免本机并发得标识
+			String threadMark=UUID.randomUUID()+"";//实例内，每次请求得唯一标识，也是避免本机并发得标识
 			long expires = System.currentTimeMillis() + expireMsecs;
 			Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress+seperator+threadMark);//setNx得特点，不存在就设置成功，存在就设置失败
 			if(setnx>0){
