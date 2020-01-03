@@ -83,7 +83,7 @@ public class DistributeLockByWatch {
                 if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
 					Transaction multi = jedis.multi();
                     multi.del(key);
-                    multi.exec();
+                    multi.exec();//当A线程走到释放锁事物。B线程走到超时获取锁时。只能有一个成功。使用了事物互斥特性
                     return true;
                 }
             }
