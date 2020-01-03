@@ -35,6 +35,7 @@ public class HandlerAop {
     @Pointcut("execution(* designpatterns.chain.AsynHandler.asynHandle*(..))")
     public void unNecessaryPointcut() {};
 
+    //非降级的异步handler处理完成后必须将计数器减1
     @Around("unNecessaryPointcut()")
     public Object unNecessaryAround(ProceedingJoinPoint pjp) throws Throwable {
 
@@ -59,6 +60,7 @@ public class HandlerAop {
         return response;
     }
 
+    //异步handler执行出现异常后，也必须将计数器减1
     @AfterThrowing("unNecessaryPointcut()")
     public void unNecessaryAfterThrowing(JoinPoint pjp) throws Throwable {
         MethodSignature ms = (MethodSignature)pjp.getSignature();
