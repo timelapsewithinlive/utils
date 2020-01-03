@@ -74,7 +74,7 @@ public class DistributeLockByGetSet {
             String[] split = currentValueStr.split(seperator);
             if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {//redis中得值和本地值进行比较
                 Transaction multi = jedis.multi();
-                multi.del(key);
+                multi.del(key);//当master宕机后，A线程的watch机制失效，那么B线程的的setNx就会成功，就可能发生A删B锁的情况，怎么办?请指教
                 multi.exec();
                 jedis.unwatch();
                 return true;
