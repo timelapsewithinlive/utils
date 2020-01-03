@@ -91,7 +91,8 @@ public class HandlerContext {
                         }
                     }else{
                         //这里非异步节点为空时其实不向下传播也可以
-                        ctx.handler.returndResponse(ctx, request);
+                        //ctx.handler.returndResponse(ctx, request);
+                        throw new ExceptionWithoutTraceStack(handler.getClass().getName() + " 获取同步任务结果异常,业务侧未进行结果返回");
                     }
                 }else if(!request.isPropagation.get()&& HandlerCurrentlyStatus.SUCCESS.equals(ctx.response.getFlag())){
                     //如果节点不为空，但是传播标识为false,且节点执行成功。证明前边的节点出现过异常。一直找到出现异常的节点
