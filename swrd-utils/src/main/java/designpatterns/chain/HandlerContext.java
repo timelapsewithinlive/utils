@@ -36,13 +36,11 @@ public class HandlerContext {
      * handler异常时，不进行后续节点剔除。
      */
     public static void invokeReceivedRequest(HandlerContext ctx, Request request) {
-        if (ctx != null) {
             try {
                 ctx.handler().receivedRequest(ctx, request);
             } catch (Throwable e) {
                 ctx.handler().exceptionCaught(ctx, e);
             }
-        }
     }
 
     /**
@@ -63,7 +61,6 @@ public class HandlerContext {
      * 查找响应时，要考虑异步handler结果的获取
      */
     public static void invokeReturndResponse(HandlerContext ctx, Request request) {
-        if (ctx != null) {
             try {
                 if (ctx.response == null) {
                     Handler handler = ctx.handler();
@@ -118,7 +115,6 @@ public class HandlerContext {
                     ctx.next.response=ctx.response;
                 }
             }
-        }
     }
 
     /**
