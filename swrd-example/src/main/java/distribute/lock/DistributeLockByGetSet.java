@@ -75,6 +75,7 @@ public class DistributeLockByGetSet {
             if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {//redis中得值和本地值进行比较
                 Transaction multi = jedis.multi();
                 multi.del(key);//当master宕机后，A线程的watch机制失效，那么B线程的的setNx就会成功，就可能发生A删B锁的情况，怎么办?请指教
+                              //del用eval放入redis执行,并且在eval中必须要判断当前要删除的key值是不是跟自己设置的相等。eval每次根据key可以固定在一台机器上执行
                 multi.exec();
                 jedis.unwatch();
                 return true;

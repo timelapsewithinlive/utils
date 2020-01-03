@@ -81,6 +81,7 @@ public class DistributeLockByWatch {
                 if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
 					Transaction multi = jedis.multi();
                     multi.del(key);//当master宕机后，A线程的watch机制失效，那么B线程的的setNx就会成功，就可能发生A删B锁的情况，怎么办?请指教
+									//del用eval放入redis执行,并且在eval中必须要判断当前要删除的key值是不是跟自己设置的相等。eval每次根据key可以固定在一台机器上执行
                     multi.exec();//当A线程走到释放锁事物。B线程走到超时获取锁时。只能有一个成功。使用了事物互斥特性
                     return true;
                 }
