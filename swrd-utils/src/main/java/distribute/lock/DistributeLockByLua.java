@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * lua中实现逻辑和这个相似，只是为了减少网络请求
+ */
 public class DistributeLockByLua {
     private static final Logger LOGGER = LoggerFactory.getLogger(DistributeLockByLua.class);
     private static final redis.clients.jedis.Jedis jedis = new redis.clients.jedis.Jedis("192.168.155.130", 6379);
