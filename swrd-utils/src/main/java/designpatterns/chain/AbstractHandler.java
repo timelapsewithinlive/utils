@@ -73,7 +73,7 @@ public abstract class AbstractHandler implements Handler {
 
     private void isPropagation(HandlerContext ctx,Request request){
         if(ctx.response==null) {
-            throw new ExceptionWithoutTraceStack(ctx.handler.getClass().getSimpleName() +" 未返回结果，直接结束链路执行");
+            throw new ExceptionWithoutTraceStack(ctx.handler.getClass().getName() +" 未返回结果，直接结束链路执行");
         }
         if(HandlerCurrentlyStatus.FAIL.equals(ctx.response.getFlag())){
             if(ctx.next!=ctx.tail){

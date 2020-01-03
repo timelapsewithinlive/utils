@@ -89,10 +89,11 @@ public class HandlerContext {
                             //同步的话继续向前寻找最后一个执行的节点,因为前边执行请求时已经校验了同步handler返回结果不能为空。
                             ctx.handler.returndResponse(ctx, request);
                         }
-                    }else{
-                        //这里非异步节点为空时其实不向下传播也可以
-                        //ctx.handler.returndResponse(ctx, request);
+                    }else if(handler instanceof SynHandler){
                         throw new ExceptionWithoutTraceStack(handler.getClass().getName() + " 获取同步任务结果异常,业务侧未进行结果返回");
+                    }else{
+                        //这里如果是尾节点时继续向前寻找
+                        ctx.handler.returndResponse(ctx, request);
                     }
                 }else if(!request.isPropagation.get()&& HandlerCurrentlyStatus.SUCCESS.equals(ctx.response.getFlag())){
                     //如果节点不为空，但是传播标识为false,且节点执行成功。证明前边的节点出现过异常。一直找到出现异常的节点
@@ -110,8 +111,8 @@ public class HandlerContext {
                 }
             } catch (Throwable e) {
                 //future获取response超时，或者response为空会出现异常
-                //ctx.response=new Response(HandlerCurrentlyStatus.FAIL,null);
-                //ctx.response.setCause(e);
+                ctx.response=new Response(HandlerCurrentlyStatus.FAIL,null);
+                ctx.response.setCause(e);
                 ctx.handler.exceptionCaught(ctx, e);
                 if(ctx.next!=null){
                     ctx.next.response=ctx.response;
