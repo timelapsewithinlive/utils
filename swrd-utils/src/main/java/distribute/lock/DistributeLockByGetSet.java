@@ -30,25 +30,27 @@ public class DistributeLockByGetSet {
     //获取锁
     public boolean lock()  {
         try{
-            if(StringUtils.isBlank(key)){
+            if(StringUtils.isBlank(key)){//如果key为空使用默认得key
                 key=distributeLock;
             }
-            InetAddress address = InetAddress.getLocalHost();//获取的是本地的IP地址 //PC-20140317PXKX/192.168.0.121
-            String hostAddress = address.getHostAddress();//192.168.0.121
-            String threadMark=hostAddress+UUID.randomUUID();
-            long expires = System.currentTimeMillis() + expireMsecs + 1;
-            Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress+seperator+threadMark);
+            String hostAddress = InetAddress.getLocalHost().getHostAddress();//获取的是本地的IP地址,作分布式实例之间得区分
+            String threadMark=hostAddress+UUID.randomUUID();//实例内，每次请求得唯一标识，也是避免本机并发得标识
+            long expires = System.currentTimeMillis() + expireMsecs;
+            Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress+seperator+threadMark);//setNx得特点，不存在就设置成功，存在就设置失败
             if(setnx>0){
-                KEY_MAP_THREAD_MARK.put(key,hostAddress+seperator+threadMark);
+                KEY_MAP_THREAD_MARK.put(key,hostAddress+seperator+threadMark);//将本机本次请求获取得锁标识放入本地内存，释放锁时需要进行值比较，才能安全释放
                 return  true;
             }
 
             //超时检测，释放掉其它线程设置的超时的锁
             String currentValueStr = jedis.get(key);
-            if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {
-                String oldValueStr = jedis.getSet(key,expires+ seperator + hostAddress+seperator+ threadMark);//存在两个线程同时运行到这里。分别先后修改key值得情况。会放入其它线程的UUID标识。释放锁，就会无法释放，必须等待锁超时
+            if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {//判断其它已获取锁得线程是否已超时
+                String oldValueStr = jedis.getSet(key,expires+ seperator + hostAddress+seperator+ threadMark);//存在A、B两个线程同时运行到这里。分别先后修改key值得情况。
+                //因为会有A、B线程同时执行getSet得情况。所以只有一个线程可能判断成功。如果某个线程判断成功，则立马再次放入自己要设置得值。
+                //可能会存在再次set过于耗时得情况，导致还没set时，C线程也执行到了set。此时觉得整体放入lua会减少概率，毕竟lua是本地执行
+                //还有个办法就是设置http的超时远远小于锁的超时时间，不然真的没法玩儿了哦。
                 if (oldValueStr != null && oldValueStr.equals(currentValueStr)) {
-                    jedis.set(key,expires+ seperator + hostAddress+seperator+ threadMark);//49 到 51行整个算一个cas操作
+                    jedis.set(key,expires+ seperator + hostAddress+seperator+ threadMark);//getSet和二次set算是一个cas操作。
                     KEY_MAP_THREAD_MARK.put(key,threadMark);
                     return true;
                 }
@@ -64,13 +66,13 @@ public class DistributeLockByGetSet {
         if(StringUtils.isBlank(key)){
             key=distributeLock;
         }
-        //假如watch得是旧值，那么会进入判断。如果超时被修改。监控得是新值。则不会进入if判断。所以应该不会存在安全问题
+        //假如watch得是A得旧值，那么会进入判断。如果超时被B修改。监控得是新值。则不会进入if判断。所以应该不会存在安全问题
         String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
         String currentValueStr = jedis.get(key);
         String threadMark = KEY_MAP_THREAD_MARK.get(key);
         if(currentValueStr != null){
             String[] split = currentValueStr.split(seperator);
-            if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
+            if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {//redis中得值和本地值进行比较
                 Transaction multi = jedis.multi();
                 multi.del(key);
                 multi.exec();

@@ -36,16 +36,15 @@ public class DistributeLockByWatch {
 	//获取锁
 	public boolean lock()  {
 		try{
-			if(StringUtils.isBlank(key)){
+			if(StringUtils.isBlank(key)){//如果key为空使用默认得key
 				key=distributeLock;
 			}
-			InetAddress address = InetAddress.getLocalHost();//获取的是本地的IP地址 //PC-20140317PXKX/192.168.0.121
-			String hostAddress = address.getHostAddress();//192.168.0.121
-			String threadMark=hostAddress+ UUID.randomUUID();
-			long expires = System.currentTimeMillis() + expireMsecs + 1;
-			Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress+seperator+threadMark);
+			String hostAddress = InetAddress.getLocalHost().getHostAddress();//获取的是本地的IP地址,作分布式实例之间得区分
+			String threadMark=hostAddress+UUID.randomUUID();//实例内，每次请求得唯一标识，也是避免本机并发得标识
+			long expires = System.currentTimeMillis() + expireMsecs;
+			Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress+seperator+threadMark);//setNx得特点，不存在就设置成功，存在就设置失败
 			if(setnx>0){
-				KEY_MAP_THREAD_MARK.put(key,hostAddress+seperator+threadMark);
+				KEY_MAP_THREAD_MARK.put(key,hostAddress+seperator+threadMark);//将本机本次请求获取得锁标识放入本地内存，释放锁时需要进行值比较，才能安全释放
 				return  true;
 			}
 
@@ -74,7 +73,7 @@ public class DistributeLockByWatch {
                 key=distributeLock;
             }
 
-            //事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
+			//假如watch得是A得旧值，那么会进入判断。如果超时被B修改。监控得是新值。则不会进入if判断。所以应该不会存在安全问题
 			String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
 			String currentValueStr = jedis.get(key);
             String threadMark = KEY_MAP_THREAD_MARK.get(key);
