@@ -5,8 +5,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderSendMqHandler extends AbstractHandler implements DownGradeHandler {
+//public class OrderSendMqHandler extends AbstractHandler implements AsynHandler {
+
 
     @Override
+    //@UnNecessary
     public Response asynHandle(Request request) {
         System.out.println("下单成功发送MQ开始--线程ID："+Thread.currentThread().getId()+"--当前时间: "+System.currentTimeMillis());
         if(true){

@@ -47,7 +47,7 @@ public class OrderService {
             }else{
                 if(response.getCause()!=null){
                     StackTraceElement[] stackTrace = response.getCause().getStackTrace();
-                    response.getCause().printStackTrace();
+                    //response.getCause().printStackTrace();
                 }
                System.out.println(response);
             }
