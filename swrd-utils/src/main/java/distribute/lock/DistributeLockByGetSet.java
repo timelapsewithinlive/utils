@@ -64,12 +64,12 @@ public class DistributeLockByGetSet {
         if(StringUtils.isBlank(key)){
             key=distributeLock;
         }
+        String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
         String currentValueStr = jedis.get(key);
         String threadMark = KEY_MAP_THREAD_MARK.get(key);
         if(currentValueStr != null){
             String[] split = currentValueStr.split(seperator);
             if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
-                String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
                 Transaction multi = jedis.multi();
                 multi.del(key);
                 multi.exec();
