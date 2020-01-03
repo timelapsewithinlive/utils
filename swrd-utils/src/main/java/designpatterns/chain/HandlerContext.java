@@ -112,7 +112,7 @@ public class HandlerContext {
                 //future获取response超时，或者response为空会出现异常
                 ctx.response=new Response(HandlerCurrentlyStatus.FAIL,null);
                 ctx.response.setCause(e);
-                ctx.handler().exceptionCaught(ctx, e);
+                ctx.handler.exceptionCaught(ctx, e);
                 if(ctx.next!=null){
                     ctx.next.response=ctx.response;
                 }
