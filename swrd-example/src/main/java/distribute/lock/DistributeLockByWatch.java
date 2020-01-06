@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Transaction;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,10 +42,13 @@ public class DistributeLockByWatch {
 			}
 			String hostAddress = InetAddress.getLocalHost().getHostAddress();//获取的是本地的IP地址,作分布式实例之间得区分
 			String threadMark=UUID.randomUUID()+"";//实例内，每次请求得唯一标识，也是避免本机并发得标识
-			long expires = System.currentTimeMillis() + expireMsecs;
-			Long setnx = jedis.setnx(key,  expires+ seperator + hostAddress+seperator+threadMark);//setNx得特点，不存在就设置成功，存在就设置失败
+            long expires = System.currentTimeMillis() + expireMsecs;//过期时间
+
+            String value = expires+seperator+hostAddress+seperator+threadMark;//前三者拼接串
+
+            Long setnx = jedis.setnx(key,value);//setNx得特点，不存在就设置成功，存在就设置失败
 			if(setnx>0){
-				KEY_MAP_THREAD_MARK.put(key,hostAddress+seperator+threadMark);//将本机本次请求获取得锁标识放入本地内存，释放锁时需要进行值比较，才能安全释放
+				KEY_MAP_THREAD_MARK.put(key,value);//将本机本次请求获取得锁标识放入本地内存，释放锁时需要进行值比较，才能安全释放
 				return  true;
 			}
 
@@ -52,9 +57,9 @@ public class DistributeLockByWatch {
 			if (currentValueStr != null && Long.parseLong(currentValueStr.split(seperator)[0]) < System.currentTimeMillis()) {
 				String watch = jedis.watch(key);
 				Transaction multi = jedis.multi();
-				multi.set(key,expires+ seperator + hostAddress+seperator+ threadMark);
+				multi.set(key,value);
 				multi.exec();
-				KEY_MAP_THREAD_MARK.put(key,threadMark);
+				KEY_MAP_THREAD_MARK.put(key,value);
 				return true;
 			}
 		}catch (Exception e){
@@ -74,17 +79,26 @@ public class DistributeLockByWatch {
 
 			//假如watch得是A得旧值，那么会进入判断。如果超时被B修改。监控得是新值。则不会进入if判断。所以应该不会存在安全问题
 			String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
-			String currentValueStr = jedis.get(key);
-            String threadMark = KEY_MAP_THREAD_MARK.get(key);
-            if(currentValueStr != null){
-                String[] split = currentValueStr.split(seperator);
-                if ((split[1]+seperator+split[2]+"").equals(threadMark) ) {
-					Transaction multi = jedis.multi();
-                    multi.del(key);//当master宕机后，A线程的watch机制失效，那么B线程的的setNx就会成功，就可能发生A删B锁的情况，怎么办?请指教
-									//del用eval放入redis执行,并且在eval中必须要判断当前要删除的key值是不是跟自己设置的相等。eval每次根据key可以固定在一台机器上执行
-                    multi.exec();//当A线程走到释放锁事物。B线程走到超时获取锁时。只能有一个成功。使用了事物互斥特性
-                    return true;
-                }
+			String redisValueStr = jedis.get(key);
+            String localValueStr = KEY_MAP_THREAD_MARK.get(key);
+            if(redisValueStr != null&&redisValueStr.equals(localValueStr)){
+
+                Transaction multi = jedis.multi();
+                //multi.del(key);//当master宕机后，A线程的watch机制失效，那么B线程的的setNx就会成功，就可能发生A删B锁的情况，怎么办?请指教
+                //del用eval放入redis执行,并且在eval中必须要判断当前要删除的key值是不是跟自己设置的相等。eval每次根据key可以固定在一台机器上执行
+                String script="local key = KEYS[1]\r\n"+
+                        "local localValueStr = ARGV[1]\r\n"+
+                        "local redisValueStr = redis.call('get', key)\r\n"+
+                        "if redisValueStr == localValueStr then\r\n"+ //lua 字符串的比较 是检测字符串的hash是否一样来判断两个字符串是否相等
+                        "redis.call('del',key)\r\n"+
+                        "end";
+                List<String> keys = new ArrayList<>();
+                keys.add(key);
+                List<String> args = new ArrayList<>();
+                args.add(localValueStr);
+                multi.eval(script,keys,args);
+                multi.exec();//当A线程走到释放锁事物。B线程走到超时获取锁时。只能有一个成功。使用了事物互斥特性
+                return true;
             }
         }catch (Exception e){
             LOGGER.error("释放锁异常：",e);
