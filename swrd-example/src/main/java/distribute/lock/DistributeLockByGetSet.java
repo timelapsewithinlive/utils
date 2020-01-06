@@ -75,23 +75,23 @@ public class DistributeLockByGetSet {
         //假如watch得是A得旧值，那么会进入判断。如果超时被B修改。监控得是新值。则不会进入if判断。所以应该不会存在安全问题
         String watch = jedis.watch(key);//事务解决防止分布式中A线程准备del锁的时候，其它线程getSet锁。会导致线程互删锁操作
         String redisValueStr = jedis.get(key);
-        String threadMark = KEY_MAP_THREAD_MARK.get(key);
+        String localValueStr = KEY_MAP_THREAD_MARK.get(key);
 
-        if(redisValueStr != null&&redisValueStr.equals(threadMark)){ //redis中得值和本地值进行比较
+        if(redisValueStr != null&&redisValueStr.equals(localValueStr)){ //redis中得值和本地值进行比较
 
             Transaction multi = jedis.multi();
             //multi.del(key);//当master宕机后，A线程的watch机制失效，那么B线程的的setNx就会成功，就可能发生A删B锁的情况，怎么办?请指教
             //del用eval放入redis执行,并且在eval中必须要判断当前要删除的key值是不是跟自己设置的相等。eval每次根据key可以固定在一台机器上执行
             String script="local key = KEYS[1]\r\n"+
-                          "local threadMark = ARGV[1]\r\n"+
+                          "local localValueStr = ARGV[1]\r\n"+
                           "local redisValueStr = redis.call('get', key)\r\n"+
-                          "if redisValueStr == threadMark then\r\n"+
+                          "if redisValueStr == localValueStr then\r\n"+ //lua 字符串的比较 是检测字符串的hash是否一样来判断两个字符串是否相等
                             "redis.call('del',key)\r\n"+
                           "end";
             List<String> keys = new ArrayList<>();
             keys.add(key);
             List<String> args = new ArrayList<>();
-            args.add(threadMark);
+            args.add(localValueStr);
             multi.eval(script,keys,args);
             multi.exec();
             jedis.unwatch();
