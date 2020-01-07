@@ -21,9 +21,9 @@ public class NIOClient {
         private static ByteBuffer receivebuffer = ByteBuffer.allocate(BLOCK);
         /*服务器端地址*/
         private final static InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(
-                "localhost", 1111);
+                "localhost", 8888);
 
-        public static void main(String[] args) throws IOException {
+        public static void main(String[] args) throws IOException, InterruptedException {
             // TODO Auto-generated method stub
             // 打开socket通道
             SocketChannel socketChannel = SocketChannel.open();
@@ -77,6 +77,7 @@ public class NIOClient {
                         count=client.read(receivebuffer);
                         if(count>0){
                             receiveText = new String( receivebuffer.array(),0,count);
+                            Thread.sleep(5000);
                             System.out.println("客户端接受服务器端数据--:"+receiveText);
                             client.register(selector, SelectionKey.OP_WRITE);
                         }
@@ -89,6 +90,7 @@ public class NIOClient {
                         //将缓冲区各标志复位,因为向里面put了数据标志被改变要想从中读取数据发向服务器,就要复位
                         sendbuffer.flip();
                         client.write(sendbuffer);
+                        Thread.sleep(5000);
                         System.out.println("客户端向服务器端发送数据--："+sendText);
                         client.register(selector, SelectionKey.OP_READ);
                     }

@@ -1,4 +1,4 @@
-package jdk.socket.bio.nio;
+package jdk.socket.bio;
 
 import java.io.BufferedReader;
 import java.io.IOException;

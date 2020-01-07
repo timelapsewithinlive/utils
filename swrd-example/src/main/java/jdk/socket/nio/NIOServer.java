@@ -43,7 +43,7 @@ public class NIOServer {
         // 监听
         private void listen() throws IOException {
             while (true) {
-                // 选择一组键，并且相应的通道已经打开
+                // 选择一组键，并且相应的通道已经打开，该函数是阻塞的
                 selector.select();
                 // 返回此选择器的已选择键集。
                 Set<SelectionKey> selectionKeys = selector.selectedKeys();

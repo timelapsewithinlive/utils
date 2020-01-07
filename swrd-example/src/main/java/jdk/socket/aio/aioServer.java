@@ -3,7 +3,7 @@
 @date 2017年5月9日---下午4:52:18
 @explain:
 */
-package jdk.socket.bio.nio.aio;
+package jdk.socket.aio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,18 +20,18 @@ public class aioServer {
 	static AsynchronousChannelGroup group=null;
 	public static void main(String[] args) throws IOException {
 		 group  = AsynchronousChannelGroup.withFixedThreadPool(6, Executors.defaultThreadFactory());
-		final  AsynchronousServerSocketChannel   listener = AsynchronousServerSocketChannel.open(group);
+		final  AsynchronousServerSocketChannel   asynchronousServerSocketChannel = AsynchronousServerSocketChannel.open(group);
 		 InetSocketAddress hostAddress = new InetSocketAddress("127.0.0.1",  8888);
-		 listener.bind(hostAddress);
+        asynchronousServerSocketChannel.bind(hostAddress);
 		 final String att1 = "First connection";
-		Thread currentThread = Thread.currentThread();
-		 listener.accept(att1, new CompletionHandler<AsynchronousSocketChannel, Object>() {
+		 Thread currentThread = Thread.currentThread();
+        asynchronousServerSocketChannel.accept(att1, new CompletionHandler<AsynchronousSocketChannel, Object>() {
 			 @Override
 		     public void completed(AsynchronousSocketChannel  ch, Object att) {
 		         System.out.println("Completed: " + att);
 				 String msg = handleConnection(ch);
-		         att = "next completed";    
-		         listener.accept(att, this);
+		         att = "next completed";
+                 asynchronousServerSocketChannel.accept(att, this);
 		         System.out.println(Thread.currentThread().getName());
 		     }    
 		     @Override
