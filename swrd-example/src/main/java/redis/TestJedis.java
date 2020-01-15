@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestJedis {
+    static  Jedis jedis = new Jedis("192.168.99.100", 6379);
 
     public static void main(String[] args) throws IOException {
-        Jedis jedis = new Jedis("192.168.99.100", 6379);
       /*  jedis.set("test","哈哈哈");
         System.out.println(jedis.get("test"));*/
 
@@ -29,6 +29,9 @@ public class TestJedis {
         jedis.eval(script,keys,params);
         System.out.println(jedis.get("swrd"));
 
+    }
+
+    public static void 令牌桶限流(){
     }
 
 }
