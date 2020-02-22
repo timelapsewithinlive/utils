@@ -1,28 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.secoo.mall.price.manage.dao.mysql.mapper.ActivityUnusualProductMapper" >
+<mapper namespace="mybatis.Nacos" >
 
-  <select id="queryUnusualSkuInActivity" resultType="com.secoo.mall.price.manage.dao.mysql.po.PriceActivityProductEntity"  >
+  <select id="queryUnusualSkuInActivity" resultType="map"  >
     select
-    tup.product_id AS skuId,
-    tpa.activity_name AS activityName,
-    tpa.id AS activityId,
-    tpa.price_level as priceLevel,
-    tpa.activity_type as activityType,
-    tpa.quota_flag as quotaFlag
+      *
     from t_activity_unusual_product tup
-    LEFT JOIN t_price_activity tpa on tup.activity_id=tpa.id
-    WHERE tpa.status !=2 AND tpa.delete_flag = 0 AND tup.del_flag = 0
-      <if test="productIds != null and productIds.size >0">
-          and product_id in
-          <foreach collection="productIds" separator="," item="productId" open="(" close=")">
-              #{productId}
-          </foreach>
-      </if>
-      and (
-      (<![CDATA[  tpa.end_time >=  #{endTime} and tpa.start_time < #{endTime} ]]>)
-      or (<![CDATA[  tpa.end_time <  #{endTime} and tpa.end_time >= #{startTime} ]]>)
-      )
-      and tpa.end_time > NOW()
+
+    WHERE id=1
+
   </select>
 </mapper>

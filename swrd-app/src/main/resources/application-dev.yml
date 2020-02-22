@@ -43,14 +43,14 @@ spring:
       erp-master:
         driver-class-name: com.mysql.jdbc.Driver
         password: B6BRaCBErrOMvxDRKpRo
-        type: com.zaxxer.hikari.HikariDataSource
-        jdbc-url: jdbc:mysql://dev01-secooErpDB.master.com:3306/secooErpDB?useSSL=false&useUnicode=true&autoReconnect=true&characterEncoding=UTF-8&socketTimeout=30000&connectTimeout=3000
+        type: com.alibaba.druid.pool.DruidDataSource
+        jdbc-url: jdbc:mysql://dev01-secooErpDB.master.com:3306/secooErpDB?useSSL=false&useUnicode=true&characterEncoding=UTF-8&socketTimeout=30000&connectTimeout=3000
         username: kaifaDB_W
       erp-slave:
         driver-class-name: com.mysql.jdbc.Driver
         password: B6BRaCBErrOMvxDRKpRo
-        type: com.zaxxer.hikari.HikariDataSource
-        jdbc-url: jdbc:mysql://dev01-secooErpDB.slave.com:3306/secooErpDB?useSSL=false&useUnicode=true&autoReconnect=true&characterEncoding=UTF-8&socketTimeout=30000&connectTimeout=3000
+        type: com.alibaba.druid.pool.DruidDataSource
+        jdbc-url: jdbc:mysql://dev01-secooErpDB.slave.com:3306/secooErpDB?useSSL=false&useUnicode=true&characterEncoding=UTF-8&socketTimeout=30000&connectTimeout=3000
         username: kaifaDB_W
 
 
