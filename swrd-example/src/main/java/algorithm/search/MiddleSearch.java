@@ -1,4 +1,4 @@
-package algorithm.problem.search;
+package algorithm.search;
 
 public class MiddleSearch {
 

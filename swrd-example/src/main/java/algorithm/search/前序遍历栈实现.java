@@ -1,6 +1,7 @@
-package algorithm.problem.search;
+package algorithm.search;
 
 import java.util.Stack;
+
 
 public class 前序遍历栈实现 {
     public static TreeNode init(){

@@ -1,4 +1,4 @@
-package algorithm.problem.sort;
+package algorithm.sort;
 
 import com.alibaba.fastjson.JSON;
 

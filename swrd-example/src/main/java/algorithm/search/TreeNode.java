@@ -1,4 +1,4 @@
-package algorithm.problem.search;
+package algorithm.search;
 
 public class TreeNode {
     int val = 0;
