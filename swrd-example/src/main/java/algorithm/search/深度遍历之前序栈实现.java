@@ -2,8 +2,8 @@ package algorithm.search;
 
 import java.util.Stack;
 
-public class 中序遍历栈实现 {
 
+public class 深度遍历之前序栈实现 {
     public static TreeNode init(){
         TreeNode J = new TreeNode(8, null, null);
         TreeNode H = new TreeNode(4, null, null);
@@ -17,17 +17,18 @@ public class 中序遍历栈实现 {
         return A;  //返回根节点
     }
 
-    public static void inOrder_Stack(TreeNode root){//先序遍历
+    public static void preOrderStack(TreeNode root){//先序遍历
+
         Stack<TreeNode> stack = new Stack<TreeNode>();
         TreeNode node = root;
 
         while(node != null || stack.size()>0){//将所有左孩子压栈
-            if(node != null){
+            if(node != null){//压栈之前先访问
+                System.out.println(node.val);
                 stack.push(node);
                 node = node.left;
             }else{
                 node = stack.pop();
-                System.out.println(node.val);
                 node = node.right;
             }
         }
@@ -35,6 +36,6 @@ public class 中序遍历栈实现 {
 
     public static void main(String[] args){
         TreeNode init = init();
-        inOrder_Stack(init);
+        preOrderStack(init);
     }
 }
