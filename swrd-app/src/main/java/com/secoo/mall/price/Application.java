@@ -9,11 +9,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @ComponentScan("designpatterns,com.secoo.mall.price.controller")
-/*@SpringBootApplication(exclude = {
+@SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class
-})*/
-@MapperScan("mybatis")
-@SpringBootApplication
+})
+/*@MapperScan("mybatis")*/
+/*@SpringBootApplication*/
 @EnableAspectJAutoProxy
 public class Application {
 
