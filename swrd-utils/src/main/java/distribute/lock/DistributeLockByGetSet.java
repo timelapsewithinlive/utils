@@ -1,3 +1,4 @@
+/*
 package distribute.lock;
 
 import org.apache.commons.lang3.StringUtils;
@@ -123,3 +124,4 @@ public class DistributeLockByGetSet {
         distributeLockBySyncronized.bussiness();
     }
 }
+*/
