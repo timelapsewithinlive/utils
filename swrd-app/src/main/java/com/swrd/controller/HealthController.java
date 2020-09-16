@@ -1,4 +1,4 @@
-package com.secoo.mall.price.controller;
+package com.swrd.controller;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.GetMapping;

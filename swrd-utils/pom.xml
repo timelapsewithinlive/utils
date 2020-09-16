@@ -65,45 +65,12 @@
 
             <distributionManagement>
                 <repository>
-                    <id>secoo-dev</id>
-                    <name>secoo-dev-repository</name>
-                    <url>http://nexus.secoo.com:8081/nexus/content/repositories/secoo-hosted-dev/</url>
+                    <id>nexus-aliyun</id>
+                    <name>Nexus aliyun</name>
+                    <url>http://maven.aliyun.com/nexus/content/groups/public</url>
                 </repository>
             </distributionManagement>
         </profile>
-
-        <profile>
-            <id>test</id>
-            <properties>
-                <conf.dir>${project.basedir}/conf_test</conf.dir>
-                <ver_type>-SNAPSHOT</ver_type>
-            </properties>
-
-            <distributionManagement>
-                <repository>
-                    <id>secoo-test</id>
-                    <name>secoo-test-repository</name>
-                    <url>http://nexus.secoo.com:8081/nexus/content/repositories/secoo-hosted-test/</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-
-        <profile>
-            <id>pro</id>
-            <properties>
-                <conf.dir>${project.basedir}/conf_deploy</conf.dir>
-                <ver_type>.RELEASE</ver_type>
-            </properties>
-
-            <distributionManagement>
-                <repository>
-                    <id>secoo-pro</id>
-                    <name>secoo-pro-repository</name>
-                    <url>http://nexus.secoo.com:8081/nexus/content/repositories/secoo-hosted-pro/</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-
     </profiles>
 
 </project>

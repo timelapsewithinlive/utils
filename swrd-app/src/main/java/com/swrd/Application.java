@@ -1,14 +1,12 @@
-package com.secoo.mall.price;
+package com.swrd;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-@ComponentScan("designpatterns,com.secoo.mall.price.controller")
+@ComponentScan("designpatterns,com.swrd.controller")
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class
 })

@@ -1,4 +1,4 @@
-package com.secoo.mall.price.controller;
+package com.swrd.controller;
 
 import designpatterns.chain.test.OrderService;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +31,7 @@ public class ChainController implements  ApplicationContextAware {
         }
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.context = applicationContext;
     }
