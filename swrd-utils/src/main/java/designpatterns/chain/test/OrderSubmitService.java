@@ -5,6 +5,7 @@ import designpatterns.chain.HandlerCurrentlyStatus;
 import designpatterns.chain.Request;
 import designpatterns.chain.Response;
 import designpatterns.chain.test.*;
+import designpatterns.strategy.OrderStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.format.datetime.joda.DateTimeParser;
@@ -12,32 +13,22 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 @Service
-public class OrderService {
+public class OrderSubmitService implements RpcService{
     @Autowired
     private ApplicationContext context;
 
-    public Response mockedCreateOrder(int orderType) {
-        Request request = new Request();  // request一般是通过外部调用获取
-        DefaultPipeline pipeline = newPipeline(request);
-        Response response = new Response(HandlerCurrentlyStatus.FAIL,null);
+    @Override
+    public void doBussiness(Request request) {
+        Response  response =null;
+        DefaultPipeline pipeline =null;;
         try {
             Date date = new Date();
             SimpleDateFormat time=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             System.out.println("业务开始---------------------------------------------------------"+ time.format(date));
-            //组装该请求的调用链路
-            pipeline.addLast(context.getBean(OrderValidatorHandler.class));
-
-            //不同订单类型，组装不同调用链
-            if(orderType==0){
-                pipeline.addLast(context.getBean(OrderGiveVipHandler.class))
-                        .addLast(context.getBean(OrderDecadeInventoryHandler.class))
-                        .addLast(context.getBean(OrderDecadeVoucher.class))
-                        .addLast(context.getBean(OrderCommitHandler.class))
-                        .addLast(context.getBean(OrderSendMqHandler.class));
-            }
-
+            pipeline = OrderStrategy.Submit.of(request);
             pipeline.fireReceiveRequest()//执行请求
                     .fireReturnResponse();//获取响应
 
@@ -51,9 +42,7 @@ public class OrderService {
                 }
                System.out.println(response);
             }
-            return response;
         }catch (Exception e){
-            return null;
         }finally {
             //未获取到想要的业务结果。进行业务链回滚
             if(response.getData()==null){
@@ -64,9 +53,5 @@ public class OrderService {
             SimpleDateFormat time=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             System.out.println("业务结束-----------------------------------------------------------"+ time.format(date2));
         }
-    }
-
-    private DefaultPipeline newPipeline(Request request) {
-        return context.getBean(DefaultPipeline.class, request);
     }
 }

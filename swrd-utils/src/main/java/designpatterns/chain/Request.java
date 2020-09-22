@@ -1,5 +1,6 @@
 package designpatterns.chain;
 
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -22,6 +23,12 @@ public class Request {
 
     public void setContextCollector(ContextCollector contextCollector) {
         this.contextCollector = contextCollector;
+    }
+
+    public Map<String,Object> param;
+
+    public Request(Map<String, Object> param) {
+        this.param = param;
     }
 
 

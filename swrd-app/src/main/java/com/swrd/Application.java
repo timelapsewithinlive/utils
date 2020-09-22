@@ -6,12 +6,15 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-@ComponentScan("designpatterns,com.swrd.controller")
+@ComponentScan(basePackages = {
+        "designpatterns",
+        "com.swrd.controller",
+        "spring"
+})
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class
 })
 /*@MapperScan("mybatis")*/
-/*@SpringBootApplication*/
 @EnableAspectJAutoProxy
 public class Application {
 
