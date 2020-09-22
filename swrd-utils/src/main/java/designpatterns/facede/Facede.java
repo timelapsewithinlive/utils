@@ -15,9 +15,7 @@ import java.util.Map;
 public interface Facede {
 
     default void guide(Request request) {
-        String interfaceName = request.param.get("service") + "";
-        Command command = (Command)ApplicationContextHolder.getBean(interfaceName);
-        command.execute(request);
+
     }
 
 }
