@@ -1,9 +1,6 @@
 package jdk8.functions;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
-import static jdk8.functions.F.$;
+import static jdk8.functions.Func.$;
 
 /**
  * @Author honglin.xhl
