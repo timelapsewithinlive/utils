@@ -49,8 +49,6 @@ public class AttachThread extends Thread {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        //new AttachThread("E:\\work\\code\\secoo-open\\asmtools-master\\out\\artifacts\\instrument\\instrument.jar", VirtualMachine.list()).start();
         new AttachThread("F:\\code\\code-github\\utils\\out\\artifacts\\swrd-example.jar", VirtualMachine.list()).start();
-
     }
 }

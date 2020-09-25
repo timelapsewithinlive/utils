@@ -2,7 +2,8 @@
 @author zuohaoshibuliuming
 @date 2017年7月10日---下午6:12:02
 @explain:
-*/
+*//*
+
 package distribute.lock;
 
 import org.apache.commons.lang3.StringUtils;
@@ -132,3 +133,4 @@ public class DistributeLockByWatch {
 		distributeLockByWatch.bussiness();
 	}
 }
+*/
