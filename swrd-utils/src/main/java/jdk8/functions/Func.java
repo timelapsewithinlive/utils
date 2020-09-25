@@ -9,21 +9,28 @@ import java.util.function.Predicate;
 
 public class Func<T> {
 
+    private Object param;
+
     protected T target;
 
     protected Func(T target) {
         this.target = target;
     }
 
-    public static <T> Func<T> $(T target) {
+    public static <T> Func<T> f(T target) {
         return new Func<>(target);
     }
 
-    public <U> Func<U> $(Function<T, U> function) {
+    public  <T> Func<T> with(Object param) {
+        param = param;
+        return (Func<T>) this;
+    }
+
+    public <U> Func<U> f(Function<T, U> function) {
         return new Func<>(function.apply(target));
     }
 
-    public <P> Func<T> $(P param, BiFunction<T, P, T> function) {
+    public <P> Func<T> f(P param, BiFunction<T, P, T> function) {
         return new Func<>(function.apply(target, param));
     }
 
@@ -52,16 +59,39 @@ public class Func<T> {
         return this;
     }
 
-    public <P> Func<T> whenFunc(Function<T,P> func, boolean predicate, BiFunction<T, P, T> function) {
+    public <P> Func<T> when(Function<T,P> func, boolean predicate, BiFunction<T, P, T> function) {
         if (predicate) {
             target = function.apply(target,func.apply(target));
         }
         return this;
     }
 
-    public <P> Func<T> whenFuncDefault(Function<T,P> func, boolean predicate, BiConsumer<T, P> function) {
+    public <P> Func<T> whenDefault(Function<T,P> func, boolean predicate, BiConsumer<T, P> function) {
         if (predicate) {
              function.accept(target,func.apply(target));
+        }
+        return this;
+    }
+
+    /**
+     * 当断言predicate为true,绑定函数结果
+     *
+     * @param param
+     * @param predicate
+     * @param function
+     * @param <P>
+     * @return
+     */
+    public <P> Func<T> whenApply(P param, boolean predicate, Function<P, T> function) {
+        if (predicate) {
+            target = function.apply(param);
+        }
+        return this;
+    }
+
+    public <P> Func<T> whenApply( boolean predicate, Function<Object, T> function) {
+        if (predicate) {
+            target = function.apply(param);
         }
         return this;
     }
@@ -121,7 +151,7 @@ public class Func<T> {
         return when(param, param != null && param.intValue() <= 0, function);
     }
 
-    public T $() {
+    public T f() {
         return target;
     }
 

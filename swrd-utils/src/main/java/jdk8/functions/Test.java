@@ -1,6 +1,6 @@
 package jdk8.functions;
 
-import static jdk8.functions.Func.$;
+import static jdk8.functions.Func.f;
 
 /**
  * @Author honglin.xhl
@@ -11,11 +11,11 @@ public class Test {
 
     public static void main(String[] args) {
         Test test = new Test();
-        $(test).whenFuncDefault(Test::get,false,(f, p)->f.setMsg(p.getMsg()));
+        f(test).whenDefault(Test::get, false, (f, p) -> f.setMsg(p.getMsg()));
         System.out.println(test);
     }
 
-    public static Test get(Test test){
+    public static Test get(Test test) {
         return test;
     }
 
