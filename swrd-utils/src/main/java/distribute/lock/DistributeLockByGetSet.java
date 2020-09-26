@@ -89,9 +89,9 @@ public class DistributeLockByGetSet {
                           "if redisValueStr == localValueStr then\r\n"+ //lua 字符串的比较 是检测字符串的hash是否一样来判断两个字符串是否相等
                             "redis.call('del',key)\r\n"+
                           "end";
-            List<String> keys = new ArrayList<>();
+            List<String> keys = new ArrayList<String>();
             keys.add(key);
-            List<String> args = new ArrayList<>();
+            List<String> args = new ArrayList<String>();
             args.add(localValueStr);
             multi.eval(script,keys,args);
             multi.exec();
