@@ -3,6 +3,7 @@ package jdk8.functions;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -45,14 +46,14 @@ public class Func<T> {
         return when(param, (p) -> true, function);
     }
 
-    public <P> Func<T> batch(Collection<P> param, BiFunction<T, P, T> function) {
+    public <P> Func<T> batchBiF(Collection<P> param, BiFunction<T, P, T> function) {
         for (P p : param) {
             this.with(p, function);
         }
         return this;
     }
 
-    public <P> Func<T> batch(P[] param, BiFunction<T, P, T> function) {
+    public <P> Func<T> batchBiF(P[] param, BiFunction<T, P, T> function) {
         for (P p : param) {
             this.with(p, function);
         }
@@ -99,6 +100,22 @@ public class Func<T> {
     public <P> Func<T> whenApply( boolean predicate, Function<Object, T> function) {
         if (predicate) {
             target = function.apply(param);
+        }
+        return this;
+    }
+
+    /**
+     * 当断言predicate为true,绑定函数结果
+     *
+     * @param param
+     * @param predicate
+     * @param consumer
+     * @param <P>
+     * @return
+     */
+    public <P> Func<T> whenC(P param, boolean predicate, Consumer<P> consumer) {
+        if (predicate) {
+            consumer.accept(param);
         }
         return this;
     }
