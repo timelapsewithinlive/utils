@@ -1,4 +1,4 @@
-package com.sm.audit.commons.functions;
+package jdk8.functions;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -11,8 +11,6 @@ import java.util.function.Function;
  * @param <C>
  * @param <R>
  *
- * @author cb
- * @date 2019-06-03
  */
 @FunctionalInterface
 public interface TriFunction<A, B, C, R> {
