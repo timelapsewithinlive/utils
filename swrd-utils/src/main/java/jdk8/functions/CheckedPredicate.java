@@ -40,17 +40,8 @@ public interface CheckedPredicate<T> {
             try {
                 return test(t);
             } catch(Throwable x) {
-                return CheckedPredicateModule.sneakyThrow(x);
+                return Throws.sneakyThrow(x);
             }
         };
     }
-}
-
-interface CheckedPredicateModule {
-
-    @SuppressWarnings("unchecked")
-    static <T extends Throwable, R> R sneakyThrow(Throwable t) throws T {
-        throw (T) t;
-    }
-
 }

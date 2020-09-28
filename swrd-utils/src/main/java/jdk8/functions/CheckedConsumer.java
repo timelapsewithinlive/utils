@@ -43,17 +43,10 @@ public interface CheckedConsumer<T> {
             try {
                 accept(t);
             } catch(Throwable x) {
-                CheckedConsumerModule.sneakyThrow(x);
+                Throws.sneakyThrow(x);
             }
         };
     }
 }
 
-interface CheckedConsumerModule {
 
-    @SuppressWarnings("unchecked")
-    static <T extends Throwable, R> R sneakyThrow(Throwable t) throws T {
-        throw (T) t;
-    }
-
-}
