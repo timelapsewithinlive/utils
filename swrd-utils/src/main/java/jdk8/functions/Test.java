@@ -2,7 +2,7 @@ package jdk8.functions;
 
 import java.util.function.Consumer;
 
-import static jdk8.functions.Func.f;
+import static jdk8.functions.Functions.f;
 
 /**
  * @Author honglin.xhl
