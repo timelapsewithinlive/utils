@@ -13,12 +13,19 @@ public class Func<T> {
 
     protected T target;
 
+    public Func() {
+    }
+
     protected Func(T target) {
         this.target = target;
     }
 
     public static <T> Func<T> f(T target) {
         return new Func<>(target);
+    }
+
+    public static <T> Func<T> fn() {
+        return new Func();
     }
 
     public  <T> Func<T> with(Object param) {

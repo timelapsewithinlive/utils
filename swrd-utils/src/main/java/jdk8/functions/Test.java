@@ -1,5 +1,7 @@
 package jdk8.functions;
 
+import java.util.function.Consumer;
+
 import static jdk8.functions.Func.f;
 
 /**
@@ -9,10 +11,15 @@ import static jdk8.functions.Func.f;
 public class Test {
     private String msg;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Throwable {
         Test test = new Test();
         f(test).whenDefault(Test::get, false, (f, p) -> f.setMsg(p.getMsg()));
         System.out.println(test);
+
+        CheckedConsumer<Object> of = CheckedConsumer.of((x) -> { });
+        Consumer<Object> unchecked = of.unchecked();
+        unchecked.accept(333);
+        System.out.println(of);
     }
 
     public static Test get(Test test) {
