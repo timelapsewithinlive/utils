@@ -15,7 +15,7 @@ public interface Handler<T> extends Bussiness {
      * @param request
      */
     default void receivedRequest(HandlerContext ctx, Request request){
-        Object data = ctx.handler.doBussiness(request.getContent().toString(), request.getT());
+        Object data = ctx.handler().doBussiness(request.getContent().toString(), request.getT());
         ctx.response.setData(data);
         ctx.fireReceivedRequest(request);
     };

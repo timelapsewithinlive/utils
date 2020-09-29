@@ -1,11 +1,14 @@
 package designpatterns.chan2;
 
+import lombok.Data;
+
 /**
  * 责任链节点上下文
  *
  * @Author honglin.xhl
  * @Date 2020/8/28 12:30 下午
  */
+@Data
 public class HandlerContext {
 
     /**
@@ -31,7 +34,7 @@ public class HandlerContext {
     /**
      * 节点处理器
      */
-    Handler handler;
+    private Handler handler;
 
     /**
      * 响应封装体
@@ -111,7 +114,7 @@ public class HandlerContext {
      *
      * @return
      */
-    private Handler handler() {
+    public Handler handler() {
         return handler;
     }
 
