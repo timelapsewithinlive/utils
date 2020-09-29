@@ -6,8 +6,8 @@ package designpatterns.chan2;
  * @Author honglin.xhl
  * @Date 2020/8/28 12:13 下午
  */
-public interface Parser<T> {
-    default   T parse(String content,T target){
+public interface Bussiness<T> {
+    default   T doBussiness(String content,T target){
         return null;
     };
 }
