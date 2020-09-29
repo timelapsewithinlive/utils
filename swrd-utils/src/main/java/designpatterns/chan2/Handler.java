@@ -14,14 +14,18 @@ public interface Handler<T> extends Parser {
      * @param ctx
      * @param request
      */
-    void receivedRequest(HandlerContext ctx, Request request);
+    default void receivedRequest(HandlerContext ctx, Request request){
+        ctx.fireReceivedRequest(request);
+    };
 
     /**
      * 处理响应，从尾节点开始逐步寻找Response
      *
      * @param ctx
      */
-    void returndResponse(HandlerContext ctx);
+    default void returndResponse(HandlerContext ctx){
+        ctx.fireReturndResponse();
+    };
 
     /**
      * handler的业务异常和系统异常统一处理
@@ -29,6 +33,8 @@ public interface Handler<T> extends Parser {
      * @param ctx
      * @param e
      */
-    void exceptionCaught(HandlerContext ctx, Throwable e);
+    default void exceptionCaught(HandlerContext ctx, Throwable e){
+
+    };
 
 }

@@ -7,5 +7,7 @@ package designpatterns.chan2;
  * @Date 2020/8/28 12:13 下午
  */
 public interface Parser<T> {
-    public  T parse(String content,T target);
+    default   T parse(String content,T target){
+        return null;
+    };
 }

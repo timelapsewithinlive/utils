@@ -29,26 +29,7 @@ public class DefaultPipeline implements Pipeline {
     /**
      * 头尾节点默认处理器实现
      */
-    private static final Handler DEFAULT_HANDLER = new Handler() {
-        @Override
-        public Object parse(String content, Object target) {
-            return null;
-        }
-
-        @Override
-        public void receivedRequest(HandlerContext ctx, Request request) {
-            ctx.fireReceivedRequest(request);
-        }
-
-        @Override
-        public void returndResponse(HandlerContext ctx) {
-            ctx.fireReturndResponse();
-        }
-
-        @Override
-        public void exceptionCaught(HandlerContext ctx, Throwable e) {
-        }
-    };
+    private static final Handler DEFAULT_HANDLER = new Handler() {};
 
     /**
      * 构造器中初始化基链
