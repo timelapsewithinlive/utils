@@ -1,7 +1,7 @@
 package algorithm.trie;
 
 import com.google.common.collect.Maps;
-import com.sm.audit.commons.utils.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class Test {
         trie.build(hashMap);
 
         List<AhoCorasickDoubleArrayTrie.Hit<String>> hits = trie.parseText("汇川dsp和品牌dsp审核拒绝");
-        if (CollectionUtils.isNotEmpty(hits)) {
+        if (!CollectionUtils.isEmpty(hits)) {
             for (AhoCorasickDoubleArrayTrie.Hit<String> hit : hits) {
                 System.out.println(hit.value);
             }

@@ -6,3 +6,26 @@ spring:
     name: swrd
   profiles:
     active: dev
+  datasource:
+    config:
+      properties:
+        default:
+          driver-class-name: com.mysql.jdbc.Driver
+          type: com.zaxxer.hikari.HikariDataSource
+          minimum-idle: 10
+          maximum-pool-size: 40
+          auto-commit: true
+          idle-timeout: 30000
+          pool-name: HikariDataSource
+          max-lifetime: 1800000
+          connection-timeout: 30000
+          connection-test-query: SELECT 1
+          data-source-properties:
+            useUnicode: true
+            characterEncoding: UTF8
+            zeroDateTimeBehavior: round
+            autoReconnect: true
+        test:
+            username: admin
+            password: 3tdnk2Z1Ak
+            jdbc-url: jdbc:mysql://11.140.66.74:3308/material?autoReconnect=true

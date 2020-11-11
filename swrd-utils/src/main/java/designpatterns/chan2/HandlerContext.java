@@ -1,6 +1,5 @@
 package designpatterns.chan2;
 
-import com.sm.naudit.rpc.api.service.UshopQualificationConfigRpcService;
 import lombok.Data;
 
 /**
