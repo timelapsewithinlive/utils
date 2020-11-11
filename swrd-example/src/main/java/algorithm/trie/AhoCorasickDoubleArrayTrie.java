@@ -59,7 +59,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
     /**
      * outer value array
      */
-    protected V[] v;
+    protected V[] value;
 
     /**
      * the length of every key
@@ -104,7 +104,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
             int[] hitArray = output[currentState];
             if (hitArray != null) {
                 for (int hit : hitArray) {
-                    processor.hit(position - l[hit], position, v[hit]);
+                    processor.hit(position - l[hit], position, value[hit]);
                 }
             }
             ++position;
@@ -125,7 +125,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
             int[] hitArray = output[currentState];
             if (hitArray != null) {
                 for (int hit : hitArray) {
-                    boolean proceed = processor.hit(position - l[hit], position, v[hit]);
+                    boolean proceed = processor.hit(position - l[hit], position, value[hit]);
                     if (!proceed) {
                         return;
                     }
@@ -148,7 +148,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
             int[] hitArray = output[currentState];
             if (hitArray != null) {
                 for (int hit : hitArray) {
-                    processor.hit(position - l[hit], position, v[hit]);
+                    processor.hit(position - l[hit], position, value[hit]);
                 }
             }
             ++position;
@@ -169,7 +169,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
             int[] hitArray = output[currentState];
             if (hitArray != null) {
                 for (int hit : hitArray) {
-                    processor.hit(position - l[hit], position, v[hit], hit);
+                    processor.hit(position - l[hit], position, value[hit], hit);
                 }
             }
             ++position;
@@ -208,7 +208,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
             int[] hitArray = output[currentState];
             if (hitArray != null) {
                 int hitIndex = hitArray[0];
-                return new Hit<V>(position - l[hitIndex], position, v[hitIndex]);
+                return new Hit<V>(position - l[hitIndex], position, value[hitIndex]);
             }
             ++position;
         }
@@ -228,7 +228,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
         out.writeObject(fail);
         out.writeObject(output);
         out.writeObject(l);
-        out.writeObject(v);
+        out.writeObject(value);
     }
 
     /**
@@ -244,7 +244,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
         fail = (int[]) in.readObject();
         output = (int[][]) in.readObject();
         l = (int[]) in.readObject();
-        v = (V[]) in.readObject();
+        value = (V[]) in.readObject();
     }
 
     /**
@@ -256,7 +256,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
     public V get(String key) {
         int index = exactMatchSearch(key);
         if (index >= 0) {
-            return v[index];
+            return value[index];
         }
 
         return null;
@@ -270,7 +270,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
      * @return The value
      */
     public V get(int index) {
-        return v[index];
+        return value[index];
     }
 
     /**
@@ -380,7 +380,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
         int[] hitArray = output[currentState];
         if (hitArray != null) {
             for (int hit : hitArray) {
-                collectedEmits.add(new Hit<V>(position - l[hit], position, v[hit]));
+                collectedEmits.add(new Hit<V>(position - l[hit], position, value[hit]));
             }
         }
     }
@@ -535,7 +535,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
      * @return
      */
     public int size() {
-        return v.length;
+        return value.length;
     }
 
     /**
@@ -575,8 +575,8 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable {
         @SuppressWarnings("unchecked")
         public void build(Map<String, V> map) {
             // 把值保存下来
-            v = (V[]) map.values().toArray();
-            l = new int[v.length];
+            value = (V[]) map.values().toArray();
+            l = new int[value.length];
             Set<String> keySet = map.keySet();
             // 构建二分trie树
             addAllKeyword(keySet);
