@@ -34,6 +34,7 @@ public class TestRuntime {
 
         //添加钩子线程
         runtime.addShutdownHook(new Thread(new Runnable() {
+            @Override
             public void run() {
 
             }

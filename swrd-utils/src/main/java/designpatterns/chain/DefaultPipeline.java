@@ -47,6 +47,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     };
 
     //请求进来时进行一些初始化
+    @Override
     public void afterPropertiesSet() throws Exception {
         head = newContext(DEFAULT_HANDLER);
         tail = newContext(DEFAULT_HANDLER);
@@ -66,12 +67,14 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
     }
 
     //请求开始的入口
+    @Override
     public Pipeline fireReceiveRequest() {
         HandlerContext.invokeReceivedRequest(head, request);
         return this;
     }
 
     //获取响应的入口
+    @Override
     public Pipeline fireReturnResponse() {
         HandlerContext.invokeReturndResponse(tail, request);
         return this;
@@ -87,6 +90,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
 
     public int tsNum;//事务数量只允许一个
     //添加handler到链表中
+    @Override
     public Pipeline addLast(Handler handler) throws NoSuchMethodException {
         HandlerContext handlerContext = newContext(handler);
         tail.prev.next = handlerContext;
@@ -136,6 +140,7 @@ public class DefaultPipeline implements Pipeline, ApplicationContextAware, Initi
         return false;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.context = applicationContext;
     }

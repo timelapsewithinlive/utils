@@ -56,7 +56,7 @@ public class Trie {
             System.out.print(infoCharsetCode);
         }
 
-        DoubleArrayTrie dat = new DoubleArrayTrie();
+        MyDoubleArrayTrie dat = new MyDoubleArrayTrie();
         System.out.println("是否错误: " + dat.build(words,new ArrayList()));
         System.out.println(dat);
         List<Integer> integerList = dat.commonPrefixSearch("一举成名天下知");

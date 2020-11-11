@@ -28,6 +28,7 @@ public class ChainThreadPoolExecutor extends ThreadPoolExecutor {
         return ftask;
     }
 
+    @Override
     protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
         return new FutureTask<T>(callable);
     }
