@@ -6,10 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
-/**
- * @author scorpio
- * @version 1.0.0
- */
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Import({
