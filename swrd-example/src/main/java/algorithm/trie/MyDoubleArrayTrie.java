@@ -319,18 +319,19 @@ public class MyDoubleArrayTrie<V> implements Serializable, ITrie<V> {
         return result;
     }
 
-    public int build(List<String> key, List<V> value) {
-        assert key.size() == value.size() : "键的个数与值的个数不一样！";
-        assert key.size() > 0 : "键值个数为0！";
-        v = (V[]) value.toArray();
-        return build(key, null, null, key.size());
+    public int build(List<String> keyList, List<V> valueList) {
+        assert keyList.size() == valueList.size() : "键的个数与值的个数不一样！";
+        assert keyList.size() > 0 : "键值个数为" +
+                "0！";
+        v = (V[]) valueList.toArray();
+        return build(keyList, null, null, keyList.size());
     }
 
-    public int build(List<String> key, V[] value) {
-        assert key.size() == value.length : "键的个数与值的个数不一样！";
-        assert key.size() > 0 : "键值个数为0！";
-        v = value;
-        return build(key, null, null, key.size());
+    public int build(List<String> keyList, V[] valueArr) {
+        assert keyList.size() == valueArr.length : "键的个数与值的个数不一样！";
+        assert keyList.size() > 0 : "键值个数为0！";
+        v = valueArr;
+        return build(keyList, null, null, keyList.size());
     }
 
     /**
