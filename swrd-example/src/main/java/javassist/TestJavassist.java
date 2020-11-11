@@ -1,6 +1,5 @@
 package javassist;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.ttl.internal.javassist.*;
 import com.alibaba.ttl.internal.javassist.bytecode.*;
 

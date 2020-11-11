@@ -1,6 +1,5 @@
 package jdk.runtime;
 
-import com.alibaba.fastjson.JSON;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 import sun.jvmstat.monitor.MonitoredHost;
@@ -20,7 +19,6 @@ public class TestRuntime {
     public static void main (String[] args) throws IOException, Exception {
         Runtime runtime = Runtime.getRuntime();
         System.out.print("运行时的实例:");
-        System.out.println(JSON.toJSONString(runtime));//getRuntime()获取当前运行时的实例
 
         System.out.print("CPU个数:");
         System.out.println(Runtime.getRuntime().availableProcessors());//availableProcessors()获取当前电脑CPU数量

@@ -13,7 +13,7 @@ public class Test {
 
     public static void main(String[] args) throws Throwable {
         Test test = new Test();
-        f(test).whenDefault(Test::get, false, (f, p) -> f.setMsg(p.getMsg()));
+        //f(test).whenDefault(Test::get, false, (f, p) -> f.setMsg(p.getMsg()));
         System.out.println(test);
 
         CheckedConsumer<Object> of = CheckedConsumer.of((x) -> { });

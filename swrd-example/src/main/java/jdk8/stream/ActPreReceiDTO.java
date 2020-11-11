@@ -1,9 +1,12 @@
 package jdk8.stream;
 
-import com.alibaba.fastjson.JSON;
-
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ActPreReceiDTO {
@@ -13,8 +16,7 @@ public class ActPreReceiDTO {
     private BigDecimal totalAmount;
 
 
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         ArrayList<ActPreReceiDTO> objects = new ArrayList<>();
         ActPreReceiDTO accountPreReceipt1 = new ActPreReceiDTO();
         accountPreReceipt1.setBizActNo("1");
@@ -40,36 +42,35 @@ public class ActPreReceiDTO {
 
         //
         Map<String, Set<Integer>> inverseseqmap = new HashMap<>();
-        Map<String,BigDecimal> bizArActAmountMap = new HashMap<>();
+        Map<String, BigDecimal> bizArActAmountMap = new HashMap<>();
 
         Map<String, Map<String, List<ActPreReceiDTO>>> bizArActMap =
                 objects.stream().collect(
-                    Collectors.groupingBy(ActPreReceiDTO::getBizActNo, Collectors.groupingBy(ActPreReceiDTO::getArActNo)
-                )
-        );
+                        Collectors.groupingBy(ActPreReceiDTO::getBizActNo, Collectors.groupingBy(ActPreReceiDTO::getArActNo)
+                        )
+                );
 
 
         bizArActMap.forEach((outkey, outvalue) -> {
             outvalue.forEach((key, value) -> {
-                value.stream().forEach(e->
-                        //财务账户、子账户拼接
+                value.stream().forEach(e ->
+                                //财务账户、子账户拼接
                         {
                             Set<Integer> integers = inverseseqmap.get(outkey + "_" + key);
-                            if(integers==null){
-                                integers=new HashSet<>();
-                                inverseseqmap.put(outkey + "_" + key,integers);
+                            if (integers == null) {
+                                integers = new HashSet<>();
+                                inverseseqmap.put(outkey + "_" + key, integers);
                             }
                             integers.add(e.getInversSeq());
                         }
-                       // inverseseqmap.put(outkey+"_"+key,e.getInversSeq());
+                        // inverseseqmap.put(outkey+"_"+key,e.getInversSeq());
                 );
 
                 BigDecimal reduce = value.stream().map(ActPreReceiDTO::getTotalAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-                bizArActAmountMap.put(outkey+"_"+key,reduce);
+                bizArActAmountMap.put(outkey + "_" + key, reduce);
             });
         });
 
-        System.out.println(JSON.toJSONString(bizArActMap));
         System.out.println(bizArActAmountMap);
         System.out.println(inverseseqmap);
 
@@ -86,7 +87,6 @@ public class ActPreReceiDTO {
                 });*/
         System.out.println();
         ///System.out.println(objects.stream().map(ActPreReceiDTO::getTotalAmount).reduce(BigDecimal.ZERO,BigDecimal::add));
-        System.out.println(TestInterface.class.getSimpleName());
     }
 
     public BigDecimal getTotalAmount() {
