@@ -28,6 +28,7 @@
         <module>swrd-utils</module>
         <module>swrd-app</module>
         <module>swrd-example</module>
+        <module>swrd-flink</module>
     </modules>
 
     <properties>
