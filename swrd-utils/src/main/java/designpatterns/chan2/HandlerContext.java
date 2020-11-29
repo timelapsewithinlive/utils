@@ -10,7 +10,6 @@ import lombok.Data;
  */
 @Data
 public class HandlerContext {
-
     /**
      * 头节点
      */
@@ -116,53 +115,5 @@ public class HandlerContext {
      */
     public Handler handler() {
         return handler;
-    }
-
-    public HandlerContext getHead() {
-        return head;
-    }
-
-    public void setHead(HandlerContext head) {
-        this.head = head;
-    }
-
-    public HandlerContext getTail() {
-        return tail;
-    }
-
-    public void setTail(HandlerContext tail) {
-        this.tail = tail;
-    }
-
-    public HandlerContext getPrev() {
-        return prev;
-    }
-
-    public void setPrev(HandlerContext prev) {
-        this.prev = prev;
-    }
-
-    public HandlerContext getNext() {
-        return next;
-    }
-
-    public void setNext(HandlerContext next) {
-        this.next = next;
-    }
-
-    public Handler getHandler() {
-        return handler;
-    }
-
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
-
-    public Response getResponse() {
-        return response;
-    }
-
-    public void setResponse(Response response) {
-        this.response = response;
     }
 }

@@ -52,6 +52,7 @@ public class Transformer implements ClassFileTransformer {
      * 抛出：
      * IllegalClassFormatException - 如果输入不表示一个格式良好的类文件
      */
+    @Override
     public byte[] transform(ClassLoader l, String className, Class<?> c,
                             ProtectionDomain pd, byte[] b) throws IllegalClassFormatException {
         if (!className.equals("instrument/TransClass")) {
