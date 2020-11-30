@@ -9,7 +9,7 @@ import org.apache.flink.util.Collector;
 public class StreamingWindowWordCountJava {
     public static void main(String[] args) throws Exception {
         //定义socket的端口号
-        int port = 9000;
+        int port;
         try{
             ParameterTool parameterTool = ParameterTool.fromArgs(args);
             port = parameterTool.getInt("port");
@@ -23,6 +23,7 @@ public class StreamingWindowWordCountJava {
         DataStreamSource<String> text = env.socketTextStream("127.0.0.1", port, "\n");
         //计算数据
         DataStream<WordWithCount> windowCount = text.flatMap(new FlatMapFunction<String, WordWithCount>() {
+            @Override
             public void flatMap(String value, Collector<WordWithCount> out) throws Exception {
                 String[] splits = value.split("\\s");
                 for (String word:splits) {
@@ -33,7 +34,7 @@ public class StreamingWindowWordCountJava {
                 //针对相同的word数据进行分组
                 .keyBy("word")
                 //指定计算数据的窗口大小和滑动窗口大小
-                .timeWindow(Time.seconds(2),Time.seconds(1))
+                .timeWindow(Time.seconds(10),Time.seconds(3))
                 .sum("count");
         //把数据打印到控制台,使用一个并行度
         windowCount.print().setParallelism(1);
