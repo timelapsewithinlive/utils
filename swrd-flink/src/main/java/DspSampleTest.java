@@ -15,6 +15,7 @@ import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -111,27 +112,32 @@ public class DspSampleTest {
 
                     }
                 })
-                .aggregate(new AggregateFunction() {
-                    @Override
-                    public Object createAccumulator() {
-                        return null;
-                    }
+                .aggregate(new AggregateFunction<Tuple2<DspIdea, Dsp>, Dsp, Object>() {
+                               @Override
+                               public Dsp createAccumulator() {
+                                   return new Dsp();
+                               }
 
-                    @Override
-                    public Object add(Object o, Object o2) {
-                        return null;
-                    }
+                               @Override
+                               public Dsp add(Tuple2<DspIdea, Dsp> value, Dsp accumulator) {
+                                   accumulator.dspId = value.f1.dspId;
+                                   accumulator.entityIds = new ArrayList<>();
+                                   accumulator.entityIds.addAll(value.f1.entityIds);
+                                   return accumulator;
+                               }
 
-                    @Override
-                    public Object getResult(Object o) {
-                        return null;
-                    }
+                               @Override
+                               public Object getResult(Dsp accumulator) {
+                                   return accumulator;
+                               }
 
-                    @Override
-                    public Object merge(Object o, Object acc1) {
-                        return null;
-                    }
-                });
+                               @Override
+                               public Dsp merge(Dsp a, Dsp b) {
+                                    a.entityIds.addAll(b.entityIds);
+                                    return a;
+                               }
+                           }
+                   );
                /* .reduce(new ReduceFunction<Tuple2<DspIdea,Dsp>>() {
                     @Override
                     public Tuple2<DspIdea, Dsp> reduce(Tuple2<DspIdea, Dsp> dspIdeaDspTuple2, Tuple2<DspIdea, Dsp> t1) throws Exception {
