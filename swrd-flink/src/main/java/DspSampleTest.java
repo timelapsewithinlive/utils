@@ -49,7 +49,7 @@ public class DspSampleTest {
         });
 
         //计算数据
-        DataStream<Tuple2<DspIdea,Dsp>> windowCount = text
+        DataStream<DspIdea> windowCount = text
                 .flatMap(new FlatMapFunction<String, DspIdea>() {
                     @Override
                     public void flatMap(String value, Collector<DspIdea> out) throws Exception {
@@ -63,37 +63,25 @@ public class DspSampleTest {
                         return true;
                     }
                 })
-                .flatMap(new FlatMapFunction<DspIdea, Tuple2<DspIdea,Dsp>>() {
+                .flatMap(new FlatMapFunction<DspIdea, DspIdea>() {
                     @Override
-                    public void flatMap(DspIdea dspIdea, Collector<Tuple2<DspIdea,Dsp>> out) throws Exception {
-                        Tuple2<DspIdea, Dsp> dspIdeaDspTuple2 = new Tuple2<>();
-                        dspIdeaDspTuple2.f0 = dspIdea;
-                        dspIdeaDspTuple2.f1 = new Dsp(dspIdea.dspId, Lists.newArrayList(dspIdea.entityId));
-                        out.collect(dspIdeaDspTuple2);
-                    }
-                }).filter(new RichFilterFunction<Tuple2<DspIdea,Dsp>>() {
-                    @Override
-                    public boolean filter(Tuple2<DspIdea,Dsp> dspIdea) throws Exception {
-                        // 满足总数小于300，写入数据库数据库
-                        //if(value.count <300){
-                        //insert mysql
-                        // }
-                        return true;
+                    public void flatMap(DspIdea dspIdea, Collector<DspIdea> out) throws Exception {
+                        out.collect(dspIdea);
                     }
                 });
                 //针对相同的word数据进行分组
-                windowCount.keyBy(new KeySelector<Tuple2<DspIdea, Dsp>, Object>() {
+                windowCount.keyBy(new KeySelector<DspIdea, Object>() {
 
                     @Override
-                    public Object getKey(Tuple2<DspIdea, Dsp> dspIdeaDspTuple2) throws Exception {
+                    public Object getKey(DspIdea dspIdeaDspTuple2) throws Exception {
                         return "dspId";
                     }
                 })
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(10))
-                .trigger(new Trigger<Tuple2<DspIdea, Dsp>, TimeWindow>() {
+               /* .trigger(new Trigger<DspIdea, TimeWindow>() {
                     @Override
-                    public TriggerResult onElement(Tuple2<DspIdea, Dsp> dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
+                    public TriggerResult onElement(DspIdea dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
                         return TriggerResult.CONTINUE;
                     }
 
@@ -111,18 +99,20 @@ public class DspSampleTest {
                     public void clear(TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
 
                     }
-                })
-                .aggregate(new AggregateFunction<Tuple2<DspIdea, Dsp>, Dsp, Object>() {
+                })*/
+                .aggregate(new AggregateFunction<DspIdea, Dsp, Object>() {
                                @Override
                                public Dsp createAccumulator() {
                                    return new Dsp();
                                }
 
                                @Override
-                               public Dsp add(Tuple2<DspIdea, Dsp> value, Dsp accumulator) {
-                                   accumulator.dspId = value.f1.dspId;
-                                   accumulator.entityIds = new ArrayList<>();
-                                   accumulator.entityIds.addAll(value.f1.entityIds);
+                               public Dsp add(DspIdea value, Dsp accumulator) {
+                                   accumulator.dspId = value.dspId;
+                                   if(accumulator.entityIds ==null){
+                                       accumulator.entityIds = new ArrayList<>();
+                                   }
+                                   accumulator.entityIds.add(value.entityId);
                                    return accumulator;
                                }
 
