@@ -94,7 +94,7 @@ public class DspSampleTest {
                 .trigger(new Trigger<Tuple2<DspIdea, Dsp>, TimeWindow>() {
                     @Override
                     public TriggerResult onElement(Tuple2<DspIdea, Dsp> dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
-                        return TriggerResult.FIRE;
+                        return TriggerResult.CONTINUE;
                     }
 
                     @Override
