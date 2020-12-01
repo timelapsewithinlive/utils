@@ -35,10 +35,8 @@ public class DspSampleTest {
                 .filter(new RichFilterFunction<String>() {
                     @Override
                     public boolean filter(String value) throws Exception {
-                        if (value.contains("ss")) {
-                            return true;
-                        }
-                        return false;
+                        //根据配置过滤物料
+                        return true;
                     }
                 })
                 .flatMap(new FlatMapFunction<String, DspIdea>() {
@@ -60,7 +58,7 @@ public class DspSampleTest {
                 .keyBy("dspId")
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(10))
-                //.timeWindow(Time.seconds(10), Time.seconds(3))
+                .trigger(null)
                 .aggregate(new AggregateFunction<DspIdea, Object, DspIdea>() {
                     @Override
                     public Object createAccumulator() {
@@ -84,6 +82,7 @@ public class DspSampleTest {
                 });
         //把数据打印到控制台,使用一个并行度
         windowCount.print().setParallelism(1);
+        windowCount.transform()
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming word count");
     }
@@ -94,22 +93,34 @@ public class DspSampleTest {
     public static class DspIdea {
         public Long dspId;
         public Long entityId;
-        public List<Long> entityIds;
 
         public DspIdea() {
         }
 
-        public DspIdea(Long dspId, List<Long> entityIds) {
+        public DspIdea(Long dspId, Long entityId) {
             this.dspId = dspId;
-            this.entityIds = entityIds;
+            this.entityId = entityId;
         }
 
         @Override
         public String toString() {
             return "DspIdea{" +
                     "dspId='" + dspId + '\'' +
-                    ", entityIds=" + JSON.toJSONString(entityIds) +
+                    ", entityId=" + entityId +
                     '}';
+        }
+    }
+
+    public static class Dsp {
+        public Long dspId;
+        public List<Long> entityIds;
+
+        public Dsp() {
+        }
+
+        public Dsp(Long dspId, List<Long> entityIds) {
+            this.dspId = dspId;
+            this.entityIds = entityIds;
         }
     }
 }
