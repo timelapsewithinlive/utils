@@ -2,6 +2,7 @@ import com.alibaba.fastjson.JSON;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
+import org.apache.flink.api.common.functions.RichReduceFunction;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -59,30 +60,14 @@ public class DspSampleTest {
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(10))
                 .trigger(null)
-                .aggregate(new AggregateFunction<DspIdea, Object, DspIdea>() {
+                .reduce(new RichReduceFunction() {
                     @Override
-                    public Object createAccumulator() {
-                        return null;
-                    }
-
-                    @Override
-                    public Object add(DspIdea dspIdea, Object o) {
-                        return null;
-                    }
-
-                    @Override
-                    public DspIdea getResult(Object o) {
-                        return null;
-                    }
-
-                    @Override
-                    public Object merge(Object o, Object acc1) {
+                    public Object reduce(Object o, Object t1) throws Exception {
                         return null;
                     }
                 });
         //把数据打印到控制台,使用一个并行度
         windowCount.print().setParallelism(1);
-        windowCount.transform()
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming word count");
     }
