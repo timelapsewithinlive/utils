@@ -2,6 +2,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import org.apache.flink.api.common.accumulators.AverageAccumulator;
 import org.apache.flink.api.common.functions.*;
+import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -9,6 +10,8 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
+import org.apache.flink.streaming.api.operators.KeyedProcessOperator;
+import org.apache.flink.streaming.api.operators.OneInputStreamOperator;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.Trigger;
 import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
@@ -127,7 +130,7 @@ public class DspSampleTest {
                                     return a;
                                }
                            }
-                   );
+                   ).transform("fsdasdaf",new BasicTypeInfo<>(),new KeyedProcessOperator());
                /* .reduce(new ReduceFunction<Tuple2<DspIdea,Dsp>>() {
                     @Override
                     public Tuple2<DspIdea, Dsp> reduce(Tuple2<DspIdea, Dsp> dspIdeaDspTuple2, Tuple2<DspIdea, Dsp> t1) throws Exception {
