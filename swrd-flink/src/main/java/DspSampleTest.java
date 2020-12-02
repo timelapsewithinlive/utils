@@ -1,17 +1,13 @@
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import org.apache.flink.api.common.accumulators.AverageAccumulator;
-import org.apache.flink.api.common.functions.*;
-import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
-import org.apache.flink.api.java.functions.KeySelector;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.RichFilterFunction;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.streaming.api.operators.KeyedProcessOperator;
-import org.apache.flink.streaming.api.operators.OneInputStreamOperator;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.Trigger;
 import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
@@ -36,6 +32,7 @@ public class DspSampleTest {
         DataStreamSource<String> text = env.addSource(new SourceFunction<String>() {
             private volatile boolean isRunning = true;
             private final Random random = new Random();
+
             @Override
             public void run(SourceContext<String> sourceContext) throws Exception {
                 while (isRunning) {
@@ -72,17 +69,12 @@ public class DspSampleTest {
                         out.collect(dspIdea);
                     }
                 });
-                //针对相同的word数据进行分组
-                windowCount.keyBy(new KeySelector<DspIdea, Object>() {
-
-                    @Override
-                    public Object getKey(DspIdea dspIdeaDspTuple2) throws Exception {
-                        return "dspId";
-                    }
-                })
+        //针对相同的word数据进行分组
+        windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(10))
-               /* .trigger(new Trigger<DspIdea, TimeWindow>() {
+                .trigger(new Trigger<DspIdea, TimeWindow>() {
+
                     @Override
                     public TriggerResult onElement(DspIdea dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
                         return TriggerResult.CONTINUE;
@@ -102,7 +94,7 @@ public class DspSampleTest {
                     public void clear(TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
 
                     }
-                })*/
+                })
                 .aggregate(new AggregateFunction<DspIdea, Dsp, Object>() {
                                @Override
                                public Dsp createAccumulator() {
@@ -111,8 +103,11 @@ public class DspSampleTest {
 
                                @Override
                                public Dsp add(DspIdea value, Dsp accumulator) {
+                                   // System.out.println("DspIdea:" + value.toString());
+                                   //System.out.println("accumulator:" + accumulator.toString());
+
                                    accumulator.dspId = value.dspId;
-                                   if(accumulator.entityIds ==null){
+                                   if (accumulator.entityIds == null) {
                                        accumulator.entityIds = new ArrayList<>();
                                    }
                                    accumulator.entityIds.add(value.entityId);
@@ -126,25 +121,30 @@ public class DspSampleTest {
 
                                @Override
                                public Dsp merge(Dsp a, Dsp b) {
-                                    a.entityIds.addAll(b.entityIds);
-                                    return a;
+                                   a.entityIds.addAll(b.entityIds);
+                                   return a;
                                }
                            }
-                   ).transform("fsdasdaf",new BasicTypeInfo<>(),new KeyedProcessOperator());
-               /* .reduce(new ReduceFunction<Tuple2<DspIdea,Dsp>>() {
+                ).addSink(
+                new RichSinkFunction<Object>() {
                     @Override
-                    public Tuple2<DspIdea, Dsp> reduce(Tuple2<DspIdea, Dsp> dspIdeaDspTuple2, Tuple2<DspIdea, Dsp> t1) throws Exception {
-                        //System.out.println(JSON.toJSONString(t1));
-                        if(t1!=null){
-                            t1.f1.entityIds.add(dspIdeaDspTuple2.f0.entityId);
-                        }
-                        return t1;
+                    public void open(Configuration parameters) throws Exception {
+                        System.out.println(parameters);
                     }
-                })*/;
-        //把数据打印到控制台,使用一个并行度
-        windowCount.print().setParallelism(1);
+
+                    @Override
+                    public void invoke(Object value, Context context) throws Exception {
+                        System.out.println(value);
+                    }
+
+                    @Override
+                    public void close() throws Exception {
+
+                    }
+
+                }).name("34231423").setParallelism(1);
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
-        env.execute("streaming word count");
+        env.execute("streaming dsp sample");
     }
 
     /**
@@ -159,6 +159,22 @@ public class DspSampleTest {
 
         public DspIdea(Long dspId, Long entityId) {
             this.dspId = dspId;
+            this.entityId = entityId;
+        }
+
+        public Long getDspId() {
+            return dspId;
+        }
+
+        public void setDspId(Long dspId) {
+            this.dspId = dspId;
+        }
+
+        public Long getEntityId() {
+            return entityId;
+        }
+
+        public void setEntityId(Long entityId) {
             this.entityId = entityId;
         }
 
