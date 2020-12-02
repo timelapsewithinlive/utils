@@ -97,7 +97,7 @@ public class DspSampleTest {
 
                     }
                 });
-        SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new AggregateFunction<DspIdea, Dsp, Dsp>() {
+            SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new AggregateFunction<DspIdea, Dsp, Dsp>() {
                                                                                     @Override
                                                                                     public Dsp createAccumulator() {
                                                                                         return new Dsp();
@@ -110,8 +110,8 @@ public class DspSampleTest {
                                                                                             accumulator.entityIds = new ArrayList<>();
                                                                                         }
                                                                                         accumulator.entityIds.add(value.entityId);
-                                                                                        System.out.println("DspIdea:" + value.toString());
-                                                                                        System.out.println("accumulator:" + accumulator.toString());
+                                                                                        //System.out.println("DspIdea:" + value.toString());
+                                                                                        //System.out.println("accumulator:" + accumulator.toString());
                                                                                         return accumulator;
                                                                                     }
 
@@ -152,9 +152,11 @@ public class DspSampleTest {
         env.execute("streaming dsp sample");
     }
 
-    /**
-     * 主要为了存储单词以及单词出现的次数
-     */
+
+
+
+
+
     public static class DspIdea {
         public Long dspId;
         public Long entityId;
