@@ -5,6 +5,8 @@ import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
@@ -70,7 +72,7 @@ public class DspSampleTest {
                     }
                 });
         //针对相同的word数据进行分组
-        windowCount.keyBy(DspIdea::getDspId)
+        WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(10))
                 .trigger(new Trigger<DspIdea, TimeWindow>() {
@@ -94,46 +96,47 @@ public class DspSampleTest {
                     public void clear(TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
 
                     }
-                })
-                .aggregate(new AggregateFunction<DspIdea, Dsp, Object>() {
-                               @Override
-                               public Dsp createAccumulator() {
-                                   return new Dsp();
-                               }
+                });
+        SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new AggregateFunction<DspIdea, Dsp, Dsp>() {
+                                                                                    @Override
+                                                                                    public Dsp createAccumulator() {
+                                                                                        return new Dsp();
+                                                                                    }
 
-                               @Override
-                               public Dsp add(DspIdea value, Dsp accumulator) {
-                                   // System.out.println("DspIdea:" + value.toString());
-                                   //System.out.println("accumulator:" + accumulator.toString());
+                                                                                    @Override
+                                                                                    public Dsp add(DspIdea value, Dsp accumulator) {
+                                                                                        accumulator.dspId = value.dspId;
+                                                                                        if (accumulator.entityIds == null) {
+                                                                                            accumulator.entityIds = new ArrayList<>();
+                                                                                        }
+                                                                                        accumulator.entityIds.add(value.entityId);
+                                                                                        System.out.println("DspIdea:" + value.toString());
+                                                                                        System.out.println("accumulator:" + accumulator.toString());
+                                                                                        return accumulator;
+                                                                                    }
 
-                                   accumulator.dspId = value.dspId;
-                                   if (accumulator.entityIds == null) {
-                                       accumulator.entityIds = new ArrayList<>();
-                                   }
-                                   accumulator.entityIds.add(value.entityId);
-                                   return accumulator;
-                               }
+                                                                                    @Override
+                                                                                    public Dsp getResult(Dsp accumulator) {
+                                                                                        return accumulator;
+                                                                                    }
 
-                               @Override
-                               public Object getResult(Dsp accumulator) {
-                                   return accumulator;
-                               }
-
-                               @Override
-                               public Dsp merge(Dsp a, Dsp b) {
-                                   a.entityIds.addAll(b.entityIds);
-                                   return a;
-                               }
-                           }
-                ).addSink(
-                new RichSinkFunction<Object>() {
+                                                                                    @Override
+                                                                                    public Dsp merge(Dsp a, Dsp b) {
+                                                                                        a.entityIds.addAll(b.entityIds);
+                                                                                        return a;
+                                                                                    }
+                                                                                }
+        );
+        aggregate
+               /* .addSink(
+                new RichSinkFunction<Dsp>() {
                     @Override
                     public void open(Configuration parameters) throws Exception {
                         System.out.println(parameters);
                     }
 
                     @Override
-                    public void invoke(Object value, Context context) throws Exception {
+                    public void invoke(Dsp value, Context context) throws Exception {
                         System.out.println(value);
                     }
 
@@ -142,7 +145,9 @@ public class DspSampleTest {
 
                     }
 
-                }).name("34231423").setParallelism(1);
+                }).name("34231423")*/
+                .print()
+                .setParallelism(1);
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming dsp sample");
     }
