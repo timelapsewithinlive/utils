@@ -28,9 +28,8 @@ import java.util.concurrent.TimeUnit;
 public class DspSampleTest {
     public static void main(String[] args) throws Exception {
 
-        //获取运行环境
+        //1.获取运行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        //连接socket获取输入的数据
         DataStreamSource<String> text = env.addSource(new SourceFunction<String>() {
             private volatile boolean isRunning = true;
             private final Random random = new Random();
@@ -50,7 +49,7 @@ public class DspSampleTest {
             }
         });
 
-        //计算数据
+        //2.过滤数据
         DataStream<DspIdea> windowCount = text
                 .flatMap(new FlatMapFunction<String, DspIdea>() {
                     @Override
@@ -71,7 +70,8 @@ public class DspSampleTest {
                         out.collect(dspIdea);
                     }
                 });
-        //针对相同的word数据进行分组
+
+        //3.定义窗口和触发器
         WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(10))
@@ -97,6 +97,8 @@ public class DspSampleTest {
 
                     }
                 });
+
+           //4.增量计算
             SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new AggregateFunction<DspIdea, Dsp, Dsp>() {
                                                                                     @Override
                                                                                     public Dsp createAccumulator() {
@@ -127,6 +129,8 @@ public class DspSampleTest {
                                                                                     }
                                                                                 }
         );
+
+        //5. 结果输出
         aggregate
                /* .addSink(
                 new RichSinkFunction<Dsp>() {
