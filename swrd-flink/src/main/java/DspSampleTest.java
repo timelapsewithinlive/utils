@@ -85,7 +85,7 @@ public class DspSampleTest {
 
                     @Override
                     public TriggerResult onProcessingTime(long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
-                        return TriggerResult.CONTINUE;
+                        return TriggerResult.FIRE_AND_PURGE;
                     }
 
                     @Override
@@ -114,7 +114,7 @@ public class DspSampleTest {
                             accumulator.entityIds = new ArrayList<>();
                         }
                         accumulator.entityIds.add(value.entityId);
-                        System.out.println("accumulator:" + accumulator.toString());
+                        //System.out.println("accumulator:" + accumulator.toString());
                         return accumulator;
                     }
 
@@ -130,15 +130,6 @@ public class DspSampleTest {
                     }
                 }
         );
-
-        aggregate.filter(new FilterFunction(){
-            @Override
-            public boolean filter(Object o) throws Exception {
-                System.out.println(o);
-                return false;
-            }
-        });
-
         //5. 结果输出
         aggregate.addSink(
                  new RichSinkFunction<Dsp>() {
@@ -150,13 +141,13 @@ public class DspSampleTest {
 
                      @Override
                      public void invoke(Dsp value, Context context) throws Exception {
-                         System.out.println(value);
+                         System.out.println("sink-------"+value);
                      }
 
                      //关闭资源、释放资源
                      @Override
                      public void close() throws Exception {
-                         System.out.println("closesssss");
+                        // System.out.println("closesssss");
                      }
 
                  })
