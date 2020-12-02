@@ -114,8 +114,7 @@ public class DspSampleTest {
                             accumulator.entityIds = new ArrayList<>();
                         }
                         accumulator.entityIds.add(value.entityId);
-                        //System.out.println("DspIdea:" + value.toString());
-                        //System.out.println("accumulator:" + accumulator.toString());
+                        System.out.println("accumulator:" + accumulator.toString());
                         return accumulator;
                     }
 
