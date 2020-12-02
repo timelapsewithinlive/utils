@@ -1,5 +1,6 @@
 import com.alibaba.fastjson.JSON;
 import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.configuration.Configuration;
@@ -98,67 +99,72 @@ public class DspSampleTest {
                     }
                 });
 
-           //4.增量计算
-            SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new AggregateFunction<DspIdea, Dsp, Dsp>() {
-                                                                                    @Override
-                                                                                    public Dsp createAccumulator() {
-                                                                                        return new Dsp();
-                                                                                    }
+        //4.增量计算
+        SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(
+                new AggregateFunction<DspIdea, Dsp, Dsp>() {
+                    @Override
+                    public Dsp createAccumulator() {
+                        return new Dsp();
+                    }
 
-                                                                                    @Override
-                                                                                    public Dsp add(DspIdea value, Dsp accumulator) {
-                                                                                        accumulator.dspId = value.dspId;
-                                                                                        if (accumulator.entityIds == null) {
-                                                                                            accumulator.entityIds = new ArrayList<>();
-                                                                                        }
-                                                                                        accumulator.entityIds.add(value.entityId);
-                                                                                        //System.out.println("DspIdea:" + value.toString());
-                                                                                        //System.out.println("accumulator:" + accumulator.toString());
-                                                                                        return accumulator;
-                                                                                    }
+                    @Override
+                    public Dsp add(DspIdea value, Dsp accumulator) {
+                        accumulator.dspId = value.dspId;
+                        if (accumulator.entityIds == null) {
+                            accumulator.entityIds = new ArrayList<>();
+                        }
+                        accumulator.entityIds.add(value.entityId);
+                        //System.out.println("DspIdea:" + value.toString());
+                        //System.out.println("accumulator:" + accumulator.toString());
+                        return accumulator;
+                    }
 
-                                                                                    @Override
-                                                                                    public Dsp getResult(Dsp accumulator) {
-                                                                                        return accumulator;
-                                                                                    }
+                    @Override
+                    public Dsp getResult(Dsp accumulator) {
+                        return accumulator;
+                    }
 
-                                                                                    @Override
-                                                                                    public Dsp merge(Dsp a, Dsp b) {
-                                                                                        a.entityIds.addAll(b.entityIds);
-                                                                                        return a;
-                                                                                    }
-                                                                                }
+                    @Override
+                    public Dsp merge(Dsp a, Dsp b) {
+                        a.entityIds.addAll(b.entityIds);
+                        return a;
+                    }
+                }
         );
 
+        aggregate.filter(new FilterFunction(){
+            @Override
+            public boolean filter(Object o) throws Exception {
+                System.out.println(o);
+                return false;
+            }
+        });
+
         //5. 结果输出
-        aggregate
-               /* .addSink(
-                new RichSinkFunction<Dsp>() {
-                    @Override
-                    public void open(Configuration parameters) throws Exception {
-                        System.out.println(parameters);
-                    }
+        aggregate.addSink(
+                 new RichSinkFunction<Dsp>() {
 
-                    @Override
-                    public void invoke(Dsp value, Context context) throws Exception {
-                        System.out.println(value);
-                    }
+                     //连接资源
+                     @Override
+                     public void open(Configuration parameters) throws Exception {
+                     }
 
-                    @Override
-                    public void close() throws Exception {
+                     @Override
+                     public void invoke(Dsp value, Context context) throws Exception {
+                         System.out.println(value);
+                     }
 
-                    }
+                     //关闭资源、释放资源
+                     @Override
+                     public void close() throws Exception {
+                         System.out.println("closesssss");
+                     }
 
-                }).name("34231423")*/
-                .print()
+                 })
                 .setParallelism(1);
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming dsp sample");
     }
-
-
-
-
 
 
     public static class DspIdea {
