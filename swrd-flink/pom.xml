@@ -85,6 +85,12 @@
             <artifactId>flink-jdbc_2.11</artifactId>
             <version>1.9.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.20</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
        <!-- <sourceDirectory>src/main/scala</sourceDirectory>

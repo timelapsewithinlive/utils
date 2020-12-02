@@ -1,14 +1,16 @@
 import com.alibaba.fastjson.JSON;
+import dsp.DspConfig;
+import function.DspConfigSourceFunction;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
+import org.apache.flink.api.common.state.MapStateDescriptor;
+import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.streaming.api.datastream.WindowedStream;
+import org.apache.flink.streaming.api.datastream.*;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
@@ -31,7 +33,16 @@ public class DspSampleTest {
 
         //1.获取运行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        //1.1设置执行环境的并发度
         env.setParallelism(4);
+
+        final MapStateDescriptor<String, String> CONFIG_DESCRIPTOR = new MapStateDescriptor<>(
+                "dspConfig",
+                BasicTypeInfo.STRING_TYPE_INFO,
+                BasicTypeInfo.STRING_TYPE_INFO);
+        //1.2广播dsp配置
+        BroadcastStream<DspConfig> broadcastStream = env.addSource(new DspConfigSourceFunction()).broadcast(CONFIG_DESCRIPTOR);
+
         DataStreamSource<String> text = env.addSource(new SourceFunction<String>() {
             private volatile boolean isRunning = true;
             private final Random random = new Random();
@@ -72,6 +83,17 @@ public class DspSampleTest {
                         out.collect(dspIdea);
                     }
                 });
+        windowCount.connect(broadcastStream).process(new BroadcastProcessFunction() {
+            @Override
+            public void processElement(Object o, ReadOnlyContext readOnlyContext, Collector collector) throws Exception {
+                System.out.println(o);
+            }
+
+            @Override
+            public void processBroadcastElement(Object o, Context context, Collector collector) throws Exception {
+
+            }
+        });
 
         //3.定义窗口和触发器
         WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
