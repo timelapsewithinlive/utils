@@ -31,6 +31,7 @@ public class DspSampleTest {
 
         //1.获取运行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(4);
         DataStreamSource<String> text = env.addSource(new SourceFunction<String>() {
             private volatile boolean isRunning = true;
             private final Random random = new Random();
@@ -38,7 +39,7 @@ public class DspSampleTest {
             @Override
             public void run(SourceContext<String> sourceContext) throws Exception {
                 while (isRunning) {
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.MILLISECONDS.sleep(100);
                     DspIdea dspIdea = new DspIdea(1L, random.nextLong());
                     sourceContext.collect(JSON.toJSONString(dspIdea));
                 }
@@ -150,8 +151,7 @@ public class DspSampleTest {
                         // System.out.println("closesssss");
                      }
 
-                 })
-                .setParallelism(1);
+                 });
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming dsp sample");
     }
