@@ -15,7 +15,7 @@ public class DspIdeaTrigger extends Trigger<DspIdea, TimeWindow> {
     //TriggerResult.FIRE ：复用第一次会重新执行聚合函数的createAccumulator的结果
     @Override
     public TriggerResult onElement(DspIdea dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
-        return TriggerResult.FIRE;
+        return TriggerResult.CONTINUE;
     }
 
     @Override

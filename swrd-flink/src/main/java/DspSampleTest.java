@@ -103,7 +103,7 @@ public class DspSampleTest {
         //3.定义窗口和触发器
         WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
-                .timeWindow(Time.seconds(1000))
+                .timeWindow(Time.seconds(10))
                 .trigger(new DspIdeaTrigger())
                 //evictor 会重新执行聚合函数的createAccumulator
                 .evictor(new DspIdeaEvitor());

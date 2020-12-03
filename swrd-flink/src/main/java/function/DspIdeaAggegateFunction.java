@@ -5,6 +5,9 @@ import domain.Dsp;
 import domain.DspIdea;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.runtime.state.FunctionInitializationContext;
+import org.apache.flink.runtime.state.FunctionSnapshotContext;
+import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
 
 import java.util.ArrayList;
 
@@ -12,7 +15,7 @@ import java.util.ArrayList;
  * @author xinghonglin
  * @date 2020/12/03
  */
-public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, Dsp> {
+public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, Dsp>, CheckpointedFunction {
 
     Dsp accumulator = null;
 
@@ -54,5 +57,14 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
     public Dsp merge(Dsp a, Dsp b) {
         a.entityIds.addAll(b.entityIds);
         return a;
+    }
+
+    @Override
+    public void snapshotState(FunctionSnapshotContext functionSnapshotContext) throws Exception {
+    }
+
+    @Override
+    public void initializeState(FunctionInitializationContext functionInitializationContext) throws Exception {
+
     }
 }
