@@ -18,7 +18,8 @@ public class DspSinkBufferFunction extends RichSinkFunction<Dsp> {
     @Override
     public void invoke(Dsp value, Context context) throws Exception {
         //value每次都是新集合
-        System.out.println("sink-------" + value+"-------------- context.currentProcessingTime(): "+ context.currentProcessingTime());
+        System.out.println("sink-------context.currentProcessingTime(): "+ context.currentProcessingTime());
+        // System.out.println("sink-------" + value+"-------------- context.currentProcessingTime(): "+ context.currentProcessingTime());
     }
 
     //关闭资源、释放资源
