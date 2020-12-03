@@ -31,6 +31,7 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
 
     @Override
     public Dsp createAccumulator() {
+        System.out.println("DspIdeaAggegateFunction  createAccumulator tread: "+Thread.currentThread().getName());
         if (CollectionUtils.isNotEmpty(accumulator.dspIdeas)) {
             accumulator.dspIdeas.clear();
         }
@@ -39,6 +40,7 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
 
     @Override
     public Dsp add(DspIdea value, Dsp accumulator) {
+        System.out.println("DspIdeaAggegateFunction add tread: "+Thread.currentThread().getName());
         accumulator.dspId = value.dspId;
         if (accumulator.entityIds == null) {
             accumulator.entityIds = new ArrayList<>();
@@ -67,10 +69,12 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
 
     @Override
     public void snapshotState(FunctionSnapshotContext functionSnapshotContext) throws Exception {
+        System.out.println("DspIdeaAggegateFunction snapshotState tread: "+Thread.currentThread().getName());
     }
 
     @Override
     public void initializeState(FunctionInitializationContext context) throws Exception {
+        System.out.println("DspIdeaAggegateFunction initializeState tread: "+Thread.currentThread().getName());
         ListStateDescriptor<Dsp> descriptor =new ListStateDescriptor<Dsp>("fsdafsd", TypeInformation.of(new TypeHint<Dsp>(){}));
         checkpointedState = context.getOperatorStateStore().getListState(descriptor);
 
