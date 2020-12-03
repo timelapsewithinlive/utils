@@ -32,7 +32,7 @@ public class DspSinkBufferFunction extends RichSinkFunction<Dsp> implements Chec
     }
 
     @Override
-    public void snapshotState(FunctionSnapshotContext functionSnapshotContext) throws Exception {
+    public void snapshotState(FunctionSnapshotContext context) throws Exception {
         //System.out.println(functionSnapshotContext);
     }
 

@@ -50,16 +50,16 @@ public class DspSampleTest {
 // Checkpoint 语义设置为 EXACTLY_ONCE
        // 表示所有要消费的数据被恰好处理一次，即所有数据既不丢数据也不重复消费；ATLEASTONCE
         //表示要消费的数据至少处理一次，可能会重复消费。
-        env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
+       env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
 
 // CheckPoint 的超时时间
-        env.getCheckpointConfig().setCheckpointTimeout(60000);
+       // env.getCheckpointConfig().setCheckpointTimeout(60000);
 
 // 同一时间，只允许 有 1 个 Checkpoint 在发生
-        env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
+       env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
 
 // 两次 Checkpoint 之间的最小时间间隔为 500 毫秒
-        env.getCheckpointConfig().setMinPauseBetweenCheckpoints(500);
+        // env.getCheckpointConfig().setMinPauseBetweenCheckpoints(500);
 
 // 当 Flink 任务取消时，保留外部保存的 CheckPoint 信息
         env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);

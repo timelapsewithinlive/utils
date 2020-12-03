@@ -31,7 +31,7 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
 
     @Override
     public Dsp createAccumulator() {
-        System.out.println("DspIdeaAggegateFunction  createAccumulator tread: "+Thread.currentThread().getName());
+        System.out.println("DspIdeaAggegateFunction  createAccumulator tread: "+Thread.currentThread());
         if (CollectionUtils.isNotEmpty(accumulator.dspIdeas)) {
             accumulator.dspIdeas.clear();
         }
@@ -40,7 +40,7 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
 
     @Override
     public Dsp add(DspIdea value, Dsp accumulator) {
-        System.out.println("DspIdeaAggegateFunction add tread: "+Thread.currentThread().getName());
+        System.out.println("DspIdeaAggegateFunction add tread: "+Thread.currentThread());
         accumulator.dspId = value.dspId;
         if (accumulator.entityIds == null) {
             accumulator.entityIds = new ArrayList<>();
