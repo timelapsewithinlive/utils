@@ -17,8 +17,8 @@ public class DspSinkFunction extends RichSinkFunction<Dsp> {
 
     @Override
     public void invoke(Dsp value, Context context) throws Exception {
+        //value每次都是新集合
         System.out.println("sink-------" + value);
-        //  value.dspIdeas.clear();
     }
 
     //关闭资源、释放资源
