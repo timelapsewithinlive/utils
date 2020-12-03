@@ -3,28 +3,21 @@ import domain.Dsp;
 import domain.DspIdea;
 import function.DspIdeaAggegateFunction;
 import function.DspIdeaEvitor;
+import function.DspIdeaSourceFunction;
 import function.DspIdeaTrigger;
-import function.DspSinkFunction;
+import function.DspSinkBufferFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
-import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
-import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.api.windowing.triggers.Trigger;
-import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
-
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author xinghonglin
@@ -48,24 +41,7 @@ public class DspSampleTest {
         //1.2广播dsp配置
         // BroadcastStream<DspConfig> broadcastStream = env.addSource(new DspConfigSourceFunction()).broadcast(CONFIG_DESCRIPTOR);
 
-        DataStreamSource<String> text = env.addSource(new SourceFunction<String>() {
-            private volatile boolean isRunning = true;
-            private final Random random = new Random();
-
-            @Override
-            public void run(SourceContext<String> sourceContext) throws Exception {
-                while (isRunning) {
-                    TimeUnit.MILLISECONDS.sleep(2000);
-                    DspIdea dspIdea = new DspIdea(1L, random.nextLong());
-                    sourceContext.collect(JSON.toJSONString(dspIdea));
-                }
-            }
-
-            @Override
-            public void cancel() {
-                isRunning = false;
-            }
-        });
+        DataStreamSource<String> text = env.addSource(new DspIdeaSourceFunction());
 
         //2.过滤数据
         DataStream<DspIdea> windowCount = text
@@ -110,7 +86,7 @@ public class DspSampleTest {
         //4.增量计算
         SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new DspIdeaAggegateFunction());
         //5. 结果输出
-        aggregate.addSink(new DspSinkFunction());
+        aggregate.addSink(new DspSinkBufferFunction());
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming dsp sample");
     }

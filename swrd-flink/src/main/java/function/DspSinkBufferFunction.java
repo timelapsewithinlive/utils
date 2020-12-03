@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
  * @author xinghonglin
  * @date 2020/12/03
  */
-public class DspSinkFunction extends RichSinkFunction<Dsp> {
+public class DspSinkBufferFunction extends RichSinkFunction<Dsp> {
 
     //连接资源
     @Override
@@ -18,7 +18,7 @@ public class DspSinkFunction extends RichSinkFunction<Dsp> {
     @Override
     public void invoke(Dsp value, Context context) throws Exception {
         //value每次都是新集合
-        System.out.println("sink-------" + value);
+        System.out.println("sink-------" + value+"-------------- context.currentProcessingTime(): "+ context.currentProcessingTime());
     }
 
     //关闭资源、释放资源
