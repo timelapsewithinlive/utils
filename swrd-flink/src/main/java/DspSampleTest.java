@@ -48,6 +48,8 @@ public class DspSampleTest {
         env.enableCheckpointing(1000);
 
 // Checkpoint 语义设置为 EXACTLY_ONCE
+       // 表示所有要消费的数据被恰好处理一次，即所有数据既不丢数据也不重复消费；ATLEASTONCE
+        //表示要消费的数据至少处理一次，可能会重复消费。
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
 
 // CheckPoint 的超时时间
