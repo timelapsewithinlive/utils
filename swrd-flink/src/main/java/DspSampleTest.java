@@ -12,16 +12,13 @@ import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.streaming.api.windowing.evictors.Evictor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.Trigger;
 import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
-import org.apache.flink.streaming.runtime.operators.windowing.TimestampedValue;
 import org.apache.flink.util.Collector;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -102,7 +99,8 @@ public class DspSampleTest {
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(1000))
                 .trigger(new Trigger<DspIdea, TimeWindow>() {
-
+                    //TriggerResult.FIRE_AND_PURGE 会重新定义聚合函数
+                    //TriggerResult.FIRE ：复用第一次定义的聚合函数
                     @Override
                     public TriggerResult onElement(DspIdea dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
                         return TriggerResult.FIRE;
@@ -122,24 +120,23 @@ public class DspSampleTest {
                     public void clear(TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
 
                     }
-                }).evictor(new Evictor<DspIdea, TimeWindow>() {
+                })
+                //evictor 会重新定义聚合函数
+                /*.evictor(new Evictor<DspIdea, TimeWindow>() {
                     @Override
-                    public void evictBefore(Iterable<TimestampedValue<DspIdea>> iterable, int i, TimeWindow timeWindow, EvictorContext evictorContext) {
-                        //System.out.println(iterable);
+                    public void evictBefore(Iterable<TimestampedValue<DspIdea>> iterable, int size, TimeWindow timeWindow, EvictorContext evictorContext) {
+                        //do nothing
                     }
 
                     @Override
                     public void evictAfter(Iterable<TimestampedValue<DspIdea>> iterable, int i, TimeWindow timeWindow, EvictorContext evictorContext) {
                         Iterator<TimestampedValue<DspIdea>> iterator = iterable.iterator();
                         while (iterator.hasNext()) {
-
                             TimestampedValue<DspIdea> next = iterator.next();
-                            DspIdea value = next.getValue();
-                            value = null;
+                            iterator.remove();
                         }
                     }
-                });
-
+                })*/;
         //4.增量计算
         SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(
                 new AggregateFunction<DspIdea, Dsp, Dsp>() {
@@ -161,7 +158,7 @@ public class DspSampleTest {
                         accumulator.count += 1;
                         //accumulator.entityIds.add(value.entityId);
                         accumulator.dspIdeas.add(value);
-                       // System.out.println(System.currentTimeMillis()+"  accumulator:" + accumulator.toString());
+                        // System.out.println(System.currentTimeMillis()+"  accumulator:" + accumulator.toString());
                         return accumulator;
                     }
 
@@ -189,7 +186,7 @@ public class DspSampleTest {
                     @Override
                     public void invoke(Dsp value, Context context) throws Exception {
                         System.out.println("sink-------" + value);
-                        value.dspIdeas.clear();
+                        //  value.dspIdeas.clear();
                     }
 
                     //关闭资源、释放资源
