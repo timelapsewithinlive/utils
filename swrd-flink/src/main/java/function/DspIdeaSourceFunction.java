@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author xinghonglin
  * @date 2020/12/03
  */
-public class DspIdeaSourceFunction implements SourceFunction<String>, CheckpointedFunction {
+public class DspIdeaSourceFunction implements SourceFunction<String>{
 
 
 
@@ -36,15 +36,5 @@ public class DspIdeaSourceFunction implements SourceFunction<String>, Checkpoint
     @Override
     public void cancel() {
         isRunning = false;
-    }
-
-    @Override
-    public void snapshotState(FunctionSnapshotContext functionSnapshotContext) throws Exception {
-
-    }
-
-    @Override
-    public void initializeState(FunctionInitializationContext context) throws Exception {
-
     }
 }

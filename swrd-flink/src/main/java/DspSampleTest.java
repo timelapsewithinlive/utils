@@ -10,10 +10,12 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
+import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
+import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
@@ -42,6 +44,32 @@ public class DspSampleTest {
         // BroadcastStream<DspConfig> broadcastStream = env.addSource(new DspConfigSourceFunction()).broadcast(CONFIG_DESCRIPTOR);
 
         DataStreamSource<String> text = env.addSource(new DspIdeaSourceFunction());
+        // 开启 Checkpoint，每 1000毫秒进行一次 Checkpoint
+        env.enableCheckpointing(1000);
+
+// Checkpoint 语义设置为 EXACTLY_ONCE
+        env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
+
+// CheckPoint 的超时时间
+        env.getCheckpointConfig().setCheckpointTimeout(60000);
+
+// 同一时间，只允许 有 1 个 Checkpoint 在发生
+        env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
+
+// 两次 Checkpoint 之间的最小时间间隔为 500 毫秒
+        env.getCheckpointConfig().setMinPauseBetweenCheckpoints(500);
+
+// 当 Flink 任务取消时，保留外部保存的 CheckPoint 信息
+        env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+
+// 当有较新的 Savepoint 时，作业也会从 Checkpoint 处恢复
+        //env.getCheckpointConfig().setPreferCheckpointForRecovery(true);
+
+// 作业最多允许 Checkpoint 失败 1 次（flink 1.9 开始支持）
+       // env.getCheckpointConfig().setTolerableCheckpointFailureNumber(1);
+
+// Checkpoint 失败后，整个 Flink 任务也会失败（flink 1.9 之前）
+       // env.getCheckpointConfig.setFailTasksOnCheckpointingErrors(true)
 
         //2.过滤数据
         DataStream<DspIdea> windowCount = text

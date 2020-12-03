@@ -55,6 +55,7 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
 
     @Override
     public Dsp merge(Dsp a, Dsp b) {
+        a.count+=b.count;
         a.entityIds.addAll(b.entityIds);
         return a;
     }
