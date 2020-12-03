@@ -1,11 +1,7 @@
 import com.alibaba.fastjson.JSON;
 import domain.Dsp;
 import domain.DspIdea;
-import function.DspIdeaAggegateFunction;
-import function.DspIdeaEvitor;
-import function.DspIdeaSourceFunction;
-import function.DspIdeaTrigger;
-import function.DspSinkBufferFunction;
+import function.*;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -34,7 +30,7 @@ public class DspSampleTest {
         //1.获取运行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //1.1设置执行环境的并发度
-        env.setParallelism(4);
+        env.setParallelism(1);
 
         final MapStateDescriptor<String, String> CONFIG_DESCRIPTOR = new MapStateDescriptor<>(
                 "dspConfig",
@@ -81,13 +77,7 @@ public class DspSampleTest {
                         out.collect(JSON.parseObject(value, DspIdea.class));
                     }
                 })
-                .filter(new RichFilterFunction<DspIdea>() {
-                    @Override
-                    public boolean filter(DspIdea dspIdea) throws Exception {
-                        //根据配置过滤物料
-                        return true;
-                    }
-                })
+                .filter(new DspIdeaFilterFunction())
                 .flatMap(new FlatMapFunction<DspIdea, DspIdea>() {
                     @Override
                     public void flatMap(DspIdea dspIdea, Collector<DspIdea> out) throws Exception {
