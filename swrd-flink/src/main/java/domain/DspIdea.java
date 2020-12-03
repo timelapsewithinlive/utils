@@ -1,10 +1,12 @@
 package domain;
 
+import java.io.Serializable;
+
 /**
  * @author xinghonglin
  * @date 2020/12/03
  */
-public class DspIdea {
+public class DspIdea implements Serializable {
 
     public Long dspId;
     public Long entityId;

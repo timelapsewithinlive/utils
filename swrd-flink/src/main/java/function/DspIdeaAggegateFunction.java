@@ -3,6 +3,7 @@ package function;
 
 import domain.Dsp;
 import domain.DspIdea;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.flink.api.common.functions.AggregateFunction;
 
 import java.util.ArrayList;
@@ -13,13 +14,18 @@ import java.util.ArrayList;
  */
 public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, Dsp> {
 
+    Dsp accumulator = null;
+
     public DspIdeaAggegateFunction() {
         System.out.println("构造新的聚合函数");
+        accumulator = new Dsp();
     }
 
     @Override
     public Dsp createAccumulator() {
-        Dsp accumulator = new Dsp();
+        if (CollectionUtils.isNotEmpty(accumulator.dspIdeas)) {
+            accumulator.dspIdeas.clear();
+        }
         return accumulator;
     }
 

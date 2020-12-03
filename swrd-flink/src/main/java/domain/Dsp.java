@@ -2,13 +2,14 @@ package domain;
 
 import com.alibaba.fastjson.JSON;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author xinghonglin
  * @date 2020/12/03
  */
-public class Dsp {
+public class Dsp implements Serializable {
     public Long dspId;
     public int count;
     public List<Long> entityIds;
