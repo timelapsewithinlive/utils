@@ -1,5 +1,7 @@
 import com.alibaba.fastjson.JSON;
-import org.apache.flink.api.common.functions.AggregateFunction;
+import domain.Dsp;
+import domain.DspIdea;
+import function.DspIdeaAggegateFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -12,14 +14,15 @@ import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
+import org.apache.flink.streaming.api.windowing.evictors.Evictor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.Trigger;
 import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.streaming.runtime.operators.windowing.TimestampedValue;
 import org.apache.flink.util.Collector;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +31,9 @@ import java.util.concurrent.TimeUnit;
  * @date 2020/12/01
  */
 public class DspSampleTest {
+    public DspSampleTest() {
+    }
+
     public static void main(String[] args) throws Exception {
 
         //1.获取运行环境
@@ -99,8 +105,8 @@ public class DspSampleTest {
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(1000))
                 .trigger(new Trigger<DspIdea, TimeWindow>() {
-                    //TriggerResult.FIRE_AND_PURGE 会重新定义聚合函数
-                    //TriggerResult.FIRE ：复用第一次定义的聚合函数
+                    //TriggerResult.FIRE_AND_PURGE 会重新执行聚合函数的createAccumulator
+                    //TriggerResult.FIRE ：复用第一次会重新执行聚合函数的createAccumulator的结果
                     @Override
                     public TriggerResult onElement(DspIdea dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
                         return TriggerResult.FIRE;
@@ -121,8 +127,8 @@ public class DspSampleTest {
 
                     }
                 })
-                //evictor 会重新定义聚合函数
-                /*.evictor(new Evictor<DspIdea, TimeWindow>() {
+                //evictor 会重新执行聚合函数的createAccumulator
+                .evictor(new Evictor<DspIdea, TimeWindow>() {
                     @Override
                     public void evictBefore(Iterable<TimestampedValue<DspIdea>> iterable, int size, TimeWindow timeWindow, EvictorContext evictorContext) {
                         //do nothing
@@ -136,44 +142,10 @@ public class DspSampleTest {
                             iterator.remove();
                         }
                     }
-                })*/;
+                });
         //4.增量计算
         SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(
-                new AggregateFunction<DspIdea, Dsp, Dsp>() {
-                    @Override
-                    public Dsp createAccumulator() {
-                        Dsp accumulator = new Dsp();
-                        return accumulator;
-                    }
-
-                    @Override
-                    public Dsp add(DspIdea value, Dsp accumulator) {
-                        accumulator.dspId = value.dspId;
-                        if (accumulator.entityIds == null) {
-                            accumulator.entityIds = new ArrayList<>();
-                        }
-                        if (accumulator.dspIdeas == null) {
-                            accumulator.dspIdeas = new ArrayList<>();
-                        }
-                        accumulator.count += 1;
-                        //accumulator.entityIds.add(value.entityId);
-                        accumulator.dspIdeas.add(value);
-                        // System.out.println(System.currentTimeMillis()+"  accumulator:" + accumulator.toString());
-                        return accumulator;
-                    }
-
-                    @Override
-                    public Dsp getResult(Dsp accumulator) {
-                        return accumulator;
-                    }
-
-                    @Override
-                    public Dsp merge(Dsp a, Dsp b) {
-                        a.entityIds.addAll(b.entityIds);
-                        return a;
-                    }
-                }
-        );
+                new DspIdeaAggegateFunction());
         //5. 结果输出
         aggregate.addSink(
                 new RichSinkFunction<Dsp>() {
@@ -198,68 +170,5 @@ public class DspSampleTest {
                 });
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming dsp sample");
-    }
-
-
-    public static class DspIdea {
-        public Long dspId;
-        public Long entityId;
-
-        public DspIdea() {
-        }
-
-        public DspIdea(Long dspId, Long entityId) {
-            this.dspId = dspId;
-            this.entityId = entityId;
-        }
-
-        public Long getDspId() {
-            return dspId;
-        }
-
-        public void setDspId(Long dspId) {
-            this.dspId = dspId;
-        }
-
-        public Long getEntityId() {
-            return entityId;
-        }
-
-        public void setEntityId(Long entityId) {
-            this.entityId = entityId;
-        }
-
-        @Override
-        public String toString() {
-            return "DspIdea{" +
-                    "dspId='" + dspId + '\'' +
-                    ", entityId=" + entityId +
-                    '}';
-        }
-    }
-
-    public static class Dsp {
-        public Long dspId;
-        public int count;
-        public List<Long> entityIds;
-        public List<DspIdea> dspIdeas;
-
-        public Dsp() {
-        }
-
-        public Dsp(Long dspId, List<Long> entityIds) {
-            this.dspId = dspId;
-            this.entityIds = entityIds;
-        }
-
-        @Override
-        public String toString() {
-            return "DspIdea{" +
-                    "dspId='" + dspId + '\'' +
-                    "count='" + count + '\'' +
-                    ", entityIds=" + JSON.toJSONString(entityIds) +
-                    ", dspIdeas=" + JSON.toJSONString(dspIdeas) +
-                    '}';
-        }
     }
 }
