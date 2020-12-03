@@ -2,6 +2,9 @@ import com.alibaba.fastjson.JSON;
 import domain.Dsp;
 import domain.DspIdea;
 import function.DspIdeaAggegateFunction;
+import function.DspIdeaEvitor;
+import function.DspIdeaTrigger;
+import function.DspSinkFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -14,15 +17,12 @@ import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.streaming.api.windowing.evictors.Evictor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.Trigger;
 import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
-import org.apache.flink.streaming.runtime.operators.windowing.TimestampedValue;
 import org.apache.flink.util.Collector;
 
-import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -104,70 +104,13 @@ public class DspSampleTest {
         WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(1000))
-                .trigger(new Trigger<DspIdea, TimeWindow>() {
-                    //TriggerResult.FIRE_AND_PURGE 会重新执行聚合函数的createAccumulator
-                    //TriggerResult.FIRE ：复用第一次会重新执行聚合函数的createAccumulator的结果
-                    @Override
-                    public TriggerResult onElement(DspIdea dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
-                        return TriggerResult.FIRE;
-                    }
-
-                    @Override
-                    public TriggerResult onProcessingTime(long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
-                        return TriggerResult.FIRE_AND_PURGE;
-                    }
-
-                    @Override
-                    public TriggerResult onEventTime(long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
-                        return TriggerResult.CONTINUE;
-                    }
-
-                    @Override
-                    public void clear(TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
-
-                    }
-                })
+                .trigger(new DspIdeaTrigger())
                 //evictor 会重新执行聚合函数的createAccumulator
-                .evictor(new Evictor<DspIdea, TimeWindow>() {
-                    @Override
-                    public void evictBefore(Iterable<TimestampedValue<DspIdea>> iterable, int size, TimeWindow timeWindow, EvictorContext evictorContext) {
-                        //do nothing
-                    }
-
-                    @Override
-                    public void evictAfter(Iterable<TimestampedValue<DspIdea>> iterable, int i, TimeWindow timeWindow, EvictorContext evictorContext) {
-                        Iterator<TimestampedValue<DspIdea>> iterator = iterable.iterator();
-                        while (iterator.hasNext()) {
-                            TimestampedValue<DspIdea> next = iterator.next();
-                            iterator.remove();
-                        }
-                    }
-                });
+                .evictor(new DspIdeaEvitor());
         //4.增量计算
-        SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(
-                new DspIdeaAggegateFunction());
+        SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new DspIdeaAggegateFunction());
         //5. 结果输出
-        aggregate.addSink(
-                new RichSinkFunction<Dsp>() {
-
-                    //连接资源
-                    @Override
-                    public void open(Configuration parameters) throws Exception {
-                    }
-
-                    @Override
-                    public void invoke(Dsp value, Context context) throws Exception {
-                        System.out.println("sink-------" + value);
-                        //  value.dspIdeas.clear();
-                    }
-
-                    //关闭资源、释放资源
-                    @Override
-                    public void close() throws Exception {
-                        // System.out.println("closesssss");
-                    }
-
-                });
+        aggregate.addSink(new DspSinkFunction());
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行
         env.execute("streaming dsp sample");
     }

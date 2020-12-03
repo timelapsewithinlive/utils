@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author xinghonglin
@@ -22,9 +23,13 @@ public class JooqTest {
     @Resource(name = "dslContext")
     private DSLContext dslContext;
 
+    @Resource
+    private List<Animal> animals;
+
     @PostConstruct
     public void init() {
         try {
+            log.info("animals: "+JSON.toJSONString(animals));
             log.info("dslContext: " + dslContext);
         } catch (Exception e) {
             e.printStackTrace();
