@@ -145,7 +145,8 @@ public class DspSampleTest {
                 new AggregateFunction<DspIdea, Dsp, Dsp>() {
                     @Override
                     public Dsp createAccumulator() {
-                        return new Dsp();
+                        Dsp accumulator = new Dsp();
+                        return accumulator;
                     }
 
                     @Override
@@ -160,7 +161,7 @@ public class DspSampleTest {
                         accumulator.count += 1;
                         //accumulator.entityIds.add(value.entityId);
                         accumulator.dspIdeas.add(value);
-                        System.out.println("accumulator:" + accumulator.toString());
+                       // System.out.println(System.currentTimeMillis()+"  accumulator:" + accumulator.toString());
                         return accumulator;
                     }
 
@@ -188,6 +189,7 @@ public class DspSampleTest {
                     @Override
                     public void invoke(Dsp value, Context context) throws Exception {
                         System.out.println("sink-------" + value);
+                        value.dspIdeas.clear();
                     }
 
                     //关闭资源、释放资源
