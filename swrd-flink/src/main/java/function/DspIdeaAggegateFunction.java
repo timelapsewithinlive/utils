@@ -5,6 +5,10 @@ import domain.Dsp;
 import domain.DspIdea;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.state.ListState;
+import org.apache.flink.api.common.state.ListStateDescriptor;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.runtime.state.FunctionInitializationContext;
 import org.apache.flink.runtime.state.FunctionSnapshotContext;
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
@@ -18,6 +22,7 @@ import java.util.ArrayList;
 public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, Dsp>, CheckpointedFunction {
 
     Dsp accumulator = null;
+    private ListState<Dsp> checkpointedState;
 
     public DspIdeaAggegateFunction() {
         System.out.println("构造新的聚合函数");
@@ -65,7 +70,13 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
     }
 
     @Override
-    public void initializeState(FunctionInitializationContext functionInitializationContext) throws Exception {
+    public void initializeState(FunctionInitializationContext context) throws Exception {
+        ListStateDescriptor<Dsp> descriptor =new ListStateDescriptor<Dsp>("fsdafsd", TypeInformation.of(new TypeHint<Dsp>(){}));
+        checkpointedState = context.getOperatorStateStore().getListState(descriptor);
 
+        if(context.isRestored()){
+            Iterable<Dsp> dsps = checkpointedState.get();
+            accumulator= dsps.iterator().next();
+        }
     }
 }
