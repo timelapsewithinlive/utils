@@ -16,7 +16,7 @@ public class DspIdeaTrigger extends Trigger<DspIdea, TimeWindow> {
     @Override
     public TriggerResult onElement(DspIdea dspIdeaDspTuple2, long l, TimeWindow timeWindow, TriggerContext triggerContext) throws Exception {
         //System.out.println("timeWindow.getStart(): "+timeWindow.getStart());
-        return TriggerResult.CONTINUE;
+        return TriggerResult.FIRE;
     }
 
     @Override

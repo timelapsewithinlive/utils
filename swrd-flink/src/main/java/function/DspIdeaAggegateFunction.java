@@ -21,26 +21,13 @@ import java.util.ArrayList;
  */
 public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, Dsp>, CheckpointedFunction {
 
-    Dsp accumulator = null;
-    private ListState<Dsp> checkpointedState;
-
-    public DspIdeaAggegateFunction() {
-        System.out.println("构造新的聚合函数");
-        accumulator = new Dsp();
-    }
-
     @Override
     public Dsp createAccumulator() {
-        System.out.println("DspIdeaAggegateFunction  createAccumulator tread: "+Thread.currentThread());
-        if (CollectionUtils.isNotEmpty(accumulator.dspIdeas)) {
-            accumulator.dspIdeas.clear();
-        }
-        return accumulator;
+        return new Dsp();
     }
 
     @Override
     public Dsp add(DspIdea value, Dsp accumulator) {
-        System.out.println("DspIdeaAggegateFunction add tread: "+Thread.currentThread());
         accumulator.dspId = value.dspId;
         if (accumulator.entityIds == null) {
             accumulator.entityIds = new ArrayList<>();
@@ -74,13 +61,6 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
 
     @Override
     public void initializeState(FunctionInitializationContext context) throws Exception {
-        System.out.println("DspIdeaAggegateFunction initializeState tread: "+Thread.currentThread().getName());
-        ListStateDescriptor<Dsp> descriptor =new ListStateDescriptor<Dsp>("fsdafsd", TypeInformation.of(new TypeHint<Dsp>(){}));
-        checkpointedState = context.getOperatorStateStore().getListState(descriptor);
 
-        if(context.isRestored()){
-            Iterable<Dsp> dsps = checkpointedState.get();
-            accumulator= dsps.iterator().next();
-        }
     }
 }

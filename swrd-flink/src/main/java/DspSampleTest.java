@@ -1,9 +1,14 @@
 import com.alibaba.fastjson.JSON;
 import domain.Dsp;
 import domain.DspIdea;
-import function.*;
+import function.DspIdeaAggegateFunction;
+import function.DspIdeaEvitor;
+import function.DspIdeaFilterFunction;
+import function.DspIdeaSourceFunction;
+import function.DspIdeaTrigger;
+import function.DspRichReduceFunction;
+import function.DspSinkBufferFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.streaming.api.CheckpointingMode;
@@ -44,15 +49,15 @@ public class DspSampleTest {
         env.enableCheckpointing(1000);
 
 // Checkpoint 语义设置为 EXACTLY_ONCE
-       // 表示所有要消费的数据被恰好处理一次，即所有数据既不丢数据也不重复消费；ATLEASTONCE
+        // 表示所有要消费的数据被恰好处理一次，即所有数据既不丢数据也不重复消费；ATLEASTONCE
         //表示要消费的数据至少处理一次，可能会重复消费。
-       env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
+        env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
 
 // CheckPoint 的超时时间
-       // env.getCheckpointConfig().setCheckpointTimeout(60000);
+        // env.getCheckpointConfig().setCheckpointTimeout(60000);
 
 // 同一时间，只允许 有 1 个 Checkpoint 在发生
-       env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
+        env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
 
 // 两次 Checkpoint 之间的最小时间间隔为 500 毫秒
         // env.getCheckpointConfig().setMinPauseBetweenCheckpoints(500);
@@ -64,10 +69,10 @@ public class DspSampleTest {
         //env.getCheckpointConfig().setPreferCheckpointForRecovery(true);
 
 // 作业最多允许 Checkpoint 失败 1 次（flink 1.9 开始支持）
-       // env.getCheckpointConfig().setTolerableCheckpointFailureNumber(1);
+        // env.getCheckpointConfig().setTolerableCheckpointFailureNumber(1);
 
 // Checkpoint 失败后，整个 Flink 任务也会失败（flink 1.9 之前）
-       // env.getCheckpointConfig.setFailTasksOnCheckpointingErrors(true)
+        // env.getCheckpointConfig.setFailTasksOnCheckpointingErrors(true)
 
         //2.过滤数据
         DataStream<DspIdea> windowCount = text
@@ -99,12 +104,13 @@ public class DspSampleTest {
         //3.定义窗口和触发器
         WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
-                .timeWindow(Time.seconds(10))
+                .timeWindow(Time.seconds(10000))
                 .trigger(new DspIdeaTrigger())
                 //evictor 会重新执行聚合函数的createAccumulator
                 .evictor(new DspIdeaEvitor());
         //4.增量计算
-        SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new DspIdeaAggegateFunction());
+        SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new DspIdeaAggegateFunction()).keyBy(Dsp::getDspId)
+                .reduce(new DspRichReduceFunction());
         //5. 结果输出
         aggregate.addSink(new DspSinkBufferFunction());
         //注意：因为flink是懒加载的，所以必须调用execute方法，上面的代码才会执行

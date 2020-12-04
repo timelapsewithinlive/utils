@@ -23,6 +23,14 @@ public class Dsp implements Serializable {
         this.entityIds = entityIds;
     }
 
+    public Long getDspId() {
+        return dspId;
+    }
+
+    public void setDspId(Long dspId) {
+        this.dspId = dspId;
+    }
+
     @Override
     public String toString() {
         return "DspIdea{" +
