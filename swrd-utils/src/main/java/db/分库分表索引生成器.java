@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
  * @date 2021/01/14
  */
 public class 分库分表索引生成器 {
-    private final static String filePath = "/Applications/winfodel";
+    private final static String filePath = "/Applications/widea";
 
     public static void main(String[] args) throws Exception {
         // 4*32
@@ -27,21 +27,28 @@ public class 分库分表索引生成器 {
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 entry.getValue().forEach(v -> {
-                   /* String format = String.format(
-                            "alter table audit_winfo_%s drop index idx_mod_tag;\r\n", v, v);*/
-                    String format = String.format(
-                            "create index idx_mod_tag_aid on audit_winfo_%s (modify_day_tag,auditor_id);\r\n", v, v);
-                    System.out.println(format);
-                    try {
+                   String winfo = String.format(
+                            "create index idx_mod_tag_aid on audit_winfo_%s (modify_day_tag,auditor_id);\r\n" +
+                                    "alter table audit_winfo_%s drop index idx_mod_tag;\r\n", v, v);
+
+                   String idea = String.format(
+                            "create index idx_mod_tag_aid on audit_idea_%s (modify_day_tag,auditor_id);\r\n" +
+                                    "alter table audit_idea_%s drop index idx_mod_tag;\r\n", v, v);
+
+                   String format = winfo+idea;
+                   System.out.println(format);
+                   try {
                         fileOutputStream.write(format.getBytes());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });
-               /* String ext = String.format(
-                        "alter table cpc_idea_pro_%s drop index INDEX_review_state_logic_state_unitid,drop index INDEX_userid_logic_state_review_state,drop index INDEX_userid_unitid_logic_state_review_state;\n", entry.getKey());
+                String create = String.format(
+                        "create index idx_mod_tag_aid on audit_idea_pro_%s (modify_day_tag,auditor_id);\n", entry.getKey());
+                String delete = String.format("alter table audit_idea_pro_%s drop index idx_mod_tag;\n", entry.getKey());
+                String ext = create+delete;
                 fileOutputStream.write(ext.getBytes());
-                fileOutputStream.close();*/
+                fileOutputStream.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
