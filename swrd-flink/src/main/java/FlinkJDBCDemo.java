@@ -6,7 +6,7 @@ import org.apache.flink.api.java.io.jdbc.JDBCInputFormat;
 import org.apache.flink.api.java.operators.MapOperator;
 import org.apache.flink.api.java.typeutils.RowTypeInfo;
 
-public class FlinkSQLDemo {
+public class FlinkJDBCDemo {
     public static void main(String[] args) throws Exception {
         //sql查询结果列类型
         TypeInformation[] fieldTypes = new TypeInformation[] {
