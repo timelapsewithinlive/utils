@@ -23,12 +23,13 @@ public class DspRichReduceFunction extends RichReduceFunction<Dsp> implements Ch
 
     @Override
     public Dsp reduce(Dsp newDsp, Dsp oldDsp) throws Exception {
+        System.out.println(newDsp);
         return oldDsp;
     }
 
     @Override
     public void snapshotState(FunctionSnapshotContext functionSnapshotContext) throws Exception {
-
+        //System.out.println(functionSnapshotContext);
     }
 
     @Override

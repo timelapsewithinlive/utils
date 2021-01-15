@@ -36,8 +36,8 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
             accumulator.dspIdeas = new ArrayList<>();
         }
         accumulator.count += 1;
-        //accumulator.entityIds.add(value.entityId);
-        accumulator.dspIdeas.add(value);
+        accumulator.entityIds.add(value.entityId);
+        //accumulator.dspIdeas.add(value);
         // System.out.println(System.currentTimeMillis()+"  accumulator:" + accumulator.toString());
         return accumulator;
     }
