@@ -63,4 +63,9 @@ public class DspIdeaAggegateFunction implements AggregateFunction<DspIdea, Dsp, 
     public void initializeState(FunctionInitializationContext context) throws Exception {
 
     }
+
+    public static void main(String[] args) {
+        String ssss= "1610461054800";
+        System.out.println(Integer.valueOf(ssss));
+    }
 }
