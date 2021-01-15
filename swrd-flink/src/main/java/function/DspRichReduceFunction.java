@@ -23,6 +23,8 @@ import java.util.Map;
 public class DspRichReduceFunction extends RichReduceFunction<Dsp> implements CheckpointedFunction {
 
     //https://blog.csdn.net/qq_33689414/article/details/94447569  Flink DataStream Manager(托管) Keyed State的简单使用
+    //https://www.jianshu.com/p/595ba0a2760b?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io flink解析之state
+    //https://zhuanlan.zhihu.com/p/104171679    Flink状态管理详解：Keyed State和Operator List State深度解析
 
     Map<String, Integer> dspCount = null;
     private ListState<Map<String, Integer>> checkpointedState;
