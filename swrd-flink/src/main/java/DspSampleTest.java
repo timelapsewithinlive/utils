@@ -9,6 +9,7 @@ import function.DspIdeaTrigger;
 import function.DspRichReduceFunction;
 import function.DspSinkBufferFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.streaming.api.CheckpointingMode;
