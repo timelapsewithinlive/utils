@@ -18,7 +18,7 @@
         <scala.version>2.11.12</scala.version>
         <scala.binary.version>2.11</scala.binary.version>
         <hadoop.version>2.7.6</hadoop.version>
-        <flink.version>1.6.1</flink.version>
+        <flink.version>1.10.0</flink.version>
     </properties>
     <dependencies>
         <dependency>
@@ -61,21 +61,24 @@
             <artifactId>flink-connector-kafka-0.10_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-table-planner -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-planner_2.12</artifactId>
-            <version>1.12.0</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-table-api-java-bridge -->
-        <dependency>
+      <!--  <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-api-java-bridge_2.12</artifactId>
             <version>1.12.0</version>
             <scope>provided</scope>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-table-planner -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner-blink_2.11</artifactId>
+            <version>1.10.0</version>
+            <scope>provided</scope>
         </dependency>
+
+
 
 
         <dependency>
