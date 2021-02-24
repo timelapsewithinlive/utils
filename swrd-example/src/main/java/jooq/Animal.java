@@ -1,6 +1,5 @@
 package jooq;
 
-import com.sm.audit.audiebant.protocol.AuditEntity;
 
 /**
  * @author xinghonglin

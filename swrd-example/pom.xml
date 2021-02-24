@@ -136,18 +136,28 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.sm.audit</groupId>
-            <artifactId>audiebant-protocol</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.5.7</version>
         </dependency>
+        <dependency>
+            <groupId>com.sm.audit</groupId>
+            <artifactId>holmes-protocol</artifactId>
+            <version>1.1.4-SNAPSHOT</version>
+        <!--    <exclusions>
+                <exclusion>
+                    <artifactId>audit-def</artifactId>
+                    <groupId>com.sm.audit</groupId>
+                </exclusion>
+            </exclusions>-->
+        </dependency>
+      <!--  <dependency>
+            <groupId>com.sm.audit</groupId>
+            <artifactId>audit-def</artifactId>
+            <version>1.8.0-word-SNAPSHOT</version>
+        </dependency>-->
     </dependencies>
 
 </project>
