@@ -27,26 +27,29 @@ public class 分库分表索引生成器 {
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 entry.getValue().forEach(v -> {
-                   String winfo = String.format(
-                            "create index idx_mod_tag_aid on audit_winfo_%s (modify_day_tag,auditor_id);\r\n" +
-                                    "alter table audit_winfo_%s drop index idx_mod_tag;\r\n", v, v);
+                    String winfo = String.format(
+                            "create index idx_unitid_userid_logic_state on cpc_winfo_%s (unitid,userid,logic_state);\r\n", v, v);
 
-                   String idea = String.format(
-                            "create index idx_mod_tag_aid on audit_idea_%s (modify_day_tag,auditor_id);\r\n" +
-                                    "alter table audit_idea_%s drop index idx_mod_tag;\r\n", v, v);
+//                   String idea = String.format(
+//                            "create index idx_mod_tag_aid on audit_idea_%s (modify_day_tag,auditor_id);\r\n" +
+//                                    "alter table audit_idea_%s drop index idx_mod_tag;\r\n", v, v);
 
-                   String format = winfo+idea;
-                   System.out.println(format);
-                   try {
+                    String format = winfo;
+                    //String format = winfo+idea;
+                    System.out.println(format);
+                    try {
                         fileOutputStream.write(format.getBytes());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });
                 String create = String.format(
-                        "create index idx_mod_tag_aid on audit_idea_pro_%s (modify_day_tag,auditor_id);\n", entry.getKey());
-                String delete = String.format("alter table audit_idea_pro_%s drop index idx_mod_tag;\n", entry.getKey());
-                String ext = create+delete;
+                        "create index idx_unitid_userid_logic_state on cpc_idea_pro_%s (unitid,userid,logic_state);\r\n", entry.getKey());
+
+                //String delete = String.format("alter table audit_idea_pro_%s drop index idx_mod_tag;\n", entry.getKey());
+                String ext = create;
+
+                //String ext = create + delete;
                 fileOutputStream.write(ext.getBytes());
                 fileOutputStream.close();
             } catch (FileNotFoundException e) {
