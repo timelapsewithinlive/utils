@@ -1,29 +1,64 @@
 package jdk8.stream.nashorn;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author xinghonglin
  * @date 2021/03/16
  */
 public class Test {
-    private final static String filePath = "/Applications/word/word.txt";
+    private final static String filePath = "/Applications/work-doc/word.txt";
+    static String NEW_LINE = "\n";
+    static Splitter LINE_SPLITTER = Splitter.on(NEW_LINE).omitEmptyStrings().trimResults();
+    static Joiner LINE_Joiner = Joiner.on(NEW_LINE).skipNulls();
+
 
     public static void main(String[] args) throws IOException {
-        File file = new File(filePath);
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        for(int i=400001;i<500000;i++){
-            String word = String.format(
-                    "李某某是二傻子%s\n", i, i);
-            System.out.println(word);
-            fileOutputStream.write(word.getBytes());
+
+        File rejectInput = new File("/Applications/work-doc/贝壳繁星人工干预.txt");
+        FileReader rejectFileReader = new FileReader(rejectInput);
+        String rejectWords = IOUtils.toString(rejectFileReader);
+        List<String> rejectWordReasons = LINE_SPLITTER.splitToList(rejectWords);
+        List<String> rejectWordList = Lists.newArrayList();
+        for (String reason : rejectWordReasons) {
+            Pair<String, String> pair = splitToPair(reason, "|");
+            rejectWordList.add(pair.getLeft());
         }
 
+        File passInput = new File("/Users/xinghonglin/Downloads/d6e497b1e68c0d988ab3d88e2893e6c5_1b16dafe.txt");
+        FileReader passFileReader = new FileReader(passInput);
+        String passtWords = IOUtils.toString(passFileReader);
+        List<String> passWordList = LINE_SPLITTER.splitToList(passtWords);
+        System.out.println(passWordList.size());
+
+
+        Collection<String> resultList = CollectionUtils.subtract(passWordList, rejectWordList);
+        System.out.println(resultList.size());
+        String resultWords = LINE_Joiner.join(resultList);
+
+        File result = new File("/Applications/work-doc/word.txt");
+        FileOutputStream fileOutputStream = new FileOutputStream(result);
+
+        fileOutputStream.write(resultWords.getBytes());
         fileOutputStream.flush();
         fileOutputStream.close();
+    }
+
+    private static Pair<String, String> splitToPair(String word, String regex) {
+        return Pair.of(StringUtils.substringBeforeLast(word, regex), StringUtils.substringAfterLast(word, regex));
     }
 
 }

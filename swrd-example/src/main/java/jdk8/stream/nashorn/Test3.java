@@ -2,6 +2,7 @@ package jdk8.stream.nashorn;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +20,6 @@ public class Test3 {
 
 
     public static void main(String[] args) {
-
        String word = "北京糖果展|竞品词[京糖]\n";
         word += "中国国际渔业博览会";
 
