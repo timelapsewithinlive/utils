@@ -1,4 +1,4 @@
-package jdk8.stream.nashorn;
+package work;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -17,9 +17,10 @@ import java.util.List;
 
 /**
  * @author xinghonglin
- * @date 2021/03/16
+ * @date 2021/03/26
  */
-public class Test {
+public class 繁星词包修复 {
+
     private final static String filePath = "/Applications/work-doc/word.txt";
     static String NEW_LINE = "\n";
     static Splitter LINE_SPLITTER = Splitter.on(NEW_LINE).omitEmptyStrings().trimResults();
@@ -28,7 +29,7 @@ public class Test {
 
     public static void main(String[] args) throws IOException {
 
-        File rejectInput = new File("/Applications/work-doc/贝壳繁星人工干预.txt");
+        File rejectInput = new File("/Applications/work-doc/人工干预 舒脉.txt");
         FileReader rejectFileReader = new FileReader(rejectInput);
         String rejectWords = IOUtils.toString(rejectFileReader);
         List<String> rejectWordReasons = LINE_SPLITTER.splitToList(rejectWords);
@@ -38,7 +39,7 @@ public class Test {
             rejectWordList.add(pair.getLeft());
         }
 
-        File passInput = new File("/Users/xinghonglin/Downloads/d6e497b1e68c0d988ab3d88e2893e6c5_1b16dafe.txt");
+        File passInput = new File("/Users/xinghonglin/Downloads/a7919d14cd753957b75bb4b82d011b0d_f101635f.txt");
         FileReader passFileReader = new FileReader(passInput);
         String passtWords = IOUtils.toString(passFileReader);
         List<String> passWordList = LINE_SPLITTER.splitToList(passtWords);

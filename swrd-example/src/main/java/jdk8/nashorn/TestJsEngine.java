@@ -1,4 +1,4 @@
-package jdk8.stream.nashorn;
+package jdk8.nashorn;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -10,7 +10,7 @@ import java.text.NumberFormat;
  * @author xinghonglin
  * @date 2021/03/15
  */
-public class Test2 {
+public class TestJsEngine {
     public static void main(String[] args) throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("nashorn");
