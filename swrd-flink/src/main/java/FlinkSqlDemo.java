@@ -1,29 +1,25 @@
+/*
+import function.DspIdeaSourceFunction;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.Table;
-import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.StreamTableEnvironment;
 
 public class FlinkSqlDemo {
 
     public static void main(String[] args) throws Exception {
 
         //1.获取运行环境
-        EnvironmentSettings blinkSettings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
-        StreamExecutionEnvironment blinkEnv = StreamExecutionEnvironment.getExecutionEnvironment();
-
+        //EnvironmentSettings fsSettings = EnvironmentSettings.newInstance().useOldPlanner().inStreamingMode().build();
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //1.1设置执行环境的并发度
-        blinkEnv.setParallelism(1);
+        env.setParallelism(1);
 
-        StreamTableEnvironment blinkTableEnv = StreamTableEnvironment.create(blinkEnv, blinkSettings);
-        TableEnvironment tableEnvironment = TableEnvironment.create(blinkSettings);
-
-        //tableEnvironment.connect(new DspCountSqlConnector("metaQ",1,false));
-
-        Table table = tableEnvironment.sqlQuery("");
-
-        //table.
+        StreamTableEnvironment fsTableEnv = StreamTableEnvironment.create(fsEnv, fsSettings);
 
 
+        DataStreamSource<String> dataStreamSource = env.addSource(new DspIdeaSourceFunction());
+
+        dataStreamSource
     }
 }
+*/

@@ -136,11 +136,42 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.5.7</version>
+        </dependency>
         <dependency>
             <groupId>com.sm.audit</groupId>
-            <artifactId>audiebant-protocol</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <artifactId>holmes-protocol</artifactId>
+            <version>1.1.4-SNAPSHOT</version>
+        <!--    <exclusions>
+                <exclusion>
+                    <artifactId>audit-def</artifactId>
+                    <groupId>com.sm.audit</groupId>
+                </exclusion>
+            </exclusions>-->
         </dependency>
+      <!--  <dependency>
+            <groupId>com.sm.audit</groupId>
+            <artifactId>audit-def</artifactId>
+            <version>1.8.0-word-SNAPSHOT</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>

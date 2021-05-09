@@ -9,7 +9,6 @@ import function.DspIdeaTrigger;
 import function.DspRichReduceFunction;
 import function.DspSinkBufferFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.streaming.api.CheckpointingMode;
@@ -107,11 +106,9 @@ public class DspSampleTest {
         WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
                 .timeWindow(Time.seconds(10000))
-                //TriggerResult.FIRE_AND_PURGE 会重新执行聚合函数的createAccumulator
-                //TriggerResult.FIRE ：复用第一次会重新执行聚合函数的createAccumulator的结果
-                .trigger(new DspIdeaTrigger());
+                .trigger(new DspIdeaTrigger())
                 //evictor 会重新执行聚合函数的createAccumulator
-                //.evictor(new DspIdeaEvitor());
+                .evictor(new DspIdeaEvitor());
         //4.增量计算
         SingleOutputStreamOperator<Dsp> aggregate = windowedStream.aggregate(new DspIdeaAggegateFunction()).keyBy(Dsp::getDspId)
                 .reduce(new DspRichReduceFunction());

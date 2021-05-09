@@ -1,4 +1,4 @@
-package jdk8.stream;
+package jdk8;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

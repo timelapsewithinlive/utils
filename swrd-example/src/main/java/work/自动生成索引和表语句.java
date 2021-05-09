@@ -1,12 +1,16 @@
-package http;
+package work;
 
+import http.HttpUtils;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.io.FileWriter;
 import java.util.Random;
 
-public class Test {
+/**
+ * @author xinghonglin
+ * @date 2021/03/26
+ */
+public class 自动生成索引和表语句 {
+
     public static void main(String[] args) throws Exception {
         //String fsdasdfa="{\"db\":426,\"sql\":\"select * from t_user_shipping where id>=4266000 and id <=4266050\",\"limit\":50}";
         //System.out.println(fsdasdfa);
@@ -19,16 +23,16 @@ public class Test {
 
         int id =55000;
 
-       while(id>=30000){
+        while(id>=30000){
             id-=3000;
 
          /*  String sql ="{\"limit\":\"1\",\"db\":\"426\",\"sql\":\"select * from t_user_shipping where id=" +id+
                    "\",\"limit\":50}";*/
 
-           String sql="{\"db\":426,\"sql\":\"select * from t_user_shipping where" +
-                   " id>=" +id+
-                   " and id <=" +(id+3000)+
-                   "\",\"limit\":3000}";
+            String sql="{\"db\":426,\"sql\":\"select * from t_user_shipping where" +
+                    " id>=" +id+
+                    " and id <=" +(id+3000)+
+                    "\",\"limit\":3000}";
             String post = HttpUtils.post("http://cloud.siku.cn/api/v1/mdb/queryjobs/",sql , "utf-8");
             //System.out.println(post);
 
@@ -40,11 +44,10 @@ public class Test {
             fos.append("\r\n"+post);
             fos.flush();
             fos.close();
-           Random random = new Random();
-           int ms = random.nextInt(3000);
-           System.out.println("id========="+id+", ms-------------------:"+ms);
-           Thread.sleep(ms);
+            Random random = new Random();
+            int ms = random.nextInt(3000);
+            System.out.println("id========="+id+", ms-------------------:"+ms);
+            Thread.sleep(ms);
         }
-
     }
 }
