@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static jdk8.functions.Functions.f;
 import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
@@ -35,6 +36,12 @@ public class Test {
         Consumer<Object> unchecked = of.unchecked();
         unchecked.accept(333);
         System.out.println(of);
+
+        CheckSupplier<Object> checkSupplier = CheckSupplier.of(() -> {
+            throw new RuntimeException("哈哈");
+        });
+        Supplier<Object> unchecked1 = checkSupplier.unchecked();
+        unchecked1.get();
     }
 
 
