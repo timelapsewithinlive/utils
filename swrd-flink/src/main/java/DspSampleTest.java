@@ -102,6 +102,7 @@ public class DspSampleTest {
             }
         });*/
 
+
         //3.定义窗口和触发器
         WindowedStream<DspIdea, Long, TimeWindow> windowedStream = windowCount.keyBy(DspIdea::getDspId)
                 //指定计算数据的窗口大小和滑动窗口大小
