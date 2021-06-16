@@ -22,4 +22,5 @@ public class FactoryBeanTest implements FactoryBean {
     public Class<?> getObjectType() {
         return null;
     }
+
 }

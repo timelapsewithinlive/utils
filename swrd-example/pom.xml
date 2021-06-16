@@ -172,6 +172,26 @@
             <version>2.8.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sm.nhetu</groupId>
+            <artifactId>nhetu-service</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log-collector-api</artifactId>
+                    <groupId>com.sm.cpc</groupId>
+                </exclusion>
+            </exclusions>
+            <version>1.5.12</version>
+        </dependency>
+
     </dependencies>
 
 </project>
