@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 public class OnlineShoppingController{
     @Resource
-    OrderSubmitService orderService;
+    OrderSubmitService orderSubmitService;
 
     @GetMapping("/api")
     public Object trade(@RequestParam Map<String,Object> params){
